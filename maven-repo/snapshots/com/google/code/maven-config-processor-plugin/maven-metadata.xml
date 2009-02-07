@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?><metadata>
+  <plugins>
+    <plugin>
+      <name>Configuration Processor Plugin for Maven</name>
+      <prefix>config-processor</prefix>
+      <artifactId>maven-config-processor-plugin</artifactId>
+    </plugin>
+  </plugins>
+</metadata>
