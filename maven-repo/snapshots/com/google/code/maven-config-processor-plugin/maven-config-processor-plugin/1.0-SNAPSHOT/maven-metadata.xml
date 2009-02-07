@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?><metadata>
+  <groupId>com.google.code.maven-config-processor-plugin</groupId>
+  <artifactId>maven-config-processor-plugin</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <versioning>
+    <snapshot>
+      <buildNumber>1</buildNumber>
+    </snapshot>
+    <lastUpdated>20090207141758</lastUpdated>
+  </versioning>
+</metadata>
