@@ -1,0 +1,255 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.google.code.maven-config-processor-plugin</groupId>
+    <artifactId>test-project</artifactId>
+    <packaging>jar</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <name>Configuration Processor Plugin Test Project</name>
+    <url>http://code.google.com/p/maven-config-processor-plugin</url>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.5</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+    
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>src/main/assembly</directory>
+            </resource>
+            <resource>
+                <directory>src/main/etc</directory>
+            </resource>
+            <resource>
+                <directory>src/main/scripts</directory>
+            </resource>
+        </resources>
+
+        <plugins>
+            <!-- Java compiler -->
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                </configuration>
+            </plugin>
+
+            <!-- Unit tests -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/*Test.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+            
+            <!-- Source code license -->
+            <plugin>
+                <groupId>com.google.code.maven-license-plugin</groupId>
+                <artifactId>maven-license-plugin</artifactId>
+                <version>1.4.0</version>
+                <configuration>
+                    <header>src/main/etc/source-license-header.txt</header>
+                    <includes>
+                        <include>src/main/java/**</include>
+                        <include>src/test/java/**</include>
+                    </includes>
+                    <mapping>
+                        <java>SLASHSTAR_STYLE</java>
+                    </mapping>
+                    <properties>
+                        <year>2009</year>
+                        <name>Leandro de Oliveira Aparecido</name>
+                        <email>lehphyro@gmail.com</email>
+                    </properties>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>format</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            
+            <plugin>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <releaseProfiles>release</releaseProfiles>
+                </configuration>
+            </plugin>
+            
+            <!--
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptors>
+                        <descriptor>src/main/assembly/test.xml</descriptor>
+                    </descriptors>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>build-distribution</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>com.google.code.maven-config-processor-plugin</groupId>
+                <artifactId>maven-config-processor-plugin</artifactId>
+                <configuration>
+                    <specificProperties>src/main/assembly/qa.properties</specificProperties>
+                    <transformations>
+                        <transformation>
+                            <input>src/main/resources/test.properties</input>
+                            <output>modified-test.properties</output>
+                            <config>src/main/assembly/properties-processing.xml</config>
+                        </transformation>
+                    </transformations>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>process</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            -->
+        </plugins>
+
+        <extensions>
+            <extension>
+                <groupId>org.jvnet.wagon-svn</groupId>
+                <artifactId>wagon-svn</artifactId>
+                <version>1.9</version>
+            </extension>
+        </extensions>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/main/assembly/test.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>build-distribution</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>com.google.code.maven-config-processor-plugin</groupId>
+                        <artifactId>maven-config-processor-plugin</artifactId>
+                        <version>1.1-SNAPSHOT</version>
+                        <configuration>
+                            <specificProperties>src/main/assembly/qa.properties</specificProperties>
+                            <transformations>
+                                <transformation>
+                                    <input>src/main/resources/test.properties</input>
+                                    <output>resources/test.properties</output>
+                                    <config>src/main/assembly/properties-processing.xml</config>
+                                </transformation>
+                            </transformations>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>process</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <scm>
+        <connection>scm:svn:https://maven-config-processor-plugin.googlecode.com/svn</connection>
+        <developerConnection>scm:svn:https://maven-config-processor-plugin.googlecode.com/svn</developerConnection>
+        <url>http://code.google.com/p/maven-config-processor-plugin/source/browse</url>
+    </scm>
+
+    <issueManagement>
+        <system>googlecode</system>
+        <url>http://code.google.com/p/maven-config-processor-plugin/issues/list</url>
+    </issueManagement>
+
+    <distributionManagement>
+        <repository>
+            <id>maven-config-processor-test-repo-releases</id>
+            <name>Maven Repository for Config Processor Test (releases)</name>
+            <url>svn:https://maven-config-processor-plugin.googlecode.com/svn/maven-repo/releases</url>
+            <uniqueVersion>false</uniqueVersion>
+        </repository>
+        <snapshotRepository>
+            <id>maven-config-processor-test-repo-releases</id>
+            <name>Maven Repository for Config Processor Test (snapshots)</name>
+            <url>svn:https://maven-config-processor-plugin.googlecode.com/svn/maven-repo/snapshots</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <licenses>
+        <license>
+            <name>Apache 2</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>A business-friendly OSS license</comments>
+        </license>
+    </licenses>
+    
+    <developers>
+        <developer>
+            <id>leandro.aparecido</id>
+            <name>Leandro de Oliveira Aparecido</name>
+            <email>lehphyro@gmail.com</email>
+            <url />
+            <roles>
+                <role>Leader</role>
+                <role>Developer</role>
+            </roles>
+            <timezone>-3</timezone>
+            <properties />
+        </developer>
+    </developers>
+
+    <repositories>
+        <repository>
+            <id>maven2-repository.dev.java.net</id>
+            <name>Java.net Repository for Maven2</name>
+            <url>http://download.java.net/maven/2/</url>
+        </repository>
+    </repositories>
+
+</project>
