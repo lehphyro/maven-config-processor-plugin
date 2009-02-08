@@ -1,0 +1,32 @@
+<processor>
+    <!-- Add non-existing property -->
+    <add>
+        <name>/root</name>
+        <value>
+            <![CDATA[
+                <property5 attribute="value5"></property3>
+            ]]>
+        </value>
+        <after>/root/property2</after>
+    </add>
+
+    <!-- Modify a property value -->  
+    <modify>
+        <name>/root/property1</name>
+        <value>new-value1</value>
+    </modify>
+
+    <modify>
+        <name>/root/property4</name>
+        <value></value>
+    </modify>
+
+    <!-- Remove a property -->    
+    <remove>
+        <name>/root/property3</name>
+    </remove>
+
+    <remove>
+        <name>/root/property4[@attribute]</name>
+    </remove>
+</processor>
