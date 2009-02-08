@@ -234,6 +234,7 @@ public class ConfigProcessorMojo extends AbstractMojo {
 	
 	protected void createOutputFile(File output) throws MojoExecutionException {
 		try {
+			// TODO Handle outputs that are only directories, not file paths
 			FileUtils.forceMkdir(output);
 			output.delete();
 		} catch (IOException e) {
