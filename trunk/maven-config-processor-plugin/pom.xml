@@ -1,11 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.google.code.maven-config-processor-plugin</groupId>
     <artifactId>maven-config-processor-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
     <name>Configuration Processor Plugin for Maven</name>
     <url>http://code.google.com/p/maven-config-processor-plugin</url>
     
@@ -177,9 +176,9 @@
     </reporting>
 
     <scm>
-        <connection>scm:svn:https://maven-config-processor-plugin.googlecode.com/svn</connection>
-        <developerConnection>scm:svn:https://maven-config-processor-plugin.googlecode.com/svn</developerConnection>
-        <url>http://code.google.com/p/maven-config-processor-plugin/source/browse</url>
+        <connection>scm:svn:https://maven-config-processor-plugin.googlecode.com/svn/tags/maven-config-processor-plugin-1.0</connection>
+        <developerConnection>scm:svn:https://maven-config-processor-plugin.googlecode.com/svn/tags/maven-config-processor-plugin-1.0</developerConnection>
+        <url>http://code.google.com/p/maven-config-processor-plugin/source/browse/tags/maven-config-processor-plugin-1.0</url>
     </scm>
 
     <issueManagement>
