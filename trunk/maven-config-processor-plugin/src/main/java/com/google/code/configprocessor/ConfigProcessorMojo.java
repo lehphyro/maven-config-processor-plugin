@@ -21,6 +21,7 @@ import org.apache.maven.project.*;
 import org.apache.maven.project.path.*;
 import org.codehaus.plexus.logging.*;
 import org.codehaus.plexus.logging.console.*;
+import org.codehaus.plexus.util.*;
 
 import com.google.code.configprocessor.parsing.*;
 import com.google.code.configprocessor.processing.*;
@@ -127,6 +128,7 @@ public class ConfigProcessorMojo extends AbstractMojo {
 			if (!config.exists()) {
 				throw new MojoExecutionException("Configuration file [" + config + "] does not exist");
 			}
+			createOutputFile(output);
 			
 			process(input, output, config, type);
 		}
@@ -227,6 +229,15 @@ public class ConfigProcessorMojo extends AbstractMojo {
 					throw new MojoExecutionException("Error closing additional properties file", e);
 				}
 			}
+		}
+	}
+	
+	protected void createOutputFile(File output) throws MojoExecutionException {
+		try {
+			FileUtils.forceMkdir(output);
+			output.delete();
+		} catch (IOException e) {
+			throw new MojoExecutionException(e.getMessage(), e);
 		}
 	}
 }
