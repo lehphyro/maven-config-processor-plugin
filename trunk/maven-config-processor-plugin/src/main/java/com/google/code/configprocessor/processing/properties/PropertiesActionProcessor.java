@@ -36,7 +36,7 @@ public class PropertiesActionProcessor implements ActionProcessor {
 	}
 	
 	public void process(InputStreamReader input, OutputStreamWriter output, Action action) throws ParsingException, IOException {
-		ActionProcessingAdvisor advisor = getAdvisorFor(action);
+		PropertiesActionProcessingAdvisor advisor = getAdvisorFor(action);
 		BufferedReader reader = new BufferedReader(input);
 		BufferedWriter writer = new BufferedWriter(output);
 
@@ -83,20 +83,20 @@ public class PropertiesActionProcessor implements ActionProcessor {
 		writer.flush();
 	}
 	
-	protected ActionProcessingAdvisor getAdvisorFor(Action action) {
+	protected PropertiesActionProcessingAdvisor getAdvisorFor(Action action) {
 		if (action instanceof AddAction) {
-			return new AddActionProcessingAdvisor((AddAction)action, expressionResolver);
+			return new PropertiesAddActionProcessingAdvisor((AddAction)action, expressionResolver);
 		} else if (action instanceof ModifyAction) {
-			return new ModifyActionProcessingAdvisor((ModifyAction)action, expressionResolver);
+			return new PropertiesModifyActionProcessingAdvisor((ModifyAction)action, expressionResolver);
 		} else if (action instanceof RemoveAction) {
-			return new RemoveActionProcessingAdvisor((RemoveAction)action, expressionResolver);
+			return new PropertiesRemoveActionProcessingAdvisor((RemoveAction)action, expressionResolver);
 		} else if (action instanceof NestedAction) {
-			List<ActionProcessingAdvisor> advisors = new ArrayList<ActionProcessingAdvisor>();
+			List<PropertiesActionProcessingAdvisor> advisors = new ArrayList<PropertiesActionProcessingAdvisor>();
 			NestedAction nestedAction = (NestedAction)action;
 			for (Action nested : nestedAction.getActions()) {
 				advisors.add(getAdvisorFor(nested));
 			}
-			return new NestedActionProcessingAdvisor(advisors);
+			return new NestedPropertiesActionProcessingAdvisor(advisors);
 		}
 		throw new IllegalArgumentException("Unknown action: " + action);
 	}

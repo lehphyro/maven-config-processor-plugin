@@ -26,6 +26,7 @@ import org.codehaus.plexus.util.*;
 import com.google.code.configprocessor.parsing.*;
 import com.google.code.configprocessor.processing.*;
 import com.google.code.configprocessor.processing.properties.*;
+import com.google.code.configprocessor.processing.xml.*;
 
 import java.io.*;
 import java.util.*;
@@ -37,6 +38,9 @@ import java.util.*;
  * @goal process
  */
 public class ConfigProcessorMojo extends AbstractMojo {
+	
+	private static final String DEFAULT_ENCODING = "UTF-8";
+	
 	/**
 	 * Output directory of the generated files.
 	 * 
@@ -72,6 +76,14 @@ public class ConfigProcessorMojo extends AbstractMojo {
 	 * @required
 	 */
 	private List<Transformation> transformations;
+	
+	/**
+	 * Namespace contexts for XPath expressions.
+	 * Mapping in the form prefix => url
+	 * 
+	 * @parameter
+	 */
+	private Map<String, String> namespaceContexts;
 
     /**
      * The Maven Project Object.
@@ -109,8 +121,8 @@ public class ConfigProcessorMojo extends AbstractMojo {
 			actualOutputDirectory = outputDirectory;
 		}
 		if (encoding == null) {
-			getLog().warn("Encoding has not been set, using platform default. Build is platform dependent!");
-			encoding = System.getProperty("file.encoding");
+			getLog().warn("Encoding has not been set, using default [" + DEFAULT_ENCODING + "].");
+			encoding = DEFAULT_ENCODING;
 		}
 		
 		getLog().debug("Using output directory [" + actualOutputDirectory + "]");
@@ -167,7 +179,7 @@ public class ConfigProcessorMojo extends AbstractMojo {
 		String type = getInputType(input, specifiedType);
 		
 		if (Transformation.XML_TYPE.equals(type)) {
-			throw new UnsupportedOperationException("Not yet implemented");
+			return new XmlActionProcessor(encoding, getExpressionResolver(), namespaceContexts);
 		} else if (Transformation.PROPERTIES_TYPE.equals(type)) {
 			return new PropertiesActionProcessor(getExpressionResolver());
 		} else {
@@ -184,7 +196,7 @@ public class ConfigProcessorMojo extends AbstractMojo {
 			} else if (input.getName().endsWith(".xml")) {
 				type = Transformation.XML_TYPE;
 			} else {
-				getLog().warn("Could not auto-detect type of input [" + input + "], it is recommended that you configure it in your pom.xml (tag: transformations/transformation/type) to avoid errors");
+				getLog().warn("Could not auto-detect type of input [" + input + "], trying XML. It is recommended that you configure it in your pom.xml (tag: transformations/transformation/type) to avoid errors");
 				type = Transformation.XML_TYPE;
 			}
 		} else {
@@ -234,7 +246,7 @@ public class ConfigProcessorMojo extends AbstractMojo {
 	
 	protected void createOutputFile(File output) throws MojoExecutionException {
 		try {
-			// TODO Handle outputs that are only directories, not file paths
+			// Create directory and delete last dir that has been created using the output file name
 			FileUtils.forceMkdir(output);
 			output.delete();
 		} catch (IOException e) {
