@@ -18,6 +18,7 @@
 			<outputDirectory>resources</outputDirectory>
 			<includes>
 				<include>*.properties</include>
+                <include>*.xml</include>
 			</includes>
 			<lineEnding>lf</lineEnding>
 			<fileMode>0644</fileMode>

@@ -91,48 +91,6 @@
                     <releaseProfiles>release</releaseProfiles>
                 </configuration>
             </plugin>
-            
-            <!--
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <configuration>
-                    <descriptors>
-                        <descriptor>src/main/assembly/test.xml</descriptor>
-                    </descriptors>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>build-distribution</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>com.google.code.maven-config-processor-plugin</groupId>
-                <artifactId>maven-config-processor-plugin</artifactId>
-                <configuration>
-                    <specificProperties>src/main/assembly/qa.properties</specificProperties>
-                    <transformations>
-                        <transformation>
-                            <input>src/main/resources/test.properties</input>
-                            <output>modified-test.properties</output>
-                            <config>src/main/assembly/properties-processing.xml</config>
-                        </transformation>
-                    </transformations>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>process</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            -->
         </plugins>
 
         <extensions>
@@ -153,7 +111,7 @@
                         <artifactId>maven-assembly-plugin</artifactId>
                         <configuration>
                             <descriptors>
-                                <descriptor>src/main/assembly/test.xml</descriptor>
+                                <descriptor>src/main/assembly/test-assembly.xml</descriptor>
                             </descriptors>
                         </configuration>
                         <executions>
@@ -177,7 +135,13 @@
                                 <transformation>
                                     <input>src/main/resources/test.properties</input>
                                     <output>resources/test.properties</output>
-                                    <config>src/main/assembly/properties-processing.xml</config>
+                                    <config>src/main/assembly/properties/properties-processing.xml</config>
+                                </transformation>
+
+                                <transformation>
+                                    <input>src/main/resources/test.xml</input>
+                                    <output>resources/test.xml</output>
+                                    <config>src/main/assembly/xml/xml-processing.xml</config>
                                 </transformation>
                             </transformations>
                         </configuration>
