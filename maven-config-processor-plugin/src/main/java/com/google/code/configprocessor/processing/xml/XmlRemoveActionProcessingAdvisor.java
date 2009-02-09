@@ -13,31 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.google.code.configprocessor.processing.properties;
+package com.google.code.configprocessor.processing.xml;
+
+import javax.xml.namespace.*;
+
+import org.w3c.dom.*;
 
 import com.google.code.configprocessor.*;
 import com.google.code.configprocessor.processing.*;
-import com.google.code.configprocessor.processing.properties.model.*;
 
-public class ModifyActionProcessingAdvisor extends AbstractActionProcessingAdvisor {
+public class XmlRemoveActionProcessingAdvisor extends AbstractXmlActionProcessingAdvisor {
 
-	private ModifyAction action;
-	
-	public ModifyActionProcessingAdvisor(ModifyAction action, ExpressionResolver expressionResolver) {
-		super(expressionResolver);
-		this.action = action;
+	public XmlRemoveActionProcessingAdvisor(RemoveAction action, ExpressionResolver expressionResolver, NamespaceContext namespaceContext)
+	throws ParsingException {
+		super(expressionResolver, namespaceContext);
+
+		if (action.getValue() == null) {
+			throw new ParsingException("Remove tag must specify the xpath expression in [value] property");
+		}
+		compile(action.getValue());
 	}
 	
-	@Override
-	public PropertiesFileItem process(PropertiesFileItem item) {
-		if (item instanceof PropertyMapping) {
-			PropertyMapping mapping = (PropertyMapping)item;
-			if (mapping.getPropertyName().trim().equals(action.getName())) {
-				return createPropertyMapping(mapping.getPropertyName(), action.getValue());
-			}
-		}
+	public void process(Document document) throws ParsingException {
+		Node node = evaluateForSingleNode(document);
+		Node parent = node.getParentNode();
 		
-		return super.process(item);
+		parent.removeChild(node);
 	}
 	
 }

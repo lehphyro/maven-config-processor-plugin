@@ -19,11 +19,11 @@ import com.google.code.configprocessor.*;
 import com.google.code.configprocessor.processing.*;
 import com.google.code.configprocessor.processing.properties.model.*;
 
-public class AddActionProcessingAdvisor extends AbstractActionProcessingAdvisor {
+public class PropertiesAddActionProcessingAdvisor extends AbstractPropertiesActionProcessingAdvisor {
 
 	private AddAction action;
 	
-	public AddActionProcessingAdvisor(AddAction action, ExpressionResolver expressionResolver) {
+	public PropertiesAddActionProcessingAdvisor(AddAction action, ExpressionResolver expressionResolver) {
 		super(expressionResolver);
 		this.action = action;
 	}

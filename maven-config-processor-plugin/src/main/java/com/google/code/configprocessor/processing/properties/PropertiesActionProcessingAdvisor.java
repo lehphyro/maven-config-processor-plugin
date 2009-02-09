@@ -17,7 +17,7 @@ package com.google.code.configprocessor.processing.properties;
 
 import com.google.code.configprocessor.processing.properties.model.*;
 
-public interface ActionProcessingAdvisor {
+public interface PropertiesActionProcessingAdvisor {
 	/**
 	 * Called when starting processing of a properties file.
 	 * 

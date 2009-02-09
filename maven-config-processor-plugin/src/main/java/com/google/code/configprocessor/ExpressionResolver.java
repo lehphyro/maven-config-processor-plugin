@@ -28,7 +28,7 @@ public class ExpressionResolver {
 	public String resolve(String value) {
 		try {
 			Object resolvedValue = evaluator.evaluate(value);
-			if (!(resolvedValue instanceof String)) {
+			if (resolvedValue != null && !(resolvedValue instanceof String)) {
 				throw new IllegalArgumentException("Expression [" + value + "] did not resolve to String");
 			}
 			return (String)resolvedValue;

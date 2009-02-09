@@ -47,12 +47,10 @@ public class ProcessingConfigurationParserTest {
 			}
 		}
 		
-		assertEquals(5, action.getActions().size());
-		assertEquals(new AddAction("/root", "<property5 attribute=\"value5\"></property3>", "/root/property2", null), action.getActions().get(0));
-		assertEquals(new ModifyAction("/root/property1", "new-value1"), action.getActions().get(1));
-		assertEquals(new ModifyAction("/root/property4", null), action.getActions().get(2));
-		assertEquals(new RemoveAction("/root/property3"), action.getActions().get(3));
-		assertEquals(new RemoveAction("/root/property4[@attribute]"), action.getActions().get(4));
+		assertEquals(3, action.getActions().size());
+		assertEquals(new AddAction(null, "<test-property>test-value</test-property>", "/root/property3", null), action.getActions().get(0));
+		assertEquals(new ModifyAction("/root/property1", "<modified-property1>modified-value</modified-property1>"), action.getActions().get(1));
+		assertEquals(new RemoveAction("/root/property2"), action.getActions().get(2));
 	}
 
 	@Test(expected = ParsingException.class)
@@ -67,7 +65,6 @@ public class ProcessingConfigurationParserTest {
 		parser.parse(getClass().getResourceAsStream("/com/google/code/configprocessor/data/xml-target-config.xml"));
 	}
 	
-	@Test
 	public void generationExample() {
 		XStream xstream = new XStream();
 		
