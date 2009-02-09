@@ -4,7 +4,7 @@
     <groupId>com.google.code.maven-config-processor-plugin</groupId>
     <artifactId>maven-config-processor-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <version>1.2-SNAPSHOT</version>
+    <version>1.2</version>
     
     <name>Configuration Processor Maven Plugin</name>
     <description>Apply transformations to configuration files to prepare then for different environments</description>
@@ -40,9 +40,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:svn:https://maven-config-processor-plugin.googlecode.com/svn</connection>
-        <developerConnection>scm:svn:https://maven-config-processor-plugin.googlecode.com/svn</developerConnection>
-        <url>http://code.google.com/p/maven-config-processor-plugin/source/browse</url>
+        <connection>scm:svn:https://maven-config-processor-plugin.googlecode.com/svn/tags/maven-config-processor-plugin-1.2</connection>
+        <developerConnection>scm:svn:https://maven-config-processor-plugin.googlecode.com/svn/tags/maven-config-processor-plugin-1.2</developerConnection>
+        <url>http://code.google.com/p/maven-config-processor-plugin/source/browse/tags/maven-config-processor-plugin-1.2</url>
     </scm>
     
     <organization>
