@@ -19,22 +19,36 @@ import org.codehaus.plexus.component.configurator.expression.*;
 
 public class ExpressionResolver {
 
+	private boolean replacePlaceholders;
 	private ExpressionEvaluator evaluator;
 	
 	public ExpressionResolver(ExpressionEvaluator evaluator) {
+		this(evaluator, true);
+	}
+
+	public ExpressionResolver(ExpressionEvaluator evaluator, boolean replacePlaceholders) {
 		this.evaluator = evaluator;
+		this.replacePlaceholders = replacePlaceholders;
 	}
 	
 	public String resolve(String value) {
-		try {
-			Object resolvedValue = evaluator.evaluate(value);
-			if (resolvedValue != null && !(resolvedValue instanceof String)) {
-				throw new IllegalArgumentException("Expression [" + value + "] did not resolve to String");
+		String resolvedValue;
+		
+		if (replacePlaceholders) {
+			try {
+				Object aux = evaluator.evaluate(value);
+				if (aux != null && !(aux instanceof String)) {
+					throw new IllegalArgumentException("Expression [" + value + "] did not resolve to String");
+				}
+				resolvedValue = (String)aux;
+			} catch (ExpressionEvaluationException e) {
+				throw new RuntimeException("Error resolving expression [" + value + "]", e);
 			}
-			return (String)resolvedValue;
-		} catch (ExpressionEvaluationException e) {
-			throw new RuntimeException("Error resolving expression [" + value + "]", e);
+		} else {
+			resolvedValue = value;
 		}
+		
+		return resolvedValue;
 	}
 	
 }

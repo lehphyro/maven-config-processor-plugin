@@ -39,7 +39,7 @@ public class XmlModifyActionProcessingAdvisor extends AbstractXmlActionProcessin
 		Node parent = node.getParentNode();
 
 		try {
-			Document fragment = XmlHelper.parse(textFragment);
+			Document fragment = XmlHelper.parse(textFragment, false);
 			Node importedNode = document.importNode(fragment.getDocumentElement(), true);
 
 			parent.replaceChild(importedNode, node);

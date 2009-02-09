@@ -47,13 +47,22 @@ public class XmlAddActionProcessingAdvisor extends AbstractXmlActionProcessingAd
 		Node parent = node.getParentNode();
 
 		try {
-			Document fragment = XmlHelper.parse(textFragment);
-			Node importedNode = document.importNode(fragment.getDocumentElement(), true);
+			Document fragment = XmlHelper.parse(textFragment, true);
 			
+			Node referenceNode;
 			if (action.getBefore() != null) {
-				parent.insertBefore(importedNode, node);
-			} else if (action.getAfter() != null) {
-				parent.insertBefore(importedNode, node.getNextSibling());
+				referenceNode = node;
+			} else {
+				referenceNode = node.getNextSibling();
+				if (referenceNode == null) {
+					referenceNode = node;
+				}
+			}
+			
+			NodeList nodeList = fragment.getFirstChild().getChildNodes();
+			for (int i = 0; i < nodeList.getLength(); i++) {
+				Node importedNode = document.importNode(nodeList.item(i), true);
+				parent.insertBefore(importedNode, referenceNode);
 			}
 		} catch (Exception e) {
 			throw new ParsingException(e);

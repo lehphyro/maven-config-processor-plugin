@@ -33,15 +33,17 @@ import com.google.code.configprocessor.processing.*;
 public class XmlActionProcessor implements ActionProcessor {
 
 	public static final String LINE_SEPARATOR = System.getProperty("line.separator");
-	private static final int DEFAULT_LINE_WIDTH = 80;
-	private static final int DEFAULT_INDENT_SIZE = 4;
 	
 	private String encoding;
+	private int lineWidth;
+	private int indentSize;
 	private ExpressionResolver expressionResolver;
 	private NamespaceContext namespaceContext;
 
-	public XmlActionProcessor(String encoding, ExpressionResolver expressionResolver, Map<String, String> contextMappings) {
+	public XmlActionProcessor(String encoding, int lineWidth, int indentSize, ExpressionResolver expressionResolver, Map<String, String> contextMappings) {
 		this.encoding = encoding;
+		this.lineWidth = lineWidth;
+		this.indentSize = indentSize;
 		this.expressionResolver = expressionResolver;
 		this.namespaceContext = new MapBasedNamespaceContext(contextMappings);
 	}
@@ -51,7 +53,7 @@ public class XmlActionProcessor implements ActionProcessor {
 		try {
 			Document document = XmlHelper.parse(input);
 			advisor.process(document);
-			XmlHelper.write(output, document, encoding, DEFAULT_LINE_WIDTH, DEFAULT_INDENT_SIZE);
+			XmlHelper.write(output, document, encoding, lineWidth, indentSize);
 		} catch (SAXException e) {
 			throw new ParsingException(e);
 		} catch (ParserConfigurationException e) {

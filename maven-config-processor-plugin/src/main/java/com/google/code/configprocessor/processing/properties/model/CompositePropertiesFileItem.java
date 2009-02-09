@@ -47,6 +47,10 @@ public class CompositePropertiesFileItem implements PropertiesFileItem {
 		nestedItems.add(item);
 	}
 	
+	public void addAllPropertiesFileItems(List<PropertiesFileItem> items) {
+		nestedItems.addAll(items);
+	}
+	
 	public void removePropertiesFileItem(PropertiesFileItem item) {
 		nestedItems.remove(item);
 	}

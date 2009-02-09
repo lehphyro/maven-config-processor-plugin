@@ -29,11 +29,13 @@ public class PropertiesModifyActionProcessingAdvisor extends AbstractPropertiesA
 	}
 	
 	@Override
-	public PropertiesFileItem process(PropertiesFileItem item) {
+	public PropertiesFileItemAdvice process(PropertiesFileItem item) {
 		if (item instanceof PropertyMapping) {
 			PropertyMapping mapping = (PropertyMapping)item;
+
 			if (mapping.getPropertyName().trim().equals(action.getName())) {
-				return createPropertyMapping(mapping.getPropertyName(), action.getValue());
+				PropertyMapping aux = createPropertyMapping(mapping.getPropertyName(), action.getValue());
+				return new PropertiesFileItemAdvice(PropertiesFileItemAdviceType.MODIFY, aux);
 			}
 		}
 		

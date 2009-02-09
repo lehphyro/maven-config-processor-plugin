@@ -29,22 +29,22 @@ public abstract class AbstractPropertiesActionProcessingAdvisor implements Prope
 	/**
 	 * Default implementation to indicate do nothing.
 	 */
-	public PropertiesFileItem onStartProcessing() {
-		return null;
+	public PropertiesFileItemAdvice onStartProcessing() {
+		return new PropertiesFileItemAdvice(PropertiesFileItemAdviceType.DO_NOTHING, null);
 	}
 
 	/**
 	 * Default implementation to indicate do nothing.
 	 */
-	public PropertiesFileItem process(PropertiesFileItem item) {
-		return item;
+	public PropertiesFileItemAdvice process(PropertiesFileItem item) {
+		return new PropertiesFileItemAdvice(PropertiesFileItemAdviceType.DO_NOTHING, null);
 	}
 	
 	/**
 	 * Default implementation to indicate do nothing.
 	 */
-	public PropertiesFileItem onEndProcessing() {
-		return null;
+	public PropertiesFileItemAdvice onEndProcessing() {
+		return new PropertiesFileItemAdvice(PropertiesFileItemAdviceType.DO_NOTHING, null);
 	}
 	
 	protected PropertyMapping createPropertyMapping(String name, String value) {

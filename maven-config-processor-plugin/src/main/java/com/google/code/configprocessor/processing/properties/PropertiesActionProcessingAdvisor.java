@@ -21,22 +21,22 @@ public interface PropertiesActionProcessingAdvisor {
 	/**
 	 * Called when starting processing of a properties file.
 	 * 
-	 * @return PropertiesFileItem to add at the start of the file or null if should do nothing.
+	 * @return Advice for processing.
 	 */
-	PropertiesFileItem onStartProcessing();
+	PropertiesFileItemAdvice onStartProcessing();
 	
 	/**
 	 * Process a properties file item.
 	 * 
 	 * @param item Item that has been read.
-	 * @return Item passed as argument, new item to use or null if the item must be removed.
+	 * @return Advice for processing.
 	 */
-	PropertiesFileItem process(PropertiesFileItem item);
+	PropertiesFileItemAdvice process(PropertiesFileItem item);
 	
 	/**
 	 * Called when processing of a properties file has been finished.
 	 * 
-	 * @return PropertiesFileItem to add at the end of the file or null if should do nothing.
+	 * @return Advice for processing.
 	 */
-	PropertiesFileItem onEndProcessing();
+	PropertiesFileItemAdvice onEndProcessing();
 }
