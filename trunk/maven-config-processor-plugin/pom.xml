@@ -5,9 +5,51 @@
     <artifactId>maven-config-processor-plugin</artifactId>
     <packaging>maven-plugin</packaging>
     <version>1.2-SNAPSHOT</version>
-    <name>Configuration Processor Plugin for Maven</name>
-    <url>http://code.google.com/p/maven-config-processor-plugin</url>
     
+    <name>Configuration Processor Maven Plugin</name>
+    <description>Apply transformations to configuration files to prepare then for different environments</description>
+    <url>http://code.google.com/p/maven-config-processor-plugin</url>
+    <inceptionYear>2009</inceptionYear>
+    
+    <prerequisites>
+        <maven>2.0</maven>
+    </prerequisites>
+
+    <issueManagement>
+        <system>googlecode</system>
+        <url>http://code.google.com/p/maven-config-processor-plugin/issues/list</url>
+    </issueManagement>
+    
+    <mailingLists>
+        <mailingList>
+            <name>Plugin users</name>
+            <post>maven-config-processor-users@googlegroups.com</post>
+            <subscribe>maven-config-processor-users-subscribe@googlegroups.com</subscribe>
+            <unsubscribe>maven-config-processor-users-unsubscribe@googlegroups.com</unsubscribe>
+            <archive>http://groups.google.com/group/maven-config-processor-users/topics</archive>
+        </mailingList>
+    </mailingLists>
+
+    <licenses>
+        <license>
+            <name>Apache 2</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>A business-friendly OSS license</comments>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:svn:https://maven-config-processor-plugin.googlecode.com/svn</connection>
+        <developerConnection>scm:svn:https://maven-config-processor-plugin.googlecode.com/svn</developerConnection>
+        <url>http://code.google.com/p/maven-config-processor-plugin/source/browse</url>
+    </scm>
+    
+    <organization>
+        <name>None</name>
+        <url>http://code.google.com/p/maven-config-processor-plugin</url>
+    </organization>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.maven</groupId>
@@ -180,17 +222,6 @@
         </plugins>
     </reporting>
 
-    <scm>
-        <connection>scm:svn:https://maven-config-processor-plugin.googlecode.com/svn</connection>
-        <developerConnection>scm:svn:https://maven-config-processor-plugin.googlecode.com/svn</developerConnection>
-        <url>http://code.google.com/p/maven-config-processor-plugin/source/browse</url>
-    </scm>
-
-    <issueManagement>
-        <system>googlecode</system>
-        <url>http://code.google.com/p/maven-config-processor-plugin/issues/list</url>
-    </issueManagement>
-
     <distributionManagement>
         <repository>
             <id>maven-config-processor-plugin-repo-releases</id>
@@ -206,15 +237,6 @@
         </snapshotRepository>
     </distributionManagement>
 
-    <licenses>
-        <license>
-            <name>Apache 2</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-            <comments>A business-friendly OSS license</comments>
-        </license>
-    </licenses>
-    
     <developers>
         <developer>
             <id>leandro.aparecido</id>
