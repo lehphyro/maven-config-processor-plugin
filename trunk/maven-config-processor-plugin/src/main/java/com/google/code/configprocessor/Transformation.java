@@ -52,6 +52,14 @@ public class Transformation {
 	 * @required
 	 */
 	private String type;
+	
+	/**
+	 * Indicates if the plugin should replace values in ${} with properties of the maven
+	 * environment.
+	 * 
+	 * @parameter default-value="true"
+	 */
+	private boolean replacePlaceholders;
 
 	public String getInput() {
 		return input;
@@ -67,5 +75,9 @@ public class Transformation {
 	
 	public String getType() {
 		return type;
+	}
+	
+	public boolean isReplacePlaceholders() {
+		return replacePlaceholders;
 	}
 }

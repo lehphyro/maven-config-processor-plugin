@@ -19,79 +19,46 @@ import java.util.*;
 
 import com.google.code.configprocessor.processing.properties.model.*;
 
-public class NestedPropertiesActionProcessingAdvisor implements PropertiesActionProcessingAdvisor {
+public class NestedPropertiesActionProcessingAdvisor extends AbstractPropertiesActionProcessingAdvisor {
 
 	private List<PropertiesActionProcessingAdvisor> advisors;
 	
 	public NestedPropertiesActionProcessingAdvisor(List<PropertiesActionProcessingAdvisor> advisors) {
+		super(null);
 		this.advisors = advisors;
 	}
 	
-	public PropertiesFileItem onStartProcessing() {
-		CompositePropertiesFileItem composite = new CompositePropertiesFileItem();
+	public PropertiesFileItemAdvice onStartProcessing() {
+		NestedPropertiesFileItemAdvice advice = new NestedPropertiesFileItemAdvice(null);
 		
 		for (PropertiesActionProcessingAdvisor advisor : advisors) {
-			PropertiesFileItem aux = advisor.onStartProcessing();
-			if (aux != null) {
-				composite.addPropertiesFileItem(aux);
-			}
+			PropertiesFileItemAdvice aux = advisor.onStartProcessing();
+			advice.addAdvice(aux);
 		}
 		
-		return getItemToReturn(null, composite);
+		return advice;
 	}
 	
-	public PropertiesFileItem process(PropertiesFileItem item) {
-		CompositePropertiesFileItem composite = new CompositePropertiesFileItem();
-		
+	public PropertiesFileItemAdvice process(PropertiesFileItem item) {
+		NestedPropertiesFileItemAdvice advice = new NestedPropertiesFileItemAdvice(null);
+
 		for (PropertiesActionProcessingAdvisor advisor : advisors) {
-			PropertiesFileItem aux = advisor.process(item);
-			if (aux == null) {
-				composite.removePropertiesFileItem(item);
-			} else {
-				// TODO Make process return a value different from the specified item to
-				// indicate do nothing and test for it, instead of using instanceof
-				if (!(advisor instanceof PropertiesRemoveActionProcessingAdvisor)) {
-					addPropertiesFileItem(aux, composite);
-				}
-			}
+			PropertiesFileItemAdvice aux = advisor.process(item);
+			advice.addAdvice(aux);
 		}
 		
-		return getItemToReturn(null, composite);
+		return advice;
 	}
 	
-	public PropertiesFileItem onEndProcessing() {
-		CompositePropertiesFileItem composite = new CompositePropertiesFileItem();
-		
+	public PropertiesFileItemAdvice onEndProcessing() {
+		NestedPropertiesFileItemAdvice advice = new NestedPropertiesFileItemAdvice(null);
+
 		for (PropertiesActionProcessingAdvisor advisor : advisors) {
-			PropertiesFileItem aux = advisor.onEndProcessing();
-			if (aux != null) {
-				composite.addPropertiesFileItem(aux);
-			}
+			PropertiesFileItemAdvice aux = advisor.onEndProcessing();
+			advice.addAdvice(aux);
 		}
 		
-		return getItemToReturn(null, composite);
+		return advice;
 	}
 
-	protected PropertiesFileItem getItemToReturn(PropertiesFileItem fallback, CompositePropertiesFileItem item) {
-		if (item.getNestedItems().isEmpty()) {
-			return fallback;
-		}
-		
-		return item;
-	}
-	
-	protected void addPropertiesFileItem(PropertiesFileItem item, CompositePropertiesFileItem composite) {
-		if (item instanceof CompositePropertiesFileItem) {
-			for (PropertiesFileItem aux : ((CompositePropertiesFileItem)item).getNestedItems()) {
-				addPropertiesFileItem(aux, composite);
-			}
-		} else {
-			int index = composite.getNestedItems().indexOf(item);
-			if (index >= 0) {
-				composite.getNestedItems().set(index, item);
-			} else {
-				composite.addPropertiesFileItem(item);
-			}
-		}
-	}
 }

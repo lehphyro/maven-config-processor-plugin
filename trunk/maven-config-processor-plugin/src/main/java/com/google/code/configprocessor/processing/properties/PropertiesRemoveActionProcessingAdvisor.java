@@ -29,11 +29,12 @@ public class PropertiesRemoveActionProcessingAdvisor extends AbstractPropertiesA
 	}
 	
 	@Override
-	public PropertiesFileItem process(PropertiesFileItem item) {
+	public PropertiesFileItemAdvice process(PropertiesFileItem item) {
 		if (item instanceof PropertyMapping) {
 			PropertyMapping mapping = (PropertyMapping)item;
+
 			if (mapping.getPropertyName().trim().equals(action.getName())) {
-				return null;
+				return new PropertiesFileItemAdvice(PropertiesFileItemAdviceType.REMOVE, null);
 			}
 		}
 		

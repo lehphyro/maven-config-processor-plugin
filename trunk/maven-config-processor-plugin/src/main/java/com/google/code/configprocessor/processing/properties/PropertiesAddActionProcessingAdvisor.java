@@ -29,23 +29,22 @@ public class PropertiesAddActionProcessingAdvisor extends AbstractPropertiesActi
 	}
 	
 	@Override
-	public PropertiesFileItem process(PropertiesFileItem item) {
+	public PropertiesFileItemAdvice process(PropertiesFileItem item) {
 		if (item instanceof PropertyMapping) {
 			PropertyMapping mapping = (PropertyMapping)item;
 			
 			if (mapping.getPropertyName().trim().equals(action.getBefore()) ||
 				mapping.getPropertyName().trim().equals(action.getAfter())) {
-				CompositePropertiesFileItem composite = new CompositePropertiesFileItem();
-				
+
+				PropertyMapping aux = createPropertyMapping(action.getName(), action.getValue());
+				PropertiesFileItemAdvice advice;
 				if (mapping.getPropertyName().trim().equals(action.getBefore())) {
-					composite.addPropertiesFileItem(createPropertyMapping(action.getName(), action.getValue()));
-					composite.addPropertiesFileItem(item);
+					advice = new PropertiesFileItemAdvice(PropertiesFileItemAdviceType.ADD_BEFORE, aux);
 				} else {
-					composite.addPropertiesFileItem(item);
-					composite.addPropertiesFileItem(createPropertyMapping(action.getName(), action.getValue()));
+					advice = new PropertiesFileItemAdvice(PropertiesFileItemAdviceType.ADD_AFTER, aux);
 				}
 				
-				return composite;
+				return advice;
 			}
 		}
 		

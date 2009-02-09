@@ -41,46 +41,71 @@ public class PropertiesActionProcessor implements ActionProcessor {
 		BufferedWriter writer = new BufferedWriter(output);
 
 		// Start
-		PropertiesFileItem currentItem = advisor.onStartProcessing();
-		if (currentItem != null) {
-			writer.append(currentItem.getAsText());
-		}
-		currentItem = null;
+		PropertiesFileItemAdvice advice = advisor.onStartProcessing();
+		processAdvice(advice, null, writer);
 		
 		// Process
+		PropertiesFileItem currentItem = null;
 		String line;
 		while ((line = reader.readLine()) != null) {
 			if (isBlankLine(line)) {
-				writer.append(line);
-			} else if (isComment(line)) {
-				currentItem = new Comment(line);
-			} else {
-				StringBuilder sb = new StringBuilder(line);
-				while (line.endsWith(PROPERTY_VALUE_SEPARATOR)) {
-					line = reader.readLine();
-					if (line == null) {
-						break;
-					}
-					sb.append(LINE_SEPARATOR);
-					sb.append(line);
-				}
-				currentItem = parsePropertyMapping(sb.toString());
-			}
-			
-			currentItem = advisor.process(currentItem);
-			if (currentItem != null) {
-				writer.append(currentItem.getAsText());
 				writer.append(LINE_SEPARATOR);
+			} else {
+				if (isComment(line)) {
+					currentItem = new Comment(line);
+				} else {
+					StringBuilder sb = new StringBuilder(line);
+					while (line.endsWith(PROPERTY_VALUE_SEPARATOR)) {
+						line = reader.readLine();
+						if (line == null) {
+							break;
+						}
+						sb.append(LINE_SEPARATOR);
+						sb.append(line);
+					}
+					currentItem = parsePropertyMapping(sb.toString());
+				}
+				
+				advice = advisor.process(currentItem);
+				processAdvice(advice, currentItem, writer);
 			}
 		}
 
 		// End
-		currentItem = advisor.onEndProcessing();
-		if (currentItem != null) {
-			writer.append(currentItem.getAsText());
-		}
+		advice = advisor.onEndProcessing();
+		processAdvice(advice, null, writer);
 		
 		writer.flush();
+	}
+	
+	protected void processAdvice(PropertiesFileItemAdvice advice,
+	                             PropertiesFileItem currentItem,
+	                             BufferedWriter writer) throws IOException {
+		switch (advice.getType()) {
+			case DO_NOTHING:
+				append(currentItem, writer);
+				break;
+			case REMOVE:
+				break;
+			case MODIFY:
+				append(advice.getItem(), writer);
+				break;
+			case ADD_AFTER:
+				append(currentItem, writer);
+				append(advice.getItem(), writer);
+				break;
+			case ADD_BEFORE:
+				append(advice.getItem(), writer);
+				append(currentItem, writer);
+				break;
+		}
+	}
+	
+	protected void append(PropertiesFileItem item, BufferedWriter writer) throws IOException {
+		if (item != null) {
+			writer.append(item.getAsText());
+			writer.append(LINE_SEPARATOR);
+		}
 	}
 	
 	protected PropertiesActionProcessingAdvisor getAdvisorFor(Action action) {

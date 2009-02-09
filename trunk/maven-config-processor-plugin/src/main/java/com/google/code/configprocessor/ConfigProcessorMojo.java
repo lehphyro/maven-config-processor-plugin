@@ -66,6 +66,20 @@ public class ConfigProcessorMojo extends AbstractMojo {
 	private String encoding;
 
 	/**
+	 * Maximum line width of the generated files to use when formatting.
+	 * 
+	 * @parameter default-value="80"
+	 */
+	private Integer lineWidth;
+	
+	/**
+	 * Indentation size as the number of whitespaces to use when formatting.
+	 * 
+	 * @parameter default-value="4"
+	 */
+	private Integer indentSize;
+	
+	/**
 	 * File to load aditional specific properties for plugin execution.
 	 * 
 	 * @parameter
@@ -145,11 +159,11 @@ public class ConfigProcessorMojo extends AbstractMojo {
 			}
 			createOutputFile(output);
 			
-			process(input, output, config, type);
+			process(input, output, config, type, transformation.isReplacePlaceholders());
 		}
 	}
 	
-	protected void process(File input, File output, File config, String type) throws MojoExecutionException {
+	protected void process(File input, File output, File config, String type, boolean replacePlaceholders) throws MojoExecutionException {
 		getLog().info("Processing file [" + input + "], outputing to [" + output + "]");
 		
 		InputStream configStream = null;
@@ -171,20 +185,20 @@ public class ConfigProcessorMojo extends AbstractMojo {
 			ProcessingConfigurationParser parser = new ProcessingConfigurationParser();
 			Action action = parser.parse(configStreamReader);
 
-			ActionProcessor processor = getActionProcessor(input, type);
+			ActionProcessor processor = getActionProcessor(input, type, replacePlaceholders);
 			processor.process(inputStreamReader, outputStreamWriter, action);
 		} catch (Exception e) {
 			throw new MojoExecutionException("Error processing file [" + input + "] using configuration [" + config + "]", e);
 		}
 	}
 	
-	protected ActionProcessor getActionProcessor(File input, String specifiedType) throws MojoExecutionException {
+	protected ActionProcessor getActionProcessor(File input, String specifiedType, boolean replacePlaceholders) throws MojoExecutionException {
 		String type = getInputType(input, specifiedType);
 		
 		if (Transformation.XML_TYPE.equals(type)) {
-			return new XmlActionProcessor(encoding, getExpressionResolver(), namespaceContexts);
+			return new XmlActionProcessor(encoding, lineWidth, indentSize, getExpressionResolver(replacePlaceholders), namespaceContexts);
 		} else if (Transformation.PROPERTIES_TYPE.equals(type)) {
-			return new PropertiesActionProcessor(getExpressionResolver());
+			return new PropertiesActionProcessor(getExpressionResolver(replacePlaceholders));
 		} else {
 			throw new MojoExecutionException("Unknown file type [" + type + "]");
 		}
@@ -209,14 +223,15 @@ public class ConfigProcessorMojo extends AbstractMojo {
 		return type;
 	}
 	
-	protected ExpressionResolver getExpressionResolver() throws MojoExecutionException {
+	protected ExpressionResolver getExpressionResolver(boolean replacePlaceholders) throws MojoExecutionException {
 		return new ExpressionResolver(
 			new PluginParameterExpressionEvaluator(mavenSession,
 												   mojoExecution,
 												   new DefaultPathTranslator(),
 												   new ConsoleLogger(Logger.LEVEL_INFO, "ConfigProcessorMojo"),
 												   mavenProject,
-												   getAdditionalProperties()));
+												   getAdditionalProperties()),
+			replacePlaceholders);
 	}
 	
 	protected Properties getAdditionalProperties() throws MojoExecutionException {
@@ -249,9 +264,10 @@ public class ConfigProcessorMojo extends AbstractMojo {
 	
 	protected void createOutputFile(File output) throws MojoExecutionException {
 		try {
-			// Create directory and delete last dir that has been created using the output file name
-			FileUtils.forceMkdir(output);
-			output.delete();
+			File directory = output.getParentFile();
+			if (!directory.exists()) {
+				FileUtils.forceMkdir(output.getParentFile());
+			}
 		} catch (IOException e) {
 			throw new MojoExecutionException(e.getMessage(), e);
 		}

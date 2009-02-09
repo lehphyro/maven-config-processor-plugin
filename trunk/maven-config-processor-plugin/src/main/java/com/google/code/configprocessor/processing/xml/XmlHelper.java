@@ -25,9 +25,24 @@ import org.xml.sax.*;
 
 public class XmlHelper {
 
-	public static Document parse(String text) throws SAXException, ParserConfigurationException {
+	public static final String ROOT_TAG = "root";
+	
+	public static Document parse(String text, boolean prefixAndSuffix) throws SAXException, ParserConfigurationException {
+		String textToParse;
+		
+		if (prefixAndSuffix) {
+			StringBuilder sb = new StringBuilder();
+			sb.append('<').append(ROOT_TAG).append('>');
+			sb.append(text);
+			sb.append("</").append(ROOT_TAG).append('>');
+			
+			textToParse = sb.toString();
+		} else {
+			textToParse = text;
+		}
+		
 		try {
-			return newDocumentBuilder().parse(new InputSource(new StringReader(text)));
+			return newDocumentBuilder().parse(new InputSource(new StringReader(textToParse)));
 		} catch (IOException e) {
 			// Should never happen
 			throw new RuntimeException(e);
