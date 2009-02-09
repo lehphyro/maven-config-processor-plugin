@@ -128,7 +128,7 @@
                     <plugin>
                         <groupId>com.google.code.maven-config-processor-plugin</groupId>
                         <artifactId>maven-config-processor-plugin</artifactId>
-                        <version>1.1-SNAPSHOT</version>
+                        <version>1.1</version>
                         <configuration>
                             <specificProperties>src/main/assembly/qa.properties</specificProperties>
                             <transformations>
