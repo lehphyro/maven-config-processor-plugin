@@ -32,7 +32,8 @@ import java.io.*;
 import java.util.*;
 
 /**
- * @description Modify resources according to configuration including, excluding and modifying properties.
+ * Generates modified configuration files according to configuration.
+ * Includes, excludes and modify properties.
  *  
  * @phase process-resources
  * @goal process
@@ -58,6 +59,8 @@ public class ConfigProcessorMojo extends AbstractMojo {
 	private boolean useOutputDirectory;
 
 	/**
+	 * Encoding to use when reading or writing files.
+	 * 
 	 * @parameter default-value="${project.build.sourceEncoding}"
 	 */
 	private String encoding;
