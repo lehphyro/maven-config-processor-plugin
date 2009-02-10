@@ -27,12 +27,12 @@ Properties Processing
 </processor>
 +-----+
 
- This fragment will make the config processor plugin add the association
+ This fragment will instruct the config processor plugin to add the association
  <property.test.example.second-\>example-value> after the property <property.test.example.first>.
 
 * Removing an association
 
- To remove an association, you configure its name.
+ To remove an association, you configure its name as follows.
 
 +-----+
 <processor>
@@ -44,10 +44,10 @@ Properties Processing
 </processor>
 +-----+
 
- This fragment will make the config processor plugin generate the processed file without
+ This fragment will instruct the config processor plugin to generate the processed file without
  the property <property.test.example.first>.
 
-* Modifying and association
+* Modifying an association
 
  To modify an association, you must define the name of the property to modify and the new value.
 
@@ -62,4 +62,5 @@ Properties Processing
 </processor>
 +-----+
 
- This fragment will make the config processor clear the value of the property <property.test.example.first>.
+ This fragment will instruct the config processor to clear the value of the property
+ <property.test.example.first>.

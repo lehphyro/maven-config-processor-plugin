@@ -28,10 +28,10 @@ public class XmlRemoveActionProcessingAdvisor extends AbstractXmlActionProcessin
 	throws ParsingException {
 		super(expressionResolver, namespaceContext);
 
-		if (action.getValue() == null) {
-			throw new ParsingException("Remove tag must specify the xpath expression in [value] property");
+		if (action.getName() == null) {
+			throw new ParsingException("Remove tag must specify the xpath expression in [name] property");
 		}
-		compile(action.getValue());
+		compile(action.getName());
 	}
 	
 	public void process(Document document) throws ParsingException {

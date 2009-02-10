@@ -16,8 +16,10 @@
 package com.google.code.configprocessor.processing.xml;
 
 import javax.xml.namespace.*;
+import javax.xml.parsers.*;
 
 import org.w3c.dom.*;
+import org.xml.sax.*;
 
 import com.google.code.configprocessor.*;
 import com.google.code.configprocessor.processing.*;
@@ -64,7 +66,9 @@ public class XmlAddActionProcessingAdvisor extends AbstractXmlActionProcessingAd
 				Node importedNode = document.importNode(nodeList.item(i), true);
 				parent.insertBefore(importedNode, referenceNode);
 			}
-		} catch (Exception e) {
+		} catch (SAXException e) {
+			throw new ParsingException(e);
+		} catch (ParserConfigurationException e) {
 			throw new ParsingException(e);
 		}
 	}

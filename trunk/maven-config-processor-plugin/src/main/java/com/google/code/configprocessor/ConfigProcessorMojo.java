@@ -47,6 +47,7 @@ public class ConfigProcessorMojo extends AbstractMojo {
 	 * 
 	 * @parameter default-value="${project.build.directory}"
 	 * @required
+	 * @since 1.0
 	 */
 	private File outputDirectory;
 	
@@ -55,6 +56,7 @@ public class ConfigProcessorMojo extends AbstractMojo {
 	 * 
 	 * @parameter default-value="true"
 	 * @required
+	 * @since 1.0
 	 */
 	private boolean useOutputDirectory;
 
@@ -62,6 +64,7 @@ public class ConfigProcessorMojo extends AbstractMojo {
 	 * Encoding to use when reading or writing files.
 	 * 
 	 * @parameter default-value="${project.build.sourceEncoding}"
+	 * @since 1.1
 	 */
 	private String encoding;
 
@@ -69,6 +72,7 @@ public class ConfigProcessorMojo extends AbstractMojo {
 	 * Maximum line width of the generated files to use when formatting.
 	 * 
 	 * @parameter default-value="80"
+	 * @since 1.2
 	 */
 	private Integer lineWidth;
 	
@@ -76,6 +80,7 @@ public class ConfigProcessorMojo extends AbstractMojo {
 	 * Indentation size as the number of whitespaces to use when formatting.
 	 * 
 	 * @parameter default-value="4"
+	 * @since 1.2
 	 */
 	private Integer indentSize;
 	
@@ -83,6 +88,7 @@ public class ConfigProcessorMojo extends AbstractMojo {
 	 * File to load aditional specific properties for plugin execution.
 	 * 
 	 * @parameter
+	 * @since 1.0
 	 */
 	private File specificProperties;
 	
@@ -91,6 +97,7 @@ public class ConfigProcessorMojo extends AbstractMojo {
 	 * 
 	 * @parameter
 	 * @required
+	 * @since 1.0
 	 */
 	private List<Transformation> transformations;
 	
@@ -99,6 +106,7 @@ public class ConfigProcessorMojo extends AbstractMojo {
 	 * Mapping in the form prefix => url
 	 * 
 	 * @parameter
+	 * @since 1.2
 	 */
 	private Map<String, String> namespaceContexts;
 

@@ -1,0 +1,79 @@
+ ------
+ XML Processing
+ ------
+ Leandro Aparecido
+ ------
+ 2009-02-10
+ ------
+
+XML Processing
+
+ You can add, remove or modify XML elements of XMLs files using XPath expressions
+ to select specific nodes.
+ The examples below show modifications to a Spring (http://www.springframework.org)
+ configuration file.
+ 
+* Adding a new XML element
+
+ When adding a new XML element, you must specify the name of the property after or before which
+ you want to add and the XML fragment as shown below.
+
++-----+
+<processor>
+  ...
+  <add>
+    <after>/beans/bean[@id='testBean']</after>
+    <value>
+      <![CDATA[
+        <bean id="testBean2" class="com.foo.TestBean">
+        </bean>
+      ]]>
+    </value>
+  </add>
+  ...
+</processor>
++-----+
+
+ This fragment will instruct the config processor plugin to add the new <bean> element
+ after the bean with id="testBean".
+
+* Removing an XML element
+
+ To remove an XML element, you have to configure its XPath as follows.
+
++-----+
+<processor>
+  ...
+  <remove>
+    <name>/beans/bean[@id='testBean']</name>
+  </remove>
+  ...
+</processor>
++-----+
+
+ This fragment will instruct the config processor plugin to generate the processed file without
+ the bean with id="testBean".
+
+* Modifying an XML element
+
+ To modify an XML element, you must define the XPath expression to find it and the fragment
+ to put on its place as shown below.
+
++-----+
+<processor>
+  ...
+  <modify>
+    <name>/beans/bean[@id='testBean']</name>
+    <value>
+      <![CDATA[
+        <bean id="testBean" class="com.foo.ActualTestBean">
+        </bean>
+      ]]>
+    </value>
+  </modify>
+  ...
+</processor>
++-----+
+
+ This fragment will instruct the config processor to remove the bean with id="testBean" and
+ put in its place the new bean definition.

@@ -17,7 +17,7 @@ Configuration Processor Maven Plugin
 
   General information about the goals.
 
-  * {{{process.html}config-processor:process}} Processes the configuration file doing all necessary transformations.
+  * {{{process-mojo.html}config-processor:process}} Processes the configuration file doing all necessary transformations.
 
 * Usage
 
