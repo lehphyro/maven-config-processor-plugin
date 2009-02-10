@@ -21,6 +21,6 @@
 
     <!-- Remove a property -->    
     <remove>
-        <value>/root/property2</value>
+        <name>/root/property2</name>
     </remove>
 </processor>
