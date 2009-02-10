@@ -110,6 +110,9 @@
             <resource>
                 <directory>src/main/etc</directory>
             </resource>
+            <resource>
+                <directory>src/site</directory>
+            </resource>
         </resources>
 
         <plugins>
