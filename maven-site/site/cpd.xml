@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd-cpd>
+<duplication lines="23" tokens="108">
+<file line="53" path="C:\Users\Leandro2\Documents\Workspace\maven-config-processor-plugin\src\main\java\com\google\code\configprocessor\processing\AbstractAction.java"/>
+<file line="37" path="C:\Users\Leandro2\Documents\Workspace\maven-config-processor-plugin\src\main\java\com\google\code\configprocessor\processing\RemoveAction.java"/>
+<codefragment>
+<![CDATA[
+		result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		AbstractAction other = (AbstractAction) obj;
+		if (getName() == null) {
+			if (other.getName() != null) {
+				return false;
+			}
+		} else if (!getName().equals(other.getName())) {
+			return false;
+		}
+]]>
+</codefragment>
+</duplication>
+</pmd-cpd>

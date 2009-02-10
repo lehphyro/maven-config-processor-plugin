@@ -1,0 +1,6 @@
+com.google.code.configprocessor
+com.google.code.configprocessor.parsing
+com.google.code.configprocessor.processing
+com.google.code.configprocessor.processing.properties
+com.google.code.configprocessor.processing.properties.model
+com.google.code.configprocessor.processing.xml

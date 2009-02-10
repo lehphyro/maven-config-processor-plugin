@@ -1,0 +1,513 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+
+
+
+
+
+
+
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Configuration Processor Maven Plugin - FindBugs Bug Detector Report</title>
+    <style type="text/css" media="all">
+      @import url("./css/maven-base.css");
+      @import url("./css/maven-theme.css");
+      @import url("./css/site.css");
+    </style>
+    <link rel="stylesheet" href="./css/print.css" type="text/css" media="print" />
+        <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+      </head>
+  <body class="composite">
+    <div id="banner">
+                    <span id="bannerLeft">
+    
+            Configuration Processor Maven Plugin
+    
+            </span>
+                    <div class="clear">
+        <hr/>
+      </div>
+    </div>
+    <div id="breadcrumbs">
+          
+  
+
+  
+    
+  
+  
+    
+            <div class="xleft">
+        Last Published: 2009-02-10
+                      </div>
+            <div class="xright">      
+  
+
+  
+    
+  
+  
+    
+  </div>
+      <div class="clear">
+        <hr/>
+      </div>
+    </div>
+    <div id="leftColumn">
+      <div id="navcolumn">
+           
+  
+
+  
+    
+  
+  
+    
+                   <h5>Overview</h5>
+            <ul>
+              
+    <li class="none">
+                    <a href="index.html">Introduction</a>
+          </li>
+              
+    <li class="none">
+                    <a href="plugin-info.html">Goals</a>
+          </li>
+              
+    <li class="none">
+                    <a href="usage.html">Usage</a>
+          </li>
+              
+    <li class="none">
+                    <a href="faq.html">FAQ</a>
+          </li>
+          </ul>
+              <h5>Examples</h5>
+            <ul>
+              
+    <li class="none">
+                    <a href="examples/properties-processing.html">Properties Processing</a>
+          </li>
+              
+    <li class="none">
+                    <a href="examples/xml-processing.html">XML Processing</a>
+          </li>
+          </ul>
+              <h5>Project Documentation</h5>
+            <ul>
+              
+                
+              
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+              
+        <li class="collapsed">
+                    <a href="project-info.html">Project Information</a>
+                </li>
+              
+                
+              
+      
+            
+      
+            
+            
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+              
+            <li class="expanded">
+                    <a href="project-reports.html">Project Reports</a>
+                  <ul>
+                  
+    <li class="none">
+                    <a href="cobertura/index.html">Cobertura Test Coverage</a>
+          </li>
+                  
+    <li class="none">
+                    <a href="cpd.html">CPD Report</a>
+          </li>
+                  
+    <li class="none">
+              <strong>FindBugs Report</strong>
+        </li>
+                  
+    <li class="none">
+                    <a href="apidocs/index.html">JavaDocs</a>
+          </li>
+                  
+    <li class="none">
+                    <a href="javancss.html">JavaNCSS Report</a>
+          </li>
+                  
+    <li class="none">
+                    <a href="plugin-info.html">Plugin Documentation</a>
+          </li>
+                  
+    <li class="none">
+                    <a href="pmd.html">PMD Report</a>
+          </li>
+                  
+    <li class="none">
+                    <a href="xref/index.html">Source Xref</a>
+          </li>
+                  
+    <li class="none">
+                    <a href="testapidocs/index.html">Test JavaDocs</a>
+          </li>
+                  
+    <li class="none">
+                    <a href="xref-test/index.html">Test Source Xref</a>
+          </li>
+              </ul>
+        </li>
+          </ul>
+                                           <a href="http://maven.apache.org/" title="Built by Maven" class="poweredBy">
+            <img alt="Built by Maven" src="./images/logos/maven-feather.png"></img>
+          </a>
+                       
+  
+
+  
+    
+  
+  
+    
+        </div>
+    </div>
+    <div id="bodyColumn">
+      <div id="contentBox">
+        <div class="section"><h2>FindBugs Bug Detector Report</h2>
+<p>The following document contains the results of <a href="http://findbugs.sourceforge.net" class="externalLink">FindBugs Report</a>
+</p>
+<p>FindBugs Version is <i>1.2.1</i>
+</p>
+<p>Threshold is <i>Low</i>
+</p>
+<p>Effort is <i>Default</i>
+</p>
+</div>
+<div class="section"><h2>Summary</h2>
+<table class="bodyTable"><tr class="a"><th>Classes</th>
+<th>Bugs</th>
+<th>Errors</th>
+<th>Missing Classes</th>
+</tr>
+<tr class="b"><td>164</td>
+<td>26</td>
+<td>0</td>
+<td>0</td>
+</tr>
+</table>
+</div>
+<div class="section"><h2>Files</h2>
+<table class="bodyTable"><tr class="a"><th>Class</th>
+<th>Bugs</th>
+</tr>
+<tr class="b"><td><a href="#com.google.code.configprocessor.ConfigProcessorMojo">com.google.code.configprocessor.ConfigProcessorMojo</a>
+</td>
+<td>16</td>
+</tr>
+<tr class="a"><td><a href="#com.google.code.configprocessor.Transformation">com.google.code.configprocessor.Transformation</a>
+</td>
+<td>5</td>
+</tr>
+<tr class="b"><td><a href="#com.google.code.configprocessor.processing.AbstractAction">com.google.code.configprocessor.processing.AbstractAction</a>
+</td>
+<td>1</td>
+</tr>
+<tr class="a"><td><a href="#com.google.code.configprocessor.processing.AddAction">com.google.code.configprocessor.processing.AddAction</a>
+</td>
+<td>1</td>
+</tr>
+<tr class="b"><td><a href="#com.google.code.configprocessor.processing.RemoveAction">com.google.code.configprocessor.processing.RemoveAction</a>
+</td>
+<td>1</td>
+</tr>
+<tr class="a"><td><a href="#com.google.code.configprocessor.processing.properties.model.Comment">com.google.code.configprocessor.processing.properties.model.Comment</a>
+</td>
+<td>1</td>
+</tr>
+<tr class="b"><td><a href="#com.google.code.configprocessor.processing.properties.model.PropertyMapping">com.google.code.configprocessor.processing.properties.model.PropertyMapping</a>
+</td>
+<td>1</td>
+</tr>
+</table>
+</div>
+<a name="com.google.code.configprocessor.ConfigProcessorMojo"></a>
+<div class="section"><h3>com.google.code.configprocessor.ConfigProcessorMojo</h3>
+<table class="bodyTable"><tr class="a"><th>Bug</th>
+<th>Category</th>
+<th>Details</th>
+<th>Line</th>
+</tr>
+<tr class="b"><td>Read of unwritten field outputDirectory in com.google.code.configprocessor.ConfigProcessorMojo.execute()</td>
+<td>CORRECTNESS</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#NP_UNWRITTEN_FIELD" class="externalLink">NP_UNWRITTEN_FIELD</a>
+</td>
+<td><a href="xref/com/google/code/configprocessor/ConfigProcessorMojo.html#143">143</a></td>
+</tr>
+<tr class="a"><td>Read of unwritten field outputDirectory in com.google.code.configprocessor.ConfigProcessorMojo.execute()</td>
+<td>CORRECTNESS</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#NP_UNWRITTEN_FIELD" class="externalLink">NP_UNWRITTEN_FIELD</a>
+</td>
+<td><a href="xref/com/google/code/configprocessor/ConfigProcessorMojo.html#144">144</a></td>
+</tr>
+<tr class="b"><td>Read of unwritten field transformations in com.google.code.configprocessor.ConfigProcessorMojo.execute()</td>
+<td>CORRECTNESS</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#NP_UNWRITTEN_FIELD" class="externalLink">NP_UNWRITTEN_FIELD</a>
+</td>
+<td><a href="xref/com/google/code/configprocessor/ConfigProcessorMojo.html#156">156</a></td>
+</tr>
+<tr class="a"><td>Read of unwritten field indentSize in com.google.code.configprocessor.ConfigProcessorMojo.getActionProcessor(File, String, boolean)</td>
+<td>CORRECTNESS</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#NP_UNWRITTEN_FIELD" class="externalLink">NP_UNWRITTEN_FIELD</a>
+</td>
+<td><a href="xref/com/google/code/configprocessor/ConfigProcessorMojo.html#207">207</a></td>
+</tr>
+<tr class="b"><td>Read of unwritten field lineWidth in com.google.code.configprocessor.ConfigProcessorMojo.getActionProcessor(File, String, boolean)</td>
+<td>CORRECTNESS</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#NP_UNWRITTEN_FIELD" class="externalLink">NP_UNWRITTEN_FIELD</a>
+</td>
+<td><a href="xref/com/google/code/configprocessor/ConfigProcessorMojo.html#207">207</a></td>
+</tr>
+<tr class="a"><td>Exception is caught when Exception is not thrown in com.google.code.configprocessor.ConfigProcessorMojo.process(File, File, File, String, boolean)</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#REC_CATCH_EXCEPTION" class="externalLink">REC_CATCH_EXCEPTION</a>
+</td>
+<td><a href="xref/com/google/code/configprocessor/ConfigProcessorMojo.html#198">198</a></td>
+</tr>
+<tr class="b"><td>Unwritten field: com.google.code.configprocessor.ConfigProcessorMojo.indentSize</td>
+<td>CORRECTNESS</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#UWF_UNWRITTEN_FIELD" class="externalLink">UWF_UNWRITTEN_FIELD</a>
+</td>
+<td><a href="xref/com/google/code/configprocessor/ConfigProcessorMojo.html#207">207</a></td>
+</tr>
+<tr class="a"><td>Unwritten field: com.google.code.configprocessor.ConfigProcessorMojo.lineWidth</td>
+<td>CORRECTNESS</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#UWF_UNWRITTEN_FIELD" class="externalLink">UWF_UNWRITTEN_FIELD</a>
+</td>
+<td><a href="xref/com/google/code/configprocessor/ConfigProcessorMojo.html#207">207</a></td>
+</tr>
+<tr class="b"><td>Unwritten field: com.google.code.configprocessor.ConfigProcessorMojo.mavenProject</td>
+<td>CORRECTNESS</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#UWF_UNWRITTEN_FIELD" class="externalLink">UWF_UNWRITTEN_FIELD</a>
+</td>
+<td><a href="xref/com/google/code/configprocessor/ConfigProcessorMojo.html#235">235</a></td>
+</tr>
+<tr class="a"><td>Unwritten field: com.google.code.configprocessor.ConfigProcessorMojo.mavenSession</td>
+<td>CORRECTNESS</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#UWF_UNWRITTEN_FIELD" class="externalLink">UWF_UNWRITTEN_FIELD</a>
+</td>
+<td><a href="xref/com/google/code/configprocessor/ConfigProcessorMojo.html#235">235</a></td>
+</tr>
+<tr class="b"><td>Unwritten field: com.google.code.configprocessor.ConfigProcessorMojo.mojoExecution</td>
+<td>CORRECTNESS</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#UWF_UNWRITTEN_FIELD" class="externalLink">UWF_UNWRITTEN_FIELD</a>
+</td>
+<td><a href="xref/com/google/code/configprocessor/ConfigProcessorMojo.html#235">235</a></td>
+</tr>
+<tr class="a"><td>Unwritten field: com.google.code.configprocessor.ConfigProcessorMojo.namespaceContexts</td>
+<td>CORRECTNESS</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#UWF_UNWRITTEN_FIELD" class="externalLink">UWF_UNWRITTEN_FIELD</a>
+</td>
+<td><a href="xref/com/google/code/configprocessor/ConfigProcessorMojo.html#207">207</a></td>
+</tr>
+<tr class="b"><td>Unwritten field: com.google.code.configprocessor.ConfigProcessorMojo.outputDirectory</td>
+<td>CORRECTNESS</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#UWF_UNWRITTEN_FIELD" class="externalLink">UWF_UNWRITTEN_FIELD</a>
+</td>
+<td><a href="xref/com/google/code/configprocessor/ConfigProcessorMojo.html#143">143</a></td>
+</tr>
+<tr class="a"><td>Unwritten field: com.google.code.configprocessor.ConfigProcessorMojo.specificProperties</td>
+<td>CORRECTNESS</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#UWF_UNWRITTEN_FIELD" class="externalLink">UWF_UNWRITTEN_FIELD</a>
+</td>
+<td><a href="xref/com/google/code/configprocessor/ConfigProcessorMojo.html#247">247</a></td>
+</tr>
+<tr class="b"><td>Unwritten field: com.google.code.configprocessor.ConfigProcessorMojo.transformations</td>
+<td>CORRECTNESS</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#UWF_UNWRITTEN_FIELD" class="externalLink">UWF_UNWRITTEN_FIELD</a>
+</td>
+<td><a href="xref/com/google/code/configprocessor/ConfigProcessorMojo.html#156">156</a></td>
+</tr>
+<tr class="a"><td>Unwritten field: com.google.code.configprocessor.ConfigProcessorMojo.useOutputDirectory</td>
+<td>CORRECTNESS</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#UWF_UNWRITTEN_FIELD" class="externalLink">UWF_UNWRITTEN_FIELD</a>
+</td>
+<td><a href="xref/com/google/code/configprocessor/ConfigProcessorMojo.html#142">142</a></td>
+</tr>
+</table>
+</div>
+<a name="com.google.code.configprocessor.Transformation"></a>
+<div class="section"><h3>com.google.code.configprocessor.Transformation</h3>
+<table class="bodyTable"><tr class="b"><th>Bug</th>
+<th>Category</th>
+<th>Details</th>
+<th>Line</th>
+</tr>
+<tr class="a"><td>Unwritten field: com.google.code.configprocessor.Transformation.config</td>
+<td>CORRECTNESS</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#UWF_UNWRITTEN_FIELD" class="externalLink">UWF_UNWRITTEN_FIELD</a>
+</td>
+<td><a href="xref/com/google/code/configprocessor/Transformation.html#73">73</a></td>
+</tr>
+<tr class="b"><td>Unwritten field: com.google.code.configprocessor.Transformation.input</td>
+<td>CORRECTNESS</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#UWF_UNWRITTEN_FIELD" class="externalLink">UWF_UNWRITTEN_FIELD</a>
+</td>
+<td><a href="xref/com/google/code/configprocessor/Transformation.html#65">65</a></td>
+</tr>
+<tr class="a"><td>Unwritten field: com.google.code.configprocessor.Transformation.output</td>
+<td>CORRECTNESS</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#UWF_UNWRITTEN_FIELD" class="externalLink">UWF_UNWRITTEN_FIELD</a>
+</td>
+<td><a href="xref/com/google/code/configprocessor/Transformation.html#69">69</a></td>
+</tr>
+<tr class="b"><td>Unwritten field: com.google.code.configprocessor.Transformation.type</td>
+<td>CORRECTNESS</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#UWF_UNWRITTEN_FIELD" class="externalLink">UWF_UNWRITTEN_FIELD</a>
+</td>
+<td><a href="xref/com/google/code/configprocessor/Transformation.html#77">77</a></td>
+</tr>
+<tr class="a"><td>Unwritten field: com.google.code.configprocessor.Transformation.replacePlaceholders</td>
+<td>CORRECTNESS</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#UWF_UNWRITTEN_FIELD" class="externalLink">UWF_UNWRITTEN_FIELD</a>
+</td>
+<td><a href="xref/com/google/code/configprocessor/Transformation.html#81">81</a></td>
+</tr>
+</table>
+</div>
+<a name="com.google.code.configprocessor.processing.AbstractAction"></a>
+<div class="section"><h3>com.google.code.configprocessor.processing.AbstractAction</h3>
+<table class="bodyTable"><tr class="b"><th>Bug</th>
+<th>Category</th>
+<th>Details</th>
+<th>Line</th>
+</tr>
+<tr class="a"><td>Dead store to prime in com.google.code.configprocessor.processing.AbstractAction.hashCode()</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#DLS_DEAD_LOCAL_STORE" class="externalLink">DLS_DEAD_LOCAL_STORE</a>
+</td>
+<td><a href="xref/com/google/code/configprocessor/processing/AbstractAction.html#50">50</a></td>
+</tr>
+</table>
+</div>
+<a name="com.google.code.configprocessor.processing.AddAction"></a>
+<div class="section"><h3>com.google.code.configprocessor.processing.AddAction</h3>
+<table class="bodyTable"><tr class="b"><th>Bug</th>
+<th>Category</th>
+<th>Details</th>
+<th>Line</th>
+</tr>
+<tr class="a"><td>Dead store to prime in com.google.code.configprocessor.processing.AddAction.hashCode()</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#DLS_DEAD_LOCAL_STORE" class="externalLink">DLS_DEAD_LOCAL_STORE</a>
+</td>
+<td><a href="xref/com/google/code/configprocessor/processing/AddAction.html#61">61</a></td>
+</tr>
+</table>
+</div>
+<a name="com.google.code.configprocessor.processing.RemoveAction"></a>
+<div class="section"><h3>com.google.code.configprocessor.processing.RemoveAction</h3>
+<table class="bodyTable"><tr class="b"><th>Bug</th>
+<th>Category</th>
+<th>Details</th>
+<th>Line</th>
+</tr>
+<tr class="a"><td>Dead store to prime in com.google.code.configprocessor.processing.RemoveAction.hashCode()</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#DLS_DEAD_LOCAL_STORE" class="externalLink">DLS_DEAD_LOCAL_STORE</a>
+</td>
+<td><a href="xref/com/google/code/configprocessor/processing/RemoveAction.html#35">35</a></td>
+</tr>
+</table>
+</div>
+<a name="com.google.code.configprocessor.processing.properties.model.Comment"></a>
+<div class="section"><h3>com.google.code.configprocessor.processing.properties.model.Comment</h3>
+<table class="bodyTable"><tr class="b"><th>Bug</th>
+<th>Category</th>
+<th>Details</th>
+<th>Line</th>
+</tr>
+<tr class="a"><td>Dead store to prime in com.google.code.configprocessor.processing.properties.model.Comment.hashCode()</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#DLS_DEAD_LOCAL_STORE" class="externalLink">DLS_DEAD_LOCAL_STORE</a>
+</td>
+<td><a href="xref/com/google/code/configprocessor/processing/properties/model/Comment.html#32">32</a></td>
+</tr>
+</table>
+</div>
+<a name="com.google.code.configprocessor.processing.properties.model.PropertyMapping"></a>
+<div class="section"><h3>com.google.code.configprocessor.processing.properties.model.PropertyMapping</h3>
+<table class="bodyTable"><tr class="b"><th>Bug</th>
+<th>Category</th>
+<th>Details</th>
+<th>Line</th>
+</tr>
+<tr class="a"><td>Dead store to prime in com.google.code.configprocessor.processing.properties.model.PropertyMapping.hashCode()</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#DLS_DEAD_LOCAL_STORE" class="externalLink">DLS_DEAD_LOCAL_STORE</a>
+</td>
+<td><a href="xref/com/google/code/configprocessor/processing/properties/model/PropertyMapping.html#53">53</a></td>
+</tr>
+</table>
+</div>
+
+      </div>
+    </div>
+    <div class="clear">
+      <hr/>
+    </div>
+    <div id="footer">
+      <div class="xright">&#169;  
+          2009
+    
+          None
+          
+  
+
+  
+    
+  
+  
+    
+  </div>
+      <div class="clear">
+        <hr/>
+      </div>
+    </div>
+  </body>
+</html>

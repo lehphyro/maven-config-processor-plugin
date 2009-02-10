@@ -1,0 +1,242 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+
+
+
+
+
+
+
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Configuration Processor Maven Plugin - Properties Processing</title>
+    <style type="text/css" media="all">
+      @import url("../css/maven-base.css");
+      @import url("../css/maven-theme.css");
+      @import url("../css/site.css");
+    </style>
+    <link rel="stylesheet" href="../css/print.css" type="text/css" media="print" />
+          <meta name="author" content="Leandro Aparecido" />
+        <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+      </head>
+  <body class="composite">
+    <div id="banner">
+                    <span id="bannerLeft">
+    
+            Configuration Processor Maven Plugin
+    
+            </span>
+                    <div class="clear">
+        <hr/>
+      </div>
+    </div>
+    <div id="breadcrumbs">
+          
+  
+
+  
+    
+  
+  
+    
+            <div class="xleft">
+        Last Published: 2009-02-10
+                      </div>
+            <div class="xright">      
+  
+
+  
+    
+  
+  
+    
+  </div>
+      <div class="clear">
+        <hr/>
+      </div>
+    </div>
+    <div id="leftColumn">
+      <div id="navcolumn">
+           
+  
+
+  
+    
+  
+  
+    
+                   <h5>Overview</h5>
+            <ul>
+              
+    <li class="none">
+                    <a href="../index.html">Introduction</a>
+          </li>
+              
+    <li class="none">
+                    <a href="../plugin-info.html">Goals</a>
+          </li>
+              
+    <li class="none">
+                    <a href="../usage.html">Usage</a>
+          </li>
+              
+    <li class="none">
+                    <a href="../faq.html">FAQ</a>
+          </li>
+          </ul>
+              <h5>Examples</h5>
+            <ul>
+              
+    <li class="none">
+              <strong>Properties Processing</strong>
+        </li>
+              
+    <li class="none">
+                    <a href="../examples/xml-processing.html">XML Processing</a>
+          </li>
+          </ul>
+              <h5>Project Documentation</h5>
+            <ul>
+              
+                
+              
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+              
+        <li class="collapsed">
+                    <a href="../project-info.html">Project Information</a>
+                </li>
+              
+                
+              
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+              
+        <li class="collapsed">
+                    <a href="../project-reports.html">Project Reports</a>
+                </li>
+          </ul>
+                                           <a href="http://maven.apache.org/" title="Built by Maven" class="poweredBy">
+            <img alt="Built by Maven" src="../images/logos/maven-feather.png"></img>
+          </a>
+                       
+  
+
+  
+    
+  
+  
+    
+        </div>
+    </div>
+    <div id="bodyColumn">
+      <div id="contentBox">
+        <div class="section"><h2>Properties Processing</h2>
+<p>You can add, remove or modify key-&gt;value associations in the properties file.</p>
+<div class="section"><h3>Adding a new association</h3>
+<p>When adding a new association, you must specify the name of the property after or before which you want to add as shown below.</p>
+<div class="source"><pre>&lt;processor&gt;
+  ...
+  &lt;add&gt;
+    &lt;name&gt;property.test.example.second&lt;/name&gt;
+    &lt;value&gt;example-value&lt;/value&gt;
+    &lt;after&gt;property.test.example.first&lt;/after&gt;
+  &lt;/add&gt;
+  ...
+&lt;/processor&gt;</pre>
+</div>
+<p>This fragment will instruct the config processor plugin to add the association <i>property.test.example.second-&gt;example-value</i>
+ after the property <i>property.test.example.first</i>
+.</p>
+</div>
+<div class="section"><h3>Removing an association</h3>
+<p>To remove an association, you configure its name as follows.</p>
+<div class="source"><pre>&lt;processor&gt;
+  ...
+  &lt;remove&gt;
+    &lt;name&gt;property.test.example.first&lt;/name&gt;
+  &lt;/remove&gt;
+  ...
+&lt;/processor&gt;</pre>
+</div>
+<p>This fragment will instruct the config processor plugin to generate the processed file without the property <i>property.test.example.first</i>
+.</p>
+</div>
+<div class="section"><h3>Modifying an association</h3>
+<p>To modify an association, you must define the name of the property to modify and the new value.</p>
+<div class="source"><pre>&lt;processor&gt;
+  ...
+  &lt;modify&gt;
+    &lt;name&gt;property.test.example.first&lt;/name&gt;
+    &lt;value&gt;&lt;/value&gt;
+  &lt;/modify&gt;
+  ...
+&lt;/processor&gt;</pre>
+</div>
+<p>This fragment will instruct the config processor to clear the value of the property <i>property.test.example.first</i>
+.</p>
+</div>
+</div>
+
+      </div>
+    </div>
+    <div class="clear">
+      <hr/>
+    </div>
+    <div id="footer">
+      <div class="xright">&#169;  
+          2009
+    
+          None
+          
+  
+
+  
+    
+  
+  
+    
+  </div>
+      <div class="clear">
+        <hr/>
+      </div>
+    </div>
+  </body>
+</html>
