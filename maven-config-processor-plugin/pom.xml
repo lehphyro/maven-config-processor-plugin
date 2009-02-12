@@ -45,8 +45,8 @@
     </licenses>
 
     <scm>
-        <connection>scm:svn:https://maven-config-processor-plugin.googlecode.com/svn</connection>
-        <developerConnection>scm:svn:https://maven-config-processor-plugin.googlecode.com/svn</developerConnection>
+        <connection>scm:svn:https://maven-config-processor-plugin.googlecode.com/svn/trunk</connection>
+        <developerConnection>scm:svn:https://maven-config-processor-plugin.googlecode.com/svn/trunk</developerConnection>
         <url>http://code.google.com/p/maven-config-processor-plugin/source/browse</url>
     </scm>
     
@@ -184,11 +184,13 @@
     <reporting>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
                 <version>2.1</version>
             </plugin>
 
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
                 <version>2.4.3</version>
             </plugin>
@@ -201,6 +203,16 @@
                 </configuration>
             </plugin>
             
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-changelog-plugin</artifactId>
+                <version>2.0</version>
+                <configuration>
+                    <type>range</type>
+                    <range>30</range>
+                </configuration>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
@@ -220,7 +232,7 @@
                     <xmlOutputDirectory>${project.reporting.outputDirectory}</xmlOutputDirectory>
                 </configuration>
             </plugin>
-            
+<!--
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
@@ -231,7 +243,7 @@
                     <xmlOutput>true</xmlOutput>
                 </configuration>
             </plugin>
-
+-->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>cobertura-maven-plugin</artifactId>
@@ -262,8 +274,8 @@
 
     <developers>
         <developer>
-            <id>leandro.aparecido</id>
-            <name>Leandro de Oliveira Aparecido</name>
+            <id>lehphyro</id>
+            <name>Leandro Aparecido</name>
             <email>lehphyro@gmail.com</email>
             <url />
             <roles>
