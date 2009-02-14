@@ -1,0 +1,187 @@
+#summary File transformation configuration reference
+#labels Featured,Phase-Implementation,Configuration
+
+= Introduction =
+
+Each file is processed using a *set of rules* defined by the file configured in field *config* of the plugin declaration.
+
+Below is the documentation about the file format and usage.
+
+= File Format =
+
+There are three basic operations that can be performed on target files: add, remove and modify properties.
+
+The transformation configuration file is an _XML_ file that defines those operations:
+
+{{{
+<processor>
+    <add>
+        <name></name>
+        <value></value>
+        <before></before> <!-- OR --> <after></after>
+    </add>
+
+    <modify>
+        <name></name>
+        <value></value>
+    </modify>
+
+    <remove>
+        <name></name>
+    </remove>
+</processor>
+}}}
+
+It is very simple and intuitive.
+
+It is possible to configure as many _add_,_modify_ and _remove_ tags as necessary.
+
+= Properties File Processing =
+
+Here is an example of a configuration file to process properties files.
+
+{{{
+<processor>
+    <!-- Add non-existing property -->
+    <add>
+        <name>test-property</name>
+        <value>${project.build.directory}</value>
+        <before>property1.value</before>
+    </add>
+
+    <!-- Modify a property value -->  
+    <modify>
+        <name>property1.value</name>
+        <value>${test-project.property1}</value>
+    </modify>
+
+    <!-- Remove a property -->    
+    <remove>
+        <name>property3.value</name>
+    </remove>
+</processor>
+}}}
+
+This file instructs the plugin to add the property _test-property_ before the property _property1.value_ and its value must be _${project.build.directory}_ which by default would be replaced by the project build output directory (target by default).
+
+In addition the plugin will modify the value of the property _property1.value_ to _${test-project.property1}_ which should be defined in your command-line, pom.xml or specific properties file.
+
+The property _property3.value_ will not appear in the generated file since it is configured to be removed.
+
+= XML File Processing =
+
+XML file processing uses the same format as properties files. But it is a bit more complex because of XML features such as nodes, attributes and namespaces.
+
+The following is an example of configuration file to process [http://www.springframework.org/ Spring] bean files.
+
+{{{
+<processor>
+    <add>
+        <after>/beans/bean[@id='testBean']</after>
+        <value>
+            <![CDATA[
+                <bean id="testBean2" class="com.foo.TestBean">
+                </bean>
+                ]]>
+        </value>
+    </add>
+
+    <add>
+        <name>/beans/bean[@id='testBean']</name>
+        <value>
+            <![CDATA[
+                scope="prototype" parent="testBeanParent"
+            ]]>
+        </value>
+    </add>
+
+    <remove>
+        <name>/beans/bean[@id='mock']</name>
+    </remove>
+
+    <remove>
+        <name>/beans/bean[@id='service']/@scope</name>
+    </remove>
+
+    <modify>
+        <name>/beans/bean[@id='testBean']</name>
+        <value>
+            <![CDATA[
+                <bean id="testBean" class="${test.bean.class}">
+                </bean>
+            ]]>
+        </value>
+    </modify>
+
+    <modify>
+        <name>/beans/bean[@id='dataSource']/@scope</name>
+        <value>singleton</value>
+    </modify>
+</processor>
+}}}
+
+All the _name_ elements must have [http://www.w3schools.com/XPath/default.asp XPath] expressions that resolve to single nodes or node attributes.
+
+As you can see, we can add completely new XML nodes specifying after or before which node we want to add.
+
+It is possible to add node attributes as well, but you should use the _name_ attribute instead of after/before attributes because node attribute ordering is not supported.
+
+You can remove entire nodes or just some attributes using XPath expressions to select the attributes such as _/beans/bean[@id='service']/@scope_, this expression will remove the _scope_ of the bean with id="service".
+
+Also, it is possible to replace nodes with entirely new nodes. Modifying attributes is specially nice because the _value_ attribute can hold only the new value while the _name_ attribute holds the XPath query.
+
+== XML Namespaces ==
+
+If your XML file uses XML Schema namespaces, you can still use XPath queries.
+The following example shows how:
+
+First, the target XML:
+
+{{{
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="testBean" class="TestClass">
+    </bean>
+
+</beans>
+}}}
+
+Note that the _beans_ element is under the namespace "!http://www.springframework.org/schema/beans". Thus, XPath queries in the form:
+
+{{{ /beans/bean[@id='testBean'] }}}
+
+will not select the _testBean_ we want. The XPath should be:
+
+{{{ //s:bean[@id='testBean'] }}}
+
+See the "s:" preceding "bean"? It is a prefix that we can map to the same "http://www.springframework.org/schema/beans" namespace used in the spring file.
+But, we have to tell the parser which namespace "s" is in. We do this in the plugin declaration in the *pom.xml* as follows:
+
+{{{
+<plugin>
+    <groupId>com.google.code.maven-config-processor-plugin</groupId>
+    <artifactId>maven-config-processor-plugin</artifactId>
+    <configuration>
+        ...
+        <transformations>
+            ...
+        </transformations>
+
+        <!-- Here is the mapping -->
+        <namespaceContexts>
+            <s>http://www.springframework.org/schema/beans</s>
+        </namespaceContexts>
+    </configuration>
+    <executions>
+        <execution>
+            <goals>
+                <goal>process</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+}}}
+
+Now the XPath will work as expected.
