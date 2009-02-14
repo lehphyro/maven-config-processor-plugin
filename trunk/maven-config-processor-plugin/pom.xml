@@ -4,7 +4,7 @@
     <groupId>com.google.code.maven-config-processor-plugin</groupId>
     <artifactId>maven-config-processor-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <version>1.4-SNAPSHOT</version>
+    <version>1.4</version>
     
     <name>Configuration Processor Maven Plugin</name>
     <description>Generates configuration files modified according to a ruleset to prepare them for different environments</description>
@@ -45,9 +45,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:svn:https://maven-config-processor-plugin.googlecode.com/svn/trunk</connection>
-        <developerConnection>scm:svn:https://maven-config-processor-plugin.googlecode.com/svn/trunk</developerConnection>
-        <url>http://code.google.com/p/maven-config-processor-plugin/source/browse</url>
+        <connection>scm:svn:https://maven-config-processor-plugin.googlecode.com/svn/tags/maven-config-processor-plugin-1.4</connection>
+        <developerConnection>scm:svn:https://maven-config-processor-plugin.googlecode.com/svn/tags/maven-config-processor-plugin-1.4</developerConnection>
+        <url>http://code.google.com/p/maven-config-processor-plugin/source/browse/tags/maven-config-processor-plugin-1.4</url>
     </scm>
     
     <ciManagement>
