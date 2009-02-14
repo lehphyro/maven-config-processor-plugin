@@ -8,15 +8,15 @@
 
 XML Processing
 
- You can add, remove or modify XML elements of XMLs files using XPath expressions
+ You can add, remove or modify nodes and attributes of XMLs files using XPath expressions
  to select specific nodes.
  The examples below show modifications to a Spring (http://www.springframework.org)
- configuration file.
+ configuration file without namespace use (but namespaces are supported too).
  
 * Adding a new XML element
 
- When adding a new XML element, you must specify the name of the property after or before which
- you want to add and the XML fragment as shown below.
+ When adding a new node, you must specify the node after or before which
+ you want to add the node and the XML fragment to add as shown below.
 
 +-----+
 <processor>
@@ -37,6 +37,29 @@ XML Processing
  This fragment will instruct the config processor plugin to add the new <bean> element
  after the bean with id="testBean".
 
+ To add a new attribute, you specify the node using the <name> configuration instead of
+ <after\/before> because attribute ordering is not supported,
+ you can't say "Add X after attribute Y", you only specify which node will have
+ the attribute added.
+
++-----+
+<processor>
+  ...
+  <add>
+    <name>/beans/bean[@id='testBean']</name>
+    <value>
+      <![CDATA[
+        scope="prototype"
+      ]]>
+    </value>
+  </add>
+  ...
+</processor>
++-----+
+
+ This fragment will instruct the config processor to add the <scope> attribute to the bean with
+ id="testBean".
+
 * Removing an XML element
 
  To remove an XML element, you have to configure its XPath as follows.
@@ -53,6 +76,9 @@ XML Processing
 
  This fragment will instruct the config processor plugin to generate the processed file without
  the bean with id="testBean".
+
+ If you want to remove just the <scope> attribute of the bean, the XPath expression would be:
+ /beans/bean[@id='testBean']/@scope
 
 * Modifying an XML element
 
@@ -77,3 +103,17 @@ XML Processing
 
  This fragment will instruct the config processor to remove the bean with id="testBean" and
  put in its place the new bean definition.
+
+ If you need to change the scope of the bean, say from "prototype" to "singleton", the
+ configuration is as follows:
+
++-----+
+<processor>
+  ...
+  <modify>
+    <name>/beans/bean[@id='testBean']/@scope</name>
+    <value>singleton</value>
+  </modify>
+  ...
+</processor>
++-----+

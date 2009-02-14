@@ -41,9 +41,17 @@ public class XmlModifyActionProcessingAdvisorTest extends AbstractXmlActionProce
 
 	@Test
 	public void modifyAttribute() throws Exception {
-		ModifyAction action = new ModifyAction("/root/property5/nested1/@a", "test-attribute=\"test-value\"");
+		ModifyAction action = new ModifyAction("/root/property5/nested1/@a", "test-value");
 		XmlModifyActionProcessingAdvisor advisor = new XmlModifyActionProcessingAdvisor(action, expressionResolver, namespaceContext);
-		String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + LINE_SEPARATOR + "<root>" + LINE_SEPARATOR + " <property1>value1</property1>" + LINE_SEPARATOR + " <property2/>" + LINE_SEPARATOR + " <property3 attribute=\"value3\">value3</property3>" + LINE_SEPARATOR + " <property4 attribute=\"value4\">value4</property4>" + LINE_SEPARATOR + " <property5>" + LINE_SEPARATOR + "  <nested1 test-attribute=\"test-value\"/>" + LINE_SEPARATOR + " </property5>" + LINE_SEPARATOR + "</root>" + LINE_SEPARATOR;
+		String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + LINE_SEPARATOR + "<root>" + LINE_SEPARATOR + " <property1>value1</property1>" + LINE_SEPARATOR + " <property2/>" + LINE_SEPARATOR + " <property3 attribute=\"value3\">value3</property3>" + LINE_SEPARATOR + " <property4 attribute=\"value4\">value4</property4>" + LINE_SEPARATOR + " <property5>" + LINE_SEPARATOR + "  <nested1 a=\"test-value\"/>" + LINE_SEPARATOR + " </property5>" + LINE_SEPARATOR + "</root>" + LINE_SEPARATOR;
+		executeTest(advisor, expected);
+	}
+
+	@Test
+	public void modifyAttributeToEmpty() throws Exception {
+		ModifyAction action = new ModifyAction("/root/property5/nested1/@a", null);
+		XmlModifyActionProcessingAdvisor advisor = new XmlModifyActionProcessingAdvisor(action, expressionResolver, namespaceContext);
+		String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + LINE_SEPARATOR + "<root>" + LINE_SEPARATOR + " <property1>value1</property1>" + LINE_SEPARATOR + " <property2/>" + LINE_SEPARATOR + " <property3 attribute=\"value3\">value3</property3>" + LINE_SEPARATOR + " <property4 attribute=\"value4\">value4</property4>" + LINE_SEPARATOR + " <property5>" + LINE_SEPARATOR + "  <nested1 a=\"\"/>" + LINE_SEPARATOR + " </property5>" + LINE_SEPARATOR + "</root>" + LINE_SEPARATOR;
 		executeTest(advisor, expected);
 	}
 }

@@ -56,10 +56,8 @@ public abstract class AbstractXmlActionProcessingAdvisor implements XmlActionPro
 			}
 		}
 		
-		if (!attributeOk) {
-			if (node instanceof Attr) {
-				throw new ParsingException("Expression resolved to attribute. It must resolve to node element: " + textExpression);
-			}
+		if (!attributeOk && node instanceof Attr) {
+			throw new ParsingException("Expression resolved to attribute. It must resolve to node element: " + textExpression);
 		}
 		
 		return node;

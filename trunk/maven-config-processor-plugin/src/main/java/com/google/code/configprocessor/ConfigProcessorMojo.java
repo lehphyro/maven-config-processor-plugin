@@ -195,8 +195,10 @@ public class ConfigProcessorMojo extends AbstractMojo {
 
 			ActionProcessor processor = getActionProcessor(input, type, replacePlaceholders);
 			processor.process(inputStreamReader, outputStreamWriter, action);
-		} catch (Exception e) {
+		} catch (ParsingException e) {
 			throw new MojoExecutionException("Error processing file [" + input + "] using configuration [" + config + "]", e);
+		} catch (IOException e) {
+			throw new MojoExecutionException("Error reading/writing files. Input is [" + input + "], configuration is [" + config + "]", e);
 		}
 	}
 	
