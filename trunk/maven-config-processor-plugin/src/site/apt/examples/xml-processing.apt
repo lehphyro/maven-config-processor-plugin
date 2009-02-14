@@ -38,7 +38,7 @@ XML Processing
  after the bean with id="testBean".
 
  To add a new attribute, you specify the node using the <name> configuration instead of
- <after\/before> because attribute ordering is not supported,
+ <after/before> because attribute ordering is not supported,
  you can't say "Add X after attribute Y", you only specify which node will have
  the attribute added.
 
