@@ -3,11 +3,12 @@
   <artifactId>maven-config-processor-plugin</artifactId>
   <version>1.0-SNAPSHOT</version>
   <versioning>
-    <latest>1.3-SNAPSHOT</latest>
+    <latest>1.4-SNAPSHOT</latest>
     <versions>
       <version>1.0-SNAPSHOT</version>
       <version>1.3-SNAPSHOT</version>
+      <version>1.4-SNAPSHOT</version>
     </versions>
-    <lastUpdated>20090209231718</lastUpdated>
+    <lastUpdated>20090214195951</lastUpdated>
   </versioning>
 </metadata>
