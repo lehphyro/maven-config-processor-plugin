@@ -1,0 +1,66 @@
+ ------
+ Properties Processing
+ ------
+ Leandro Aparecido
+ ------
+ 2009-02-10
+ ------
+
+Properties Processing
+
+ You can add, remove or modify key-\>value associations in the properties file.
+ 
+* Adding a new association
+
+ When adding a new association, you must specify the name of the property after or before which
+ you want to add as shown below.
+
++-----+
+<processor>
+  ...
+  <add>
+    <name>property.test.example.second</name>
+    <value>example-value</value>
+    <after>property.test.example.first</after>
+  </add>
+  ...
+</processor>
++-----+
+
+ This fragment will instruct the config processor plugin to add the association
+ <property.test.example.second-\>example-value> after the property <property.test.example.first>.
+
+* Removing an association
+
+ To remove an association, you configure its name as follows.
+
++-----+
+<processor>
+  ...
+  <remove>
+    <name>property.test.example.first</name>
+  </remove>
+  ...
+</processor>
++-----+
+
+ This fragment will instruct the config processor plugin to generate the processed file without
+ the property <property.test.example.first>.
+
+* Modifying an association
+
+ To modify an association, you must define the name of the property to modify and the new value.
+
++-----+
+<processor>
+  ...
+  <modify>
+    <name>property.test.example.first</name>
+    <value></value>
+  </modify>
+  ...
+</processor>
++-----+
+
+ This fragment will instruct the config processor to clear the value of the property
+ <property.test.example.first>.
