@@ -46,4 +46,12 @@ public class XmlRemoveActionProcessingAdvisorTest extends AbstractXmlActionProce
 		String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + LINE_SEPARATOR + "<root>" + LINE_SEPARATOR + " <property1>value1</property1>" + LINE_SEPARATOR + " <property2/>" + LINE_SEPARATOR + " <property3 attribute=\"value3\">value3</property3>" + LINE_SEPARATOR + " <property4 attribute=\"value4\">value4</property4>" + LINE_SEPARATOR + "</root>" + LINE_SEPARATOR;
 		executeTest(advisor, expected);
 	}
+	
+	@Test
+	public void removeAttribute() throws Exception {
+		RemoveAction action = new RemoveAction("/root/property5/nested1/@a");
+		XmlActionProcessingAdvisor advisor = new XmlRemoveActionProcessingAdvisor(action, expressionResolver, namespaceContext);
+		String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + LINE_SEPARATOR + "<root>" + LINE_SEPARATOR + " <property1>value1</property1>" + LINE_SEPARATOR + " <property2/>" + LINE_SEPARATOR + " <property3 attribute=\"value3\">value3</property3>" + LINE_SEPARATOR + " <property4 attribute=\"value4\">value4</property4>" + LINE_SEPARATOR + " <property5>" + LINE_SEPARATOR + "  <nested1/>" + LINE_SEPARATOR + " </property5>" + LINE_SEPARATOR + "</root>" + LINE_SEPARATOR;
+		executeTest(advisor, expected);
+	}
 }

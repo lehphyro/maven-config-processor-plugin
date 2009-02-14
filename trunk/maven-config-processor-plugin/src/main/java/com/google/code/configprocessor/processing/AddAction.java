@@ -36,8 +36,8 @@ public class AddAction extends AbstractAction {
 		this.after = after;
 		this.before = before;
 		
-		if (getAfter() == null && getBefore() == null) {
-			throw new IllegalArgumentException("Either before or after is required for property: " + name);
+		if (getName() == null && getAfter() == null && getBefore() == null) {
+			throw new IllegalArgumentException("Either before or after is required if no name is provided for property: " + name);
 		} else if (getAfter() != null && getBefore() != null) {
 			throw new IllegalArgumentException("Choose only one of either before or after to set for property: " + name);
 		}

@@ -35,10 +35,22 @@ public class XmlRemoveActionProcessingAdvisor extends AbstractXmlActionProcessin
 	}
 	
 	public void process(Document document) throws ParsingException {
-		Node node = evaluateForSingleNode(document);
-		Node parent = node.getParentNode();
+		Node node = evaluateForSingleNode(document, true, true);
 		
+		if (node instanceof Attr) {
+			removeAttribute((Attr)node);
+		} else {
+			removeNode(node);
+		}
+	}
+	
+	protected void removeNode(Node node) {
+		Node parent = node.getParentNode();
 		parent.removeChild(node);
 	}
 	
+	protected void removeAttribute(Attr attr) {
+		Node owner = attr.getOwnerElement();
+		owner.getAttributes().removeNamedItemNS(attr.getNamespaceURI(), attr.getLocalName());
+	}
 }
