@@ -27,9 +27,6 @@ import org.xml.sax.*;
 import com.google.code.configprocessor.*;
 import com.google.code.configprocessor.processing.*;
 
-/**
- * TODO Handle XML attributes
- */
 public class XmlActionProcessor implements ActionProcessor {
 
 	public static final String LINE_SEPARATOR = System.getProperty("line.separator");

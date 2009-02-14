@@ -15,8 +15,6 @@
  */
 package com.google.code.configprocessor.processing.xml;
 
-import java.util.*;
-
 import javax.xml.namespace.*;
 import javax.xml.parsers.*;
 
@@ -61,23 +59,7 @@ public class XmlModifyActionProcessingAdvisor extends AbstractXmlActionProcessin
 		parent.replaceChild(importedNode, oldNode);
 	}
 	
-	protected void modifyAttribute(Document document, Attr oldAttr) throws SAXException, ParserConfigurationException {
-		List<Attr> attributes = XmlHelper.parseAttributes(textFragment);
-		Node node = oldAttr.getOwnerElement();
-		NamedNodeMap nodeMap = node.getAttributes();
-		
-		for (int i = 0; i < nodeMap.getLength();) {
-			Node aux = nodeMap.item(i);
-			if (aux.equals(oldAttr)) {
-				nodeMap.removeNamedItemNS(aux.getNamespaceURI(), aux.getLocalName());
-			} else {
-				i++;
-			}
-		}
-		
-		for (Attr attr : attributes) {
-			Attr importedAttr = (Attr)document.importNode(attr, false);
-			nodeMap.setNamedItemNS(importedAttr);
-		}
+	protected void modifyAttribute(Document document, Attr oldAttr) {
+		oldAttr.setValue(textFragment);
 	}
 }
