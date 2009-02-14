@@ -26,6 +26,7 @@ public abstract class AbstractXmlActionProcessingAdvisor implements XmlActionPro
 	
 	private ExpressionResolver expressionResolver;
 	private NamespaceContext namespaceContext;
+	private String textExpression;
 	private XPathExpression xpathExpression;
 	
 	public AbstractXmlActionProcessingAdvisor(ExpressionResolver expressionResolver, NamespaceContext namespaceContext) {
@@ -38,22 +39,38 @@ public abstract class AbstractXmlActionProcessingAdvisor implements XmlActionPro
 		XPath xpath = factory.newXPath();
 		xpath.setNamespaceContext(namespaceContext);
 		try {
-			xpathExpression = xpath.compile(resolve(expression));
+			this.xpathExpression = xpath.compile(resolve(expression));
+			this.textExpression = expression;
 		} catch (XPathExpressionException e) {
 			throw new ParsingException(e);
 		}
 	}
 	
-	protected Node evaluateForSingleNode(Document document) throws ParsingException {
-		try {
-			Node node = (Node)getXPathExpression().evaluate(document, XPathConstants.NODE);
-			if (node == null) {
-				throw new ParsingException("XPath expression did not find nodes: " + getXPathExpression().toString());
-			}
+	protected Node evaluateForSingleNode(Document document, boolean orphanOK, boolean attributeOk) throws ParsingException {
+		Node node = evaluateForNode(document);
 
+		if (!orphanOK) {
 			Node parent = node.getParentNode();
 			if (parent == null) {
 				throw new ParsingException("Cannot manipulate node without a parent");
+			}
+		}
+		
+		if (!attributeOk) {
+			if (node instanceof Attr) {
+				throw new ParsingException("Expression resolved to attribute. It must resolve to node element: " + textExpression);
+			}
+		}
+		
+		return node;
+	}
+	
+	private Node evaluateForNode(Document document) throws ParsingException {
+		try {
+			Node node = (Node)getXPathExpression().evaluate(document, XPathConstants.NODE);
+
+			if (node == null) {
+				throw new ParsingException("XPath expression did not find nodes: " + textExpression);
 			}
 			
 			return node;

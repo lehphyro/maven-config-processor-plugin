@@ -16,6 +16,7 @@
 package com.google.code.configprocessor.processing.xml;
 
 import java.io.*;
+import java.util.*;
 
 import javax.xml.parsers.*;
 
@@ -25,6 +26,11 @@ import org.xml.sax.*;
 
 public class XmlHelper {
 
+	public static final String NODE_START = "<";
+	public static final String NODE_END = ">";
+	public static final String CLOSING_NODE_START = "</";
+	public static final String CLOSING_NODE_END = NODE_END;
+	
 	public static final String ROOT_TAG = "root";
 	
 	public static Document parse(String text, boolean prefixAndSuffix) throws SAXException, ParserConfigurationException {
@@ -32,9 +38,9 @@ public class XmlHelper {
 		
 		if (prefixAndSuffix) {
 			StringBuilder sb = new StringBuilder();
-			sb.append('<').append(ROOT_TAG).append('>');
+			sb.append(NODE_START).append(ROOT_TAG).append(NODE_END);
 			sb.append(text);
-			sb.append("</").append(ROOT_TAG).append('>');
+			sb.append(CLOSING_NODE_START).append(ROOT_TAG).append(CLOSING_NODE_END);
 			
 			textToParse = sb.toString();
 		} else {
@@ -65,6 +71,30 @@ public class XmlHelper {
 		}
 	}
 	
+	public static List<Attr> parseAttributes(String text) throws SAXException, ParserConfigurationException {
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append(NODE_START).append(ROOT_TAG).append(" ");
+		sb.append(text);
+		sb.append(NODE_END);
+		sb.append(CLOSING_NODE_START).append(ROOT_TAG).append(CLOSING_NODE_END);
+		
+		try {
+			Document document = newDocumentBuilder().parse(new InputSource(new StringReader(sb.toString())));
+			NamedNodeMap nodeMap = document.getFirstChild().getAttributes();
+			List<Attr> attributes = new ArrayList<Attr>();
+			
+			for (int i = 0; i < nodeMap.getLength(); i++) {
+				attributes.add((Attr)nodeMap.item(i));
+			}
+			
+			return attributes;
+		} catch (IOException e) {
+			// Should never happen
+			throw new RuntimeException(e);
+		}
+	}
+	
 	public static String write(Document document, String encoding, int lineWidth, int indentSize) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         write(new OutputStreamWriter(baos), document, encoding, lineWidth, indentSize);
@@ -88,6 +118,10 @@ public class XmlHelper {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	public static boolean representsNodeElement(String fragment) {
+		return fragment.startsWith(NODE_START);
 	}
 
 	private static DocumentBuilder newDocumentBuilder() throws ParserConfigurationException {

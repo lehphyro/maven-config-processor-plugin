@@ -15,6 +15,8 @@
  */
 package com.google.code.configprocessor.processing.xml;
 
+import java.util.*;
+
 import javax.xml.namespace.*;
 import javax.xml.parsers.*;
 
@@ -34,18 +36,34 @@ public class XmlAddActionProcessingAdvisor extends AbstractXmlActionProcessingAd
 		super(expressionResolver, namespaceContext);
 		
 		this.action = action;
-		if (this.action.getBefore() != null) {
+		this.textFragment = resolve(action.getValue());
+		
+		if (action.getBefore() != null) {
 			compile(action.getBefore());
-		} else if (this.action.getAfter() != null) {
+		} else if (action.getAfter() != null) {
 			compile(action.getAfter());
 		} else {
-			throw new ParsingException("Add action must specify [before] or [after] attribute");
+			if (XmlHelper.representsNodeElement(textFragment)) {
+				throw new ParsingException("Add action must specify [before] or [after] attribute");
+			}
+			if (action.getName() == null) {
+				throw new ParsingException("Add action must specify [name] when appending attributes");
+			}
+			compile(action.getName());
 		}
-		this.textFragment = resolve(action.getValue());
 	}
 	
 	public void process(Document document) throws ParsingException {
-		Node node = evaluateForSingleNode(document);
+		if (XmlHelper.representsNodeElement(textFragment)) {
+			Node node = evaluateForSingleNode(document, false, false);
+			addNode(document, node);
+		} else {
+			Node node = evaluateForSingleNode(document, true, false);
+			addAttribute(document, node);
+		}
+	}
+	
+	protected void addNode(Document document, Node node) throws ParsingException {
 		Node parent = node.getParentNode();
 
 		try {
@@ -73,4 +91,19 @@ public class XmlAddActionProcessingAdvisor extends AbstractXmlActionProcessingAd
 		}
 	}
 	
+	protected void addAttribute(Document document, Node node) throws ParsingException {
+		try {
+			List<Attr> attributes = XmlHelper.parseAttributes(textFragment);
+			
+			NamedNodeMap nodeMap = node.getAttributes();
+			for (Attr attr : attributes) {
+				Attr importedAttr = (Attr)document.importNode(attr, false);
+				nodeMap.setNamedItemNS(importedAttr);
+			}
+		} catch (SAXException e) {
+			throw new ParsingException(e);
+		} catch (ParserConfigurationException e) {
+			throw new ParsingException(e);
+		}
+	}
 }
