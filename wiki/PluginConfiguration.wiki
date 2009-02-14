@@ -1,0 +1,57 @@
+#summary Plugin configuration reference guide
+#labels Featured,Phase-Implementation,Configuration
+
+= Configuration options =
+
+Below is a plugin configuration with all the available options set:
+
+{{{
+<plugin>
+    <groupId>com.google.code.maven-config-processor-plugin</groupId>
+    <artifactId>maven-config-processor-plugin</artifactId>
+    <configuration>
+        <outputDirectory>target/processed-files</outputDirectory>
+        <useOutputDirectory>true</useOutputDirectory>
+        <encoding>ISO-8859-1</encoding>
+        <lineWidth>200</lineWidth>
+        <indentSize>4</indentSize>
+        <specificProperties>src/main/assembly/qa.properties</specificProperties>
+        <transformations>
+            <transformation>
+                <type>properties</type>
+                <replacePlaceholders>true</replacePlaceholders>
+                <input>src/main/resources/test.properties</input>
+                <output>resources/test.properties</output>
+                <config>src/main/assembly/properties/properties-processing.xml</config>
+            </transformation>
+        </transformations>
+        <namespaceContexts>
+            <s>http://www.springframework.org/schema/beans</s>
+        </namespaceContexts>
+    </configuration>
+    <executions>
+        <execution>
+            <goals>
+                <goal>process</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+}}}
+
+The following table shows detailed descriptions of the configuration options:
+
+||Name||Type||Required||Default||Description||
+||outputDirectory||file||false||${project.build.directory}||Output directory of processed files, all output will be relative to this directory unless _useOutputDirectory_ is set to false||
+||useOutputDirectory||boolean||false||true||Specify if you want to output all files in directories relative to _outputDirectory_ or use absolute directory names if false.||
+||encoding||string||false||UTF-8||Encoding to use when generating files resulting of the processing||
+||lineWidth||integer||false||80||Line width of XML files to use when formatting output files||
+||indentSize||integer||false||4||Number of whitespaces to use when formatting output files||
+||specificProperties||file||false||empty||File to load additional properties from when replacing placeholders of output files. Useful to keep properties for different environments in files specific to each one. Please note that Maven environment properties always take precedence when resolving placeholders.||
+||transformations||list||true||none||List of files to process with one transformation per file||
+||type||string||false||auto-detected||Type of the file being processed. Possible values are: xml, properties. The plugin will try to auto-detect the file type looking for known file name extensions such as .properties for properties files and .xml for XML files.||
+||replacePlaceholders||boolean||false||true||Specify if you want the plugin to replace text fragments in the form ${} on output files using maven environment and specific properties.||
+||input||file||true||none||Input file to process||
+||output||file||true||none||Output file to generate when processing||
+||config||file||true||none||Rules configuration file to use when processing the input file||
+||namespaceContexts||map||false||empty||Mapping in the form identifier => URL of XML namespaces. Used when querying XML files such as spring bean configurations using XPath||
