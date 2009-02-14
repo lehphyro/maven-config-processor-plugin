@@ -173,6 +173,15 @@
                     </execution>
                 </executions>
             </plugin>
+            
+            <!-- Release -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <goals>deploy site source:jar javadoc:jar repository:bundle-create</goals>
+                </configuration>
+            </plugin>
         </plugins>
 
         <extensions>
