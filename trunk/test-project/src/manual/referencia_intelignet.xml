@@ -1,0 +1,1996 @@
+<?xml version='1.0'?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN" "http://www.oasis-open.org/docbook/xml/4.3b2/docbookx.dtd">
+<book lang="pt-BR">
+
+  <bookinfo>
+
+    <title>Portal de Serviços Intelignet - Documentação de 
+    Referência - Versão <?eval ${project.version}?></title>
+
+  </bookinfo>
+
+  <chapter>
+
+    <title>Introdução</title>
+
+    <sect1>
+
+      <title>Visão Geral</title>
+
+      <para>O portal de serviços intelignet é uma aplicação web com 
+      áreas de acesso público, restrito com acesso de terceiros e 
+      restrito com acesso interno à Intelig. O principal objetivo dessa 
+      aplicação é gerar gráficos e exibir informações sobre os serviços 
+      prestados pela Intelig.</para>
+
+    </sect1>
+
+  </chapter>
+
+  <chapter>
+
+    <title>Arquitetura</title>
+
+    <sect1>
+
+      <title>Introdução</title>
+
+      <para>O portal de serviços é disponibilizado na forma de uma 
+      aplicação web Java baseada no framework Spring. Os componentes 
+      estão organizados sob uma arquitetura MVC simples em que, no 
+      geral, o Modelo representa os dados manipulados diretamente pelos 
+      Controladores (não há uma “camada de serviços” ou “negócio”) e 
+      estes repassam os dados processados à Visão, esta implementada 
+      através de páginas JSP.</para>
+
+      <para>Podemos enumerar três grandes módulos no portal: 
+      administração, gráficos e relatórios, infra – estrutura.</para>
+
+    </sect1>
+
+    <sect1>
+
+      <title>Portal</title>
+
+      <para>O portal possui uma organização interna para suportar a 
+      disponibilização de informações sobre os serviços da Intelig. O 
+      seguinte modelo demonstra essa organização.</para>
+
+      <figure>
+
+        <title>Diagrama de Classes do Domínio do Portal</title>
+
+        <mediaobject><imageobject>
+        <imagedata fileref="imagens/classes_dominio.png"
+         format="png"/></imageobject></mediaobject>
+      </figure>
+
+      <para>O acesso aos dados do portal é feito através do Hibernate 
+      que é configurado e gerenciado pelo Spring.</para>
+
+    </sect1>
+
+    <sect1>
+
+      <title>Serviços</title>
+
+      <para>Os serviços da Intelig são representados por páginas com 
+      tratamento de segurança diferenciado e fazem uso da infra – 
+      estrutura do portal.</para>
+
+      <para>O acesso a dados sobre serviços da Intelig é feito via JDBC 
+      diretamente com algumas classes implementadas para facilitar esse 
+      acesso.</para>
+
+    </sect1>
+
+  </chapter>
+
+  <chapter>
+
+    <title>Administração</title>
+
+    <sect1>
+
+      <title>Introdução</title>
+
+      <para>O módulo de administração é principalmente interno à 
+      Intelig com algumas funcionalidades disponíveis a terceiros. 
+      Compreende cadastros sobre serviços, outras funcionalidades úteis 
+      à Intelig e alguns relatórios sobre o funcionamento do portal. 
+      Está organizado ao redor de três operações básicas: paginação, 
+      exclusão, alteração, inclusão e validação de dados.</para>
+
+    </sect1>
+
+    <sect1>
+
+      <title>Paginação</title>
+
+      <para>A paginação é implementada através de controladores 
+      específicos à paginação que servem de base aos controladores 
+      reais e tag files para geração de HTML.</para>
+
+      <para>As classes estão localizadas no pacote 
+      <classname>br.com.intelignet.controle.paginacao</classname> e 
+      suportam paginação, exclusão com validação e autorização e 
+      filtragem de dados.</para>
+
+      <figure>
+
+        <title>Diagrama de Classes de Paginação</title>
+
+        <mediaobject><imageobject>
+        <imagedata fileref="imagens/classes_paginacao.png"
+         format="png"/></imageobject></mediaobject>
+      </figure>
+
+      <para>Para criar uma nova funcionalidade de paginação, precisamos 
+      primeiro implementar uma classe que herde de 
+      <classname>br.com.intelignet.controle.paginacao.ControladorPaginacao</classname>, 
+      e opcionalmente implementar um 
+      <classname>br.com.intelignet.controle.paginacao.Paginador</classname> 
+      caso o acesso a dados implementado por padrão não seja suficiente 
+      para nossos propósitos.</para>
+
+      <programlisting>public class ControladorPaginacaoServico extends ControladorPaginacao { 
+ 
+ @Override 
+ protected Object formBackingObject(HttpServletRequest request) throws Exception { 
+  return new FiltragemServicoForm(); 
+ } 
+  
+ @Override 
+ protected boolean podeRemover(Persistente obj) { 
+  Servico servico = (Servico)obj; 
+  if (servico.getPlanos().size() &gt; 0) { 
+   return false; 
+  } 
+  return true; 
+ } 
+}</programlisting>
+      <para>A classe 
+      <classname>br.com.intelignet.controle.paginacao.administracao.form.FiltragemServicoForm</classname> 
+      do exemplo guardará os dados da paginação e quaisquer outros 
+      atributos necessários para fazer filtragem dos dados. Podemos ver 
+      também que o método <methodname>podeRemover()</methodname> foi 
+      sobrescrito para garantirmos que somente Serviços sem planos 
+      associados serão removidos.</para>
+
+      <para>Com o controlador implementado, podemos criar a página JSP 
+      para exibição dos dados.</para>
+
+      <programlisting>&lt;%@ include file=&quot;/WEB-INF/jsp/include/include.jsp&quot; %&gt; 
+ 
+&lt;form:form id=&quot;formulario&quot; commandName=&quot;form&quot;&gt; 
+&lt;table border=&quot;0&quot; width=&quot;80%&quot; align=&quot;center&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt; 
+ &lt;tr align=&quot;center&quot;&gt;&lt;td align=&quot;left&quot;&gt; 
+  
+  &lt;table width=&quot;8%&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot; border=&quot;0&quot;&gt; 
+   &lt;tr&gt; 
+    &lt;t:botaoAdicionar url=&quot;/admin/editar_servico.htm&quot; /&gt; 
+ 
+    &lt;td&gt; 
+    &lt;t:pesquisa id=&quot;busca&quot; title=&quot;Filtrar&quot;&gt; 
+     &lt;jsp:attribute name=&quot;adicional&quot;&gt; 
+      &lt;img src=&quot;&lt;c:url value=&quot;/imagens/operacoes/buscar.gif&quot; /&gt;&quot; alt=&quot;Filtrar&quot; border=&quot;0&quot; /&gt; 
+     &lt;/jsp:attribute&gt; 
+     &lt;jsp:body&gt; 
+      &lt;table border=&quot;0&quot; cellpadding=&quot;2&quot; cellspacing=&quot;0&quot;&gt; 
+       &lt;tr&gt; 
+        &lt;td class=&quot;label&quot;&gt; 
+         Nome 
+        &lt;/td&gt; 
+        &lt;td&gt; 
+         &lt;form:input path=&quot;nome&quot; 
+            cssClass=&quot;campoTexto&quot; 
+            cssErrorClass=&quot;campoTextoErro&quot; 
+            maxlength=&quot;50&quot; 
+            size=&quot;25&quot; 
+            cssStyle=&quot;margin-top: 10px;&quot; /&gt; 
+        &lt;/td&gt; 
+        &lt;td style=&quot;padding-right: 17px;&quot;&gt; 
+         &lt;input type=&quot;image&quot;
+                name=&quot;filtrar&quot;
+                src=&quot;&lt;c:url value=&quot;/imagens/operacoes/enviar.gif&quot;/&gt;&quot;
+                title=&quot;Enviar&quot; alt=&quot;Enviar&quot;&gt; 
+        &lt;/td&gt; 
+       &lt;/tr&gt; 
+      &lt;/table&gt; 
+     &lt;/jsp:body&gt; 
+     &lt;/t:pesquisa&gt; 
+    &lt;/td&gt; 
+   &lt;/tr&gt; 
+  &lt;/table&gt; 
+   
+ &lt;/td&gt;&lt;/tr&gt; 
+ 
+ &lt;tr align=&quot;center&quot;&gt;&lt;td&gt; 
+ 
+ &lt;t:paginacao id=&quot;tabela_servicos&quot; lista=&quot;${form.listaPaginacao}&quot;&gt; 
+  &lt;jsp:attribute name=&quot;cabecalho&quot;&gt; 
+   &lt;th&gt;Nome&lt;/th&gt;&lt;th&gt;Página&lt;/th&gt;&lt;th&gt;&lt;!-- Editar --&gt;&lt;/th&gt;&lt;th&gt;&lt;!-- Excluir --&gt;&lt;/th&gt; 
+  &lt;/jsp:attribute&gt; 
+  &lt;jsp:attribute name=&quot;linha&quot;&gt; 
+   &lt;td&gt; 
+    &lt;t:colunaEditar id=&quot;${item.id}&quot; url=&quot;/admin/editar_servico.htm&quot;&gt; 
+     ${item.nome} 
+    &lt;/t:colunaEditar&gt; 
+   &lt;/td&gt; 
+   &lt;td&gt; 
+    ${item.pagina} 
+   &lt;/td&gt; 
+   &lt;td style=&quot;width: 17px; height: 16px;&quot;&gt; 
+    &lt;t:botaoEditar id=&quot;${item.id}&quot; url=&quot;/admin/editar_servico.htm&quot; /&gt; 
+   &lt;/td&gt; 
+   &lt;td style=&quot;width: 17px; height: 16px;&quot;&gt; 
+    &lt;t:botaoExcluir id=&quot;${item.id}&quot; paginaAtual=&quot;${form.listaPaginacao.numeroPagina}&quot; /&gt; 
+   &lt;/td&gt; 
+  &lt;/jsp:attribute&gt; 
+  &lt;jsp:attribute name=&quot;link&quot;&gt; 
+   javascript: paginar(&apos;formulario&apos;, &apos;${tabela}&apos;, ${pagina}); 
+  &lt;/jsp:attribute&gt; 
+ &lt;/t:paginacao&gt; 
+ 
+ &lt;/td&gt;&lt;/tr&gt; 
+&lt;/table&gt; 
+ 
+&lt;input type=&quot;hidden&quot; id=&quot;metodo&quot; name=&quot;metodo&quot; value=&quot;paginar&quot; /&gt; 
+&lt;input type=&quot;hidden&quot; id=&quot;id&quot; name=&quot;id&quot; value=&quot;&quot; /&gt; 
+&lt;input type=&quot;hidden&quot; id=&quot;pagina&quot; name=&quot;pagina&quot; value=&quot;&quot; /&gt; 
+&lt;input type=&quot;hidden&quot; id=&quot;tabela&quot; name=&quot;tabela&quot; value=&quot;&quot; /&gt; 
+ 
+&lt;/form:form&gt; 
+ 
+&lt;%-- Mensagem de remoção negada --%&gt;  
+&lt;c:if test=&quot;${remocaoNegada}&quot;&gt; 
+ &lt;t:popup id=&quot;popupRemocao&quot; titulo=&quot;Exclusão negada&quot; tipo=&quot;alerta&quot; exibido=&quot;true&quot; semLink=&quot;true&quot;&gt; 
+  Este serviço possui planos associados. 
+ &lt;/t:popup&gt; 
+&lt;/c:if&gt; 
+ 
+&lt;%@ include file=&quot;/WEB-INF/jsp/include/rodape.jsp&quot; %&gt;</programlisting>
+      <para>Usamos tags do Spring para fazer o binding automático do 
+      atributo &quot;nome&quot; do formulário e o tag file 
+      <methodname>t:paginacao</methodname> para exibir a tabela com os 
+      dados paginados, também usamos o tag file 
+      <methodname>t:popup</methodname> para exibir uma mensagem caso o 
+      usuário tenha tentado excluir um Serviço que ainda possui Planos 
+      associados.</para>
+
+      <para>O passo final é configurar o portal para usar o novo 
+      controlador, para isso, primeiro configuramos no arquivo 
+      <filename>paginacao.xml</filename> um bean para o 
+      controlador.</para>
+
+      <programlisting>&lt;bean id=&quot;controladorPaginacaoServicos&quot; 
+      class=&quot;br.com.intelignet.controle.paginacao.administracao.ControladorPaginacaoServico&quot; 
+      parent=&quot;controladorPaginacaoAbstrato&quot;&gt; 
+  &lt;property name=&quot;formView&quot; value=&quot;/admin/listar_servicos&quot; /&gt; 
+  &lt;property name=&quot;successView&quot; value=&quot;/admin/listar_servicos&quot; /&gt; 
+  &lt;property name=&quot;paginador&quot;&gt; 
+    &lt;bean class=&quot;br.com.intelignet.controle.paginacao.Paginador&quot;&gt; 
+      &lt;property name=&quot;dao&quot;&gt;&lt;ref bean=&quot;servicoDAO&quot; /&gt;&lt;/property&gt; 
+    &lt;/bean&gt; 
+  &lt;/property&gt; 
+  &lt;property name=&quot;dao&quot;&gt;&lt;ref bean=&quot;servicoDAO&quot; /&gt;&lt;/property&gt; 
+&lt;/bean&gt;</programlisting>
+      <para>Setamos as páginas que o controlador exibirá quando receber 
+      uma requisição e obtemos uma referência ao DAO de Serviços para o 
+      controlador e para o paginador.</para>
+
+      <para>Agora, adicionamos o mapeamento ao nosso controlador no 
+      bean <methodname>urlMapping</methodname> no arquivo <filename>
+      intelignet-servlet.xml</filename>.</para>
+
+      <programlisting>&lt;prop key=&quot;/admin/listar_servicos.htm&quot;&gt;controladorPaginacaoServicos&lt;/prop&gt; </programlisting>
+      <para>Com isso, o portal está pronto para tratar requisições à 
+      página &quot;/admin/listar_servicos.htm&quot;, devemos colocá - 
+      la no nosso Template usando o cadastro de Templates do portal 
+      para podermos acessá - la.</para>
+
+      <para>Abaixo, um diagrama de seqüência mostrando os passos 
+      executados pelo controlador de paginação ao receber requisições 
+      de filtragem, paginação e remoção de itens.</para>
+
+      <figure>
+
+        <title>Diagrama de Seqüência de Paginação</title>
+
+        <mediaobject><imageobject>
+        <imagedata fileref="imagens/sequencia_paginacao.png"/></imageobject></mediaobject>
+      </figure>
+
+    </sect1>
+
+    <sect1>
+
+      <title>Cadastros</title>
+
+      <para>Os cadastros são implementados com recursos do Spring para 
+      data binding e controle de fluxo de páginas. As classes estão 
+      localizadas no pacote 
+      <classname>br.com.intelignet.controle.administracao</classname> e 
+      contam com suporte à cadastros simples e de relacionamentos do 
+      tipo 1:N com paginação.</para>
+
+      <figure>
+
+        <title>Diagrama de Classes de Cadastros</title>
+
+        <mediaobject><imageobject>
+        <imagedata fileref="imagens/classes_cadastro.png"
+         format="png"/></imageobject></mediaobject>
+      </figure>
+
+      <para>Para criar uma nova funcionalidade de cadastro, devemos 
+      primeiro implementar um controlador que herde de 
+      <classname>org.springframework.web.servlet.mvc.SimpleFormController</classname> 
+      caso seja um cadastro simples sem paginações ou 
+      <classname>br.com.intelignet.controle.AbstractMultiActionPaginationFormController</classname> 
+      caso seja um cadastro com paginações e relacionamentos do tipo 
+      1:N.</para>
+
+      <programlisting>public class ControladorServico extends SimpleFormController { 
+ 
+ private Usuario usuario; 
+ private ServicoDAO servicoDAO; 
+ private Autorizador autorizador; 
+  
+ public Usuario getUsuario() { 
+  return usuario; 
+ } 
+  
+ public void setUsuario(Usuario usuario) { 
+  this.usuario = usuario; 
+ } 
+  
+ public void setServicoDAO(ServicoDAO servicoDAO) { 
+  this.servicoDAO = servicoDAO; 
+ } 
+  
+ public ServicoDAO getServicoDAO() { 
+  return servicoDAO; 
+ } 
+  
+ public Autorizador getAutorizador() { 
+  return autorizador; 
+ } 
+  
+ public void setAutorizador(Autorizador autorizador) { 
+  this.autorizador = autorizador; 
+ } 
+ 
+ @Override 
+ protected ModelAndView onSubmit(HttpServletRequest request,
+                                 HttpServletResponse response,
+                                 Object command,
+                                 BindException errors) throws Exception { 
+  Servico servico = (Servico)command; 
+  SegurancaUtils.autorizarInclusaoAlteracao(servico, getUsuario(), getAutorizador(), request); 
+  getServicoDAO().incluirOuAtualizar(servico); 
+   
+  return new ModelAndView(getSuccessView()); 
+ } 
+ 
+ @Override 
+ protected Object formBackingObject(HttpServletRequest request) throws Exception { 
+  Servico servico = null; 
+   
+  Long id = ServletRequestUtils.getLongParameter(request, &quot;id&quot;); 
+  if (id == null) { 
+   servico = new Servico(); 
+  } else { 
+   servico = getServicoDAO().recuperar(id); 
+  } 
+   
+  return servico; 
+ } 
+  
+}</programlisting>
+      <para>Este controlador serve tanto para inclusão, quanto 
+      atualização, verificando se o parâmetro &quot;id&quot; foi 
+      passado na requisição no método 
+      <methodname>formBackingObject()</methodname>, observe também a 
+      verificação de segurança no método 
+      <methodname>onSubmit()</methodname>.</para>
+
+      <para>Agora implementamos a página JSP com o formulário.</para>
+
+      <programlisting>&lt;%@ include file=&quot;/WEB-INF/jsp/include/include.jsp&quot; %&gt; 
+ 
+&lt;br /&gt; 
+&lt;t:formulario&gt; 
+ 
+&lt;jsp:attribute name=&quot;cabecalho&quot;&gt; 
+&amp;gt;&amp;gt; Serviço 
+&lt;/jsp:attribute&gt; 
+ 
+&lt;jsp:body&gt; 
+&lt;form:form id=&quot;formulario&quot; commandName=&quot;servico&quot;&gt; 
+ &lt;table border=&quot;0&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot; width=&quot;100%&quot;&gt; 
+ 
+ &lt;tr&gt; 
+  &lt;td colspan=&quot;2&quot; class=&quot;mensagemErro&quot;&gt; 
+   &lt;form:errors path=&quot;*&quot; /&gt; 
+  &lt;/td&gt; 
+ &lt;/tr&gt; 
+  
+ &lt;tr&gt; 
+  &lt;td class=&quot;label&quot;&gt; 
+   Nome 
+  &lt;/td&gt; 
+  &lt;td class=&quot;label&quot;&gt; 
+   URL 
+  &lt;/td&gt; 
+ &lt;/tr&gt; 
+  
+ &lt;tr&gt; 
+  &lt;td&gt; 
+   &lt;form:input path=&quot;nome&quot; 
+      cssClass=&quot;campoTexto&quot; 
+      cssErrorClass=&quot;campoTextoErro&quot; 
+      maxlength=&quot;100&quot; 
+      size=&quot;50&quot; 
+      disabled=&quot;${!menuAtual.inclusaoPermissao and !menuAtual.alteracaoPermissao}&quot; /&gt; 
+  &lt;/td&gt; 
+  &lt;td&gt; 
+   &lt;form:input path=&quot;pagina&quot; 
+      cssClass=&quot;campoTexto&quot; 
+      cssErrorClass=&quot;campoTextoErro&quot; 
+      maxlength=&quot;100&quot; 
+      size=&quot;50&quot; 
+      disabled=&quot;${!menuAtual.inclusaoPermissao and !menuAtual.alteracaoPermissao}&quot; /&gt; 
+  &lt;/td&gt; 
+ &lt;/tr&gt; 
+  
+ &lt;tr align=&quot;center&quot;&gt; 
+  &lt;td colspan=&quot;2&quot;&gt; 
+   &lt;t:botaoSalvar /&gt; 
+  &lt;/td&gt; 
+ &lt;/tr&gt; 
+ 
+ &lt;/table&gt; 
+&lt;/form:form&gt; 
+&lt;/jsp:body&gt; 
+ 
+&lt;/t:formulario&gt; 
+&lt;br /&gt; 
+ 
+&lt;%@ include file=&quot;/WEB-INF/jsp/include/rodape.jsp&quot; %&gt;</programlisting>
+      <para>Usamos tags &quot;form&quot; do Spring para o binding 
+      automático do formulário e alguns tag files de apoio do portal 
+      como <methodname>t:formulario</methodname> e 
+      <methodname>t:botaoSalvar</methodname>.</para>
+
+      <para>Por fim, configuramos no arquivo <filename>
+      formularios.xml</filename> um bean para o controlador.</para>
+
+      <programlisting>&lt;bean id=&quot;validadorEdicaoServico&quot; class=&quot;br.com.intelignet.validacao.ValidadorServico&quot;&gt; 
+  &lt;property name=&quot;servicoDAO&quot;&gt;&lt;ref bean=&quot;servicoDAO&quot; /&gt;&lt;/property&gt; 
+&lt;/bean&gt; 
+&lt;bean id=&quot;controladorEdicaoServico&quot;
+      class=&quot;br.com.intelignet.controle.administracao.ControladorServico&quot;&gt; 
+  &lt;property name=&quot;commandName&quot; value=&quot;servico&quot; /&gt; 
+  &lt;property name=&quot;commandClass&quot; value=&quot;br.com.intelignet.modelo.Servico&quot; /&gt; 
+  &lt;property name=&quot;formView&quot; value=&quot;/admin/editar_servico&quot; /&gt; 
+  &lt;property name=&quot;successView&quot; value=&quot;redirect:/admin/listar_servicos.htm&quot; /&gt; 
+  &lt;property name=&quot;validator&quot;&gt;&lt;ref bean=&quot;validadorEdicaoServico&quot; /&gt;&lt;/property&gt; 
+  &lt;property name=&quot;servicoDAO&quot;&gt;&lt;ref bean=&quot;servicoDAO&quot; /&gt;&lt;/property&gt; 
+  &lt;property name=&quot;usuario&quot;&gt;&lt;ref bean=&quot;usuario&quot; /&gt;&lt;/property&gt; 
+  &lt;property name=&quot;autorizador&quot;&gt;&lt;ref bean=&quot;autorizador&quot; /&gt;&lt;/property&gt; 
+&lt;/bean&gt; </programlisting>
+      <para>Note a declaração de um validador para nosso formulário, 
+      veremos mais sobre eles na próxima seção.</para>
+
+      <para>Com o controlador e a página implementados, precisamos 
+      mapeá - lo no bean <methodname>urlMapping</methodname> no arquivo 
+      <filename>intelignet-servlet.xml</filename>.</para>
+
+      <programlisting>&lt;prop key=&quot;/admin/editar_servico.htm&quot;&gt;controladorEdicaoServico&lt;/prop&gt; </programlisting>
+      <para>Não esqueça de colocar a página 
+      &quot;/admin/editar_servico.htm&quot; no seu Template para ter 
+      acesso à página.</para>
+
+    </sect1>
+
+    <sect1>
+
+      <title>Validação</title>
+
+      <para>A validação de dados é feita através dos “Validators” do 
+      Spring com algumas extensões para validação específica ao portal 
+      como validação de e-mail. As classes estão localizadas no pacote 
+      <classname>br.com.intelignet.validacao</classname>.</para>
+
+      <para>Continuando o cadastro de serviço, vamos implementar agora 
+      o validador declarado na seção anterior.</para>
+
+      <programlisting>public class ValidadorServico implements Validator { 
+ 
+ private ServicoDAO servicoDAO; 
+  
+ public ServicoDAO getServicoDAO() { 
+  return servicoDAO; 
+ } 
+  
+ public void setServicoDAO(ServicoDAO servicoDAO) { 
+  this.servicoDAO = servicoDAO; 
+ } 
+  
+ public boolean supports(Class clazz) { 
+  return Servico.class.isAssignableFrom(clazz); 
+ } 
+  
+ public void validate(Object obj, Errors errors) { 
+  ValidationUtils.rejectIfEmptyOrWhitespace( 
+   errors, &quot;nome&quot;, &quot;servico.erro.nome_obrigatorio&quot;); 
+  ValidationUtils.rejectIfEmptyOrWhitespace( 
+   errors, &quot;pagina&quot;, &quot;servico.erro.pagina_obrigatoria&quot;); 
+   
+  Servico servico = (Servico)obj; 
+  if (servico.getId() == null &amp;&amp; StringUtils.hasText(servico.getPagina())) { 
+   if (getServicoDAO().recuperarPelaPagina(servico.getPagina()) != null) { 
+    errors.rejectValue(&quot;pagina&quot;, &quot;servico.erro.pagina_existente&quot;); 
+   } 
+  } 
+ } 
+}</programlisting>
+      <para>Ele deve implementar a interface 
+      <classname>org.springframework.validation.Validator</classname> e 
+      executar a validação no método 
+      <methodname>validate()</methodname>. Observe que o validador 
+      retorna identificadores de mensagens de erro ao invés de retornar 
+      as próprias mensagens. O Spring automaticamente buscará as 
+      mensagens reais no arquivo <filename>
+      br/com/intelignet/recursos/erros.properties</filename> 
+      configurado pelo bean <methodname>messageSource</methodname> no 
+      arquivo <filename>infra.xml</filename>.</para>
+
+    </sect1>
+
+  </chapter>
+
+  <chapter>
+
+    <title>Gráficos e Relatórios</title>
+
+    <sect1>
+
+      <title>Introdução</title>
+
+      <para>O módulo de gráficos e relatórios é praticamente de acesso 
+      público visto que os serviços da Intelig são acessados através 
+      desse módulo.</para>
+
+    </sect1>
+
+    <sect1>
+
+      <title>Gráficos</title>
+
+      <sect2>
+
+        <title>Gerenciador de Gráficos</title>
+
+        <para>Os gráficos gerados pelo portal são salvos num diretório 
+        específico do servidor web para acesso pelos clientes, o 
+        Gerenciador de Gráficos é responsável por salvar gráficos 
+        gerados, excluir gráficos antigos e fazer cache de gráficos 
+        gerados para evitar a geração repetida dos mesmos gráficos. 
+        Todos os Geradores de Gráficos do portal trabalham em conjunto 
+        com o Gerenciador de Gráficos para fazer seu trabalho.</para>
+
+        <figure>
+
+          <title>Diagrama de Classes de Gerenciamento de 
+          Gráficos</title>
+
+          <mediaobject><imageobject>
+          <imagedata fileref="imagens/classes_gerenciador_graficos.png"
+           format="png"/></imageobject></mediaobject>
+        </figure>
+
+        <para>Veja a seqüência de chamadas que ocorre durante a geração 
+        de um gráfico:</para>
+
+        <figure>
+
+          <title>Diagrama de Seqüência de Geração de Gráfico</title>
+
+          <mediaobject><imageobject>
+          <imagedata fileref="imagens/sequencia_gerador_graficos.png"/></imageobject></mediaobject>
+        </figure>
+
+      </sect2>
+
+      <sect2>
+
+        <title>Geradores de Gráficos</title>
+
+        <para>Um Gerador de Gráfico age como interface entre o cliente 
+        que requisita um gráfico e o processo de geração do gráfico. 
+        Ele deve obter os dados necessários para gerar um gráfico, 
+        processá – los e retornar um identificador do gráfico gerado ao 
+        cliente. Esse identificador, no portal, é usado como o nome do 
+        arquivo que contém a imagem do gráfico, sendo repassado ao 
+        browser e servido pelo servidor web. Para fazer seu trabalho, 
+        os Geradores de Gráficos normalmente contam com dois ajudantes: 
+        um objeto que obtém os dados da fonte efetivamente (DAO) e um 
+        que mapeia e formata os dados obtidos para serem usados na 
+        geração do gráfico final (Mapeador).</para>
+
+        <para>Existem algumas implementações prontas para uso no portal 
+        baseadas na biblioteca 
+        <ulink url="http://www.jfree.org/jfreechart/">
+        JFreeChart</ulink>:</para>
+
+        <variablelist>
+
+          <varlistentry>
+
+            <term><classname>br.com.intelignet.grafico.GeradorGraficoArea</classname></term>
+
+            <listitem>
+
+              <para>Gera gráficos de área e suporta os mesmos atributos 
+              do gerador de gráficos de barras.</para>
+
+            </listitem>
+
+          </varlistentry>
+
+          <varlistentry>
+
+            <term><classname>br.com.intelignet.grafico.GeradorGraficoBarras</classname></term>
+
+            <listitem>
+
+              <para>Gera gráficos de barras categorizados ou não.</para>
+
+            </listitem>
+
+          </varlistentry>
+
+          <varlistentry>
+
+            <term><classname>br.com.intelignet.grafico.GeradorGraficoPizza</classname></term>
+
+            <listitem>
+
+              <para>Gera gráficos do tipo pizza.</para>
+
+            </listitem>
+
+          </varlistentry>
+
+          <varlistentry>
+
+            <term><classname>br.com.intelignet.grafico.GeradorGraficoXY</classname></term>
+
+            <listitem>
+
+              <para>Gera gráficos de coordenadas XY.</para>
+
+            </listitem>
+
+          </varlistentry>
+
+        </variablelist>
+
+        <figure>
+
+          <title>Diagrama de Classes de Geradores de Gráficos</title>
+
+          <mediaobject><imageobject>
+          <imagedata fileref="imagens/classes_gerador_graficos.png"
+           format="png"/></imageobject></mediaobject>
+        </figure>
+
+        <para>A implementação de um Gerador de Gráfico normalmente se 
+        resume à escolha de uma classe base de acordo com o tipo de 
+        gráfico a ser gerado (área, barras, pizza ou XY) e à 
+        implementação do método 
+        <methodname>graficoCriado()</methodname> que permite a 
+        customização do gráfico após ele ser gerado. Outro método que 
+        pode ser sobrescrito é o 
+        <methodname>criarDataSet()</methodname> caso os dados não 
+        venham num formato &quot;amigável&quot; ao gerador de gráficos. 
+        Vejamos um exemplo:</para>
+
+        <programlisting>public class GeradorGraficoPerformance0800LigLocalOrigem extends GeradorGraficoPizza { 
+ 
+ @Override 
+ protected void graficoCriado(JFreeChart grafico, Parametro... parametros) throws Exception { 
+  PiePlot plot = (PiePlot)grafico.getPlot(); 
+   
+  plot.setLabelGenerator(null); 
+  for (int i = 0; i &lt; 10; i++) { 
+   plot.setSectionPaint(i, getConfiguracoesGrafico().getCoresOrigem()[i]); 
+  } 
+ 
+  grafico.setBorderVisible(false); 
+ } 
+}</programlisting>
+        <para>Este é o gerador de gráficos do Serviço Performance de 
+        Voz 0800 e LigLocal -&gt; Origem, ele herda de 
+        <classname>br.com.intelignet.grafico.GeradorGraficoPizza</classname> 
+        e implementa o método <methodname>graficoCriado()</methodname> 
+        para mudar as cores das fatias da pizza usando o método 
+        <methodname>setSectionPaint()</methodname>.</para>
+
+      </sect2>
+
+      <sect2>
+
+        <title>Acesso a Dados</title>
+
+        <para>Geradores de Gráficos normalmente usam um DAO para obter 
+        os dados necessários para gerar um gráfico. Os classes usadas 
+        para essa tarefa estão localizadas no pacote 
+        <classname>br.com.intelignet.grafico.dao</classname>. A 
+        implementação mais usada de DAO é a classe 
+        <classname>br.com.intelignet.grafico.dao.GraficoDAOGenerico</classname>, 
+        ela faz uso dos mapeadores para transformar os dados obtidos 
+        para serem usados pelos Geradores de Gráficos. No portal, estes 
+        implementam a interface 
+        <classname>org.springframework.jdbc.core.RowMapper</classname> 
+        e criam objetos &quot;DataItem&quot; representando linhas 
+        obtidas do banco a partir dos dados obtidos.</para>
+
+        <figure>
+
+          <title>Diagrama de Classes de Acesso a Dados para Geradores 
+          de Gráficos</title>
+
+          <mediaobject><imageobject>
+          <imagedata fileref="imagens/classes_dao_graficos.png"
+           format="png"/></imageobject></mediaobject>
+        </figure>
+
+        <para>Como a implementação de DAO padrão vale para a grande 
+        maioria dos casos, vejamos a implementação de um mapeador como 
+        exemplo:</para>
+
+        <programlisting>public class Mapeador extends MapeadorCategoria { 
+ 
+ private DateFormat dateFormatEntrada; 
+ private DateFormat dateFormatSaida; 
+ 
+ public Mapeador() { 
+  dateFormatEntrada = new SimpleDateFormat(&quot;yyyy-MM-dd HH:mm:ss&quot;); 
+  dateFormatSaida = new SimpleDateFormat(&quot;MMM-yy&quot;); 
+ } 
+  
+ @Override 
+ public Object mapRow(ResultSet rs, int rowNum) throws SQLException { 
+  double valor = rs.getDouble(getNomeValor()); 
+  String categoria = getCategoriaDeColuna(rs.getString(getNomeCategoria())); 
+   
+  return new CategoriaDataItem(valor, &quot;TD&quot;, categoria); 
+ } 
+  
+ @Override 
+ protected String getCategoriaDeColuna(String categoria) { 
+  String saida = null; 
+  try { 
+   saida = dateFormatSaida.format(dateFormatEntrada.parse(categoria)); 
+  } catch (Exception e) { 
+   throw new RuntimeException(e); 
+  } 
+  return saida; 
+ } 
+ 
+}</programlisting>
+        <para>Este mapeador implementa o método principal dos 
+        mapeadores, <methodname>mapRow()</methodname>, para formatar os 
+        nomes das <methodname>categorias</methodname> no formato 
+        &quot;MMM-yy&quot;.</para>
+
+      </sect2>
+
+    </sect1>
+
+    <sect1>
+
+      <title>Relatórios</title>
+
+      <para>Relatórios são listagens de dados geradas a partir ou não 
+      de parâmetros e podem ou não oferecer opções de exportação para 
+      algum tipo de saída e download. São implementados através da 
+      estrutura de controladores do Spring.</para>
+
+      <para>Veja um exemplo:</para>
+
+      <programlisting>public class ControladorRelatorioTrafegoUsuarios 
+ extends SimpleFormController 
+ implements ListenerParametrosSistema { 
+ 
+ private static final int LIMITE_USUARIOS_DEFAULT = 10; 
+  
+ private UsuarioDAO usuarioDAO; 
+  
+ private int limiteUsuarios; 
+  
+ public ControladorRelatorioTrafegoUsuarios() { 
+  limiteUsuarios = LIMITE_USUARIOS_DEFAULT; 
+ } 
+  
+ public UsuarioDAO getUsuarioDAO() { 
+  return usuarioDAO; 
+ } 
+  
+ public void setUsuarioDAO(UsuarioDAO usuarioDAO) { 
+  this.usuarioDAO = usuarioDAO; 
+ } 
+ 
+ @Override 
+ protected ModelAndView onSubmit(HttpServletRequest request,
+                                 HttpServletResponse response,
+                                 Object command,
+                                 BindException errors) throws Exception { 
+  return showForm(request, response, errors); 
+ } 
+  
+ @Override 
+ protected void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) throws Exception { 
+  binder.registerCustomEditor(Date.class, new EditorData(new SimpleDateFormat(&quot;dd/MM/yyyy&quot;))); 
+ } 
+ 
+ @Override 
+ protected Map referenceData(HttpServletRequest request, Object command, Errors errors) throws Exception { 
+  RelatorioTrafegoUsuariosForm form = (RelatorioTrafegoUsuariosForm)command; 
+  form.setUsuariosMaisLogados(getUsuarioDAO().listarMaisLogados(
+    form.getDataInicial(), form.getDataFinal(), limiteUsuarios)); 
+   
+  return super.referenceData(request, command, errors); 
+ } 
+  
+ public void parametrosAtualizados(ParametrosSistema parametrosSistema) { 
+  limiteUsuarios = parametrosSistema.getParametrosAdministracao().getLimiteUsuariosMaisLogados(); 
+  if (limiteUsuarios &lt;= 0) { 
+   limiteUsuarios = LIMITE_USUARIOS_DEFAULT; 
+  } 
+ } 
+}</programlisting>
+      <para>Este é o controlador do relatório de tráfego de usuários, 
+      note o uso do DAO para obtenção dos dados, ele usa o seguinte JSP 
+      para formatar a saída.</para>
+
+      <programlisting>&lt;%@ include file=&quot;/WEB-INF/jsp/include/include.jsp&quot; %&gt; 
+ 
+&lt;form:form id=&quot;formulario&quot; commandName=&quot;relatorio&quot;&gt; 
+ &lt;table border=&quot;0&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot; width=&quot;95%&quot; align=&quot;center&quot;&gt; 
+ 
+  &lt;tr&gt; 
+   &lt;td class=&quot;mensagemErro&quot;&gt; 
+    &lt;form:errors path=&quot;*&quot; /&gt; 
+   &lt;/td&gt; 
+  &lt;/tr&gt; 
+ 
+  &lt;tr&gt; 
+   &lt;td&gt; 
+    &lt;t:cabecalho&gt; 
+     &lt;table border=&quot;0&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot; width=&quot;50%&quot; align=&quot;left&quot;&gt; 
+      &lt;tr&gt; 
+       &lt;td class=&quot;fonte-cabecalho&quot; align=&quot;right&quot;&gt; 
+        Início 
+       &lt;/td&gt; 
+       &lt;td&gt; 
+        &lt;form:input id=&quot;campo_dataInicial&quot; 
+           path=&quot;dataInicial&quot; 
+           cssClass=&quot;campoTexto&quot; 
+           cssErrorClass=&quot;campoTextoErro&quot; 
+           cssStyle=&quot;margin-right: 0px; margin-bottom: 3px;&quot; 
+           maxlength=&quot;10&quot; 
+           size=&quot;15&quot; /&gt; 
+        &lt;t:calendario campo=&quot;campo_dataInicial&quot; habilitado=&quot;true&quot; /&gt; 
+       &lt;/td&gt; 
+       &lt;td class=&quot;fonte-cabecalho&quot; align=&quot;right&quot;&gt; 
+        Fim 
+       &lt;/td&gt; 
+       &lt;td&gt; 
+        &lt;form:input id=&quot;campo_dataFinal&quot; 
+           path=&quot;dataFinal&quot; 
+           cssClass=&quot;campoTexto&quot; 
+           cssErrorClass=&quot;campoTextoErro&quot; 
+           cssStyle=&quot;margin-right: 0px; margin-bottom: 3px;&quot; 
+           maxlength=&quot;10&quot; 
+           size=&quot;15&quot; /&gt; 
+        &lt;t:calendario campo=&quot;campo_dataFinal&quot; habilitado=&quot;true&quot; /&gt; 
+       &lt;/td&gt; 
+       &lt;td&gt; 
+        &lt;input type=&quot;image&quot; src=&quot;&lt;c:url value=&quot;/imagens/operacoes/enviar.gif&quot; /&gt;&quot; title=&quot;Enviar&quot;&gt; 
+       &lt;/td&gt; 
+      &lt;/tr&gt; 
+     &lt;/table&gt; 
+    &lt;/t:cabecalho&gt; 
+   &lt;/td&gt; 
+  &lt;/tr&gt; 
+ 
+  &lt;c:if test=&quot;${!empty relatorio.usuariosMaisLogados}&quot;&gt; 
+  &lt;!-- Espaço --&gt; 
+  &lt;tr&gt; 
+   &lt;td style=&quot;font-size: 10px;&quot;&gt;&amp;nbsp;&lt;/td&gt; 
+  &lt;/tr&gt; 
+   
+  &lt;tr&gt; 
+   &lt;td&gt; 
+    &lt;t:paginacao id=&quot;trafego&quot; lista=&quot;${relatorio.usuariosMaisLogados}&quot; semPaginacao=&quot;true&quot;&gt; 
+     &lt;jsp:attribute name=&quot;cabecalho&quot;&gt; 
+      &lt;th&gt;Login&lt;/th&gt; 
+      &lt;th&gt;Nome&lt;/th&gt; 
+      &lt;th&gt;Último Login&lt;/th&gt; 
+      &lt;th&gt;Quantidade de Logins&lt;/th&gt; 
+      &lt;th&gt;Último IP&lt;/th&gt; 
+     &lt;/jsp:attribute&gt; 
+     &lt;jsp:attribute name=&quot;linha&quot;&gt; 
+      &lt;td&gt; 
+       ${item.login} 
+      &lt;/td&gt; 
+      &lt;td&gt; 
+       ${item.nome} 
+      &lt;/td&gt; 
+      &lt;td&gt; 
+       &lt;fmt:formatDate value=&quot;${item.ultimoLogin}&quot; 
+           type=&quot;both&quot; 
+           dateStyle=&quot;medium&quot; 
+           timeStyle=&quot;medium&quot; /&gt; 
+      &lt;/td&gt; 
+      &lt;td style=&quot;text-align: right;&quot;&gt; 
+       ${item.quantidadeLogins} 
+      &lt;/td&gt; 
+      &lt;td&gt; 
+       ${item.ultimoIP} 
+      &lt;/td&gt; 
+     &lt;/jsp:attribute&gt; 
+    &lt;/t:paginacao&gt; 
+   &lt;/td&gt; 
+  &lt;/tr&gt; 
+  &lt;/c:if&gt; 
+   
+ &lt;/table&gt; 
+&lt;/form:form&gt; 
+ 
+&lt;%@ include file=&quot;/WEB-INF/jsp/include/rodape.jsp&quot; %&gt;</programlisting>
+    </sect1>
+
+    <sect1>
+
+      <title>Exportação e Download</title>
+
+      <para>Algumas funcionalidades do portal oferecem a opção de 
+      download dos dados sendo manipulados. Esta opção é implementada 
+      como um controlador à parte que obtém os dados e faz uso de um 
+      “viewResolver” especial do Spring configurado pelo arquivo de 
+      propriedades <filename>
+      br/com/intelignet/recursos/exportacoes.properties</filename> para 
+      gerar a saída para download sem precisar de uma página JSP. O 
+      portal exporta arquivos CSV e PDF. As classes de controladores 
+      estão localizadas no pacote 
+      <classname>br.com.intelignet.controle.exportacao</classname> e os 
+      exportadores no pacote 
+      <classname>br.com.intelignet.exportacao</classname>.</para>
+
+      <figure>
+
+        <title>Diagrama de Classes de Exportação de Dados</title>
+
+        <mediaobject><imageobject>
+        <imagedata fileref="imagens/classes_exportacao.png"
+         format="png"/></imageobject></mediaobject>
+      </figure>
+
+      <para>Para disponibilizar um download de arquivo CSV por exemplo, 
+      primeiro implementamos o controlador que será responsável por 
+      obter os dados e repassá - los ao exportador.</para>
+
+      <programlisting>public class ControladorExportacaoFaleConosco extends AbstractController { 
+  
+ private Usuario usuario; 
+  
+ private UsuarioDAO usuarioDAO; 
+  
+ public void setUsuario(Usuario usuario) { 
+  this.usuario = usuario; 
+ } 
+  
+ public Usuario getUsuario() { 
+  return usuario; 
+ } 
+  
+ public void setUsuarioDAO(UsuarioDAO usuarioDAO) { 
+  this.usuarioDAO = usuarioDAO; 
+ } 
+  
+ public UsuarioDAO getUsuarioDAO() { 
+  return usuarioDAO; 
+ } 
+  
+ @Override 
+ protected ModelAndView handleRequestInternal(HttpServletRequest request, 
+             HttpServletResponse response) 
+ throws Exception { 
+  Usuario recuperado = getUsuarioDAO().recuperar(getUsuario().getId()); 
+  int status = ServletRequestUtils.getIntParameter(request, &quot;status&quot;, FaleConosco.PENDENTE); 
+   
+  // Seleciona os itens 
+  List&lt;FaleConosco&gt; lista = new ArrayList&lt;FaleConosco&gt;(); 
+  for (FaleConosco faleConosco : recuperado.getRequisicoesFaleConosco()) { 
+   if (faleConosco.getStatus() == status) { 
+    lista.add(faleConosco); 
+   } 
+  } 
+   
+  // Ordena 
+  Collections.sort(lista); 
+ 
+  ModelAndView modelAndView = new ModelAndView(&quot;exportadorFaleConosco&quot;); 
+  modelAndView.addObject(&quot;lista&quot;, lista); 
+   
+  return modelAndView; 
+ } 
+} </programlisting>
+      <para>Com a lista de dados, o exportador pode gerar o CSV e enviá 
+      - lo ao cliente.</para>
+
+      <programlisting>public class ExportadorFaleConosco extends AbstractCsvView { 
+ 
+ private DateFormat dateFormat; 
+  
+ public ExportadorFaleConosco() { 
+  dateFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, new Locale(&quot;pt&quot;, &quot;BR&quot;)); 
+ } 
+  
+ @Override 
+ protected String getFileName(Map model) { 
+  return &quot;fale_conosco.csv&quot;; 
+ } 
+  
+ @SuppressWarnings(&quot;unchecked&quot;) 
+ @Override 
+ protected String buildCsv(Map model) { 
+  List&lt;FaleConosco&gt; lista = (List&lt;FaleConosco&gt;)model.get(&quot;lista&quot;); 
+   
+  StringBuilder sb = new StringBuilder(); 
+  if (lista.size() == 0) { 
+   sb.append(&quot;Nenhum registro&quot;); 
+  } else { 
+   for (FaleConosco faleConosco : lista) { 
+    adicionarRegistro(faleConosco, sb); 
+   } 
+  } 
+   
+  return sb.toString(); 
+ } 
+  
+ protected void adicionarRegistro(FaleConosco faleConosco, StringBuilder sb) { 
+  sb.append(faleConosco.getAssunto().getNome()); 
+  sb.append(&apos;;&apos;); 
+  sb.append(faleConosco.getNome()); 
+  sb.append(&apos;;&apos;); 
+  sb.append(faleConosco.getTelefone()); 
+  sb.append(&apos;;&apos;); 
+  sb.append(faleConosco.getEmail()); 
+  sb.append(&apos;;&apos;); 
+  sb.append(dateFormat.format(faleConosco.getData())); 
+  sb.append(&apos;;&apos;); 
+  sb.append(faleConosco.getSolicitacao()); 
+  sb.append(&quot;\r\n&quot;); 
+ } 
+}</programlisting>
+      <para>Nesse ponto, a classe 
+      <classname>br.com.intelignet.exportacao.AbstractCsvView</classname> 
+      cuida de enviar a resposta apropriada ao cliente.</para>
+
+    </sect1>
+
+  </chapter>
+
+  <chapter>
+
+    <title>Segurança</title>
+
+    <sect1>
+
+      <title>Introdução</title>
+
+      <para>Sabendo que o portal possui áreas públicas, uma boa infra – 
+      estrutura para segurança se faz necessária. O portal implementa 
+      autenticação e autorização nos níveis de serviço, página e ações 
+      individuais dentro das páginas através de “Templates” e 
+      configuração por exceção flexível.</para>
+
+      <figure>
+
+        <title>Diagrama de Classes de Segurança</title>
+
+        <mediaobject><imageobject>
+        <imagedata fileref="imagens/classes_seguranca.png"
+         format="png"/></imageobject></mediaobject>
+      </figure>
+
+    </sect1>
+
+    <sect1>
+
+      <title>Autenticação</title>
+
+      <para>A autenticação é feita por uma classe que implementa a 
+      interface 
+      <classname>br.com.intelignet.seguranca.Autenticador</classname> 
+      normalmente utilizando uma classe que implementa a interface 
+      <classname>br.com.intelignet.seguranca.ManipuladorSenhas</classname> 
+      para verificar senhas. Ela é responsável por buscar os dados da 
+      fonte de dados e fazer as verificações de segurança 
+      necessárias.</para>
+
+      <para>O portal acessa os dados dos usuários em duas fontes de 
+      dados diferentes: banco de dados relacional e LDAP. O banco de 
+      dados somente mantém os logins dos usuários registrados no 
+      portal, o LDAP mantém o nome real e a senha do usuário.</para>
+
+      <para>O login é cadastrado na forma de um endereço de e-mail no 
+      formato <emphasis>nome@domínio</emphasis> e a senha é mantida 
+      como um hash que pode ser gerado por três algoritmos diferentes: 
+      (SHA-1, MD5 ou crypt do Perl) no formato 
+      <emphasis>{SHA|MD5|crypt}hash</emphasis>.</para>
+
+      <para>Todas as requisições por páginas intrínsecas ao portal, 
+      estáticas ou dinâmicas (scripts) passam pelo 
+      <classname>InterceptadorAutenticador</classname> configurado pelo 
+      Spring que verifica se o usuário está logado ou não e se seu 
+      login expirou, obrigando – o a se autenticar em caso positivo. O 
+      portal faz uma distinção entre expiração da sessão HTTP e 
+      expiração do login do usuário garantindo que uma página diferente 
+      seja exibida em cada situação e que haja um controle mais fino do 
+      login do usuário.</para>
+
+    </sect1>
+
+    <sect1>
+
+      <title>Autorização</title>
+
+      <sect2>
+
+        <title>Geral</title>
+
+        <para>Todas as requisições por páginas intrínsecas ao portal, 
+        estáticas ou dinâmicas (scripts) passam pelo 
+        <classname>InterceptadorAutorizadorGeral</classname> 
+        configurado pelo Spring que verifica se o usuário possui acesso 
+        à página requisitada através de seu Template, ou, caso não 
+        esteja logado, através do Template Público. Há também as 
+        páginas que não requerem autorização e portanto têm acesso 
+        livre de verificação.</para>
+
+      </sect2>
+
+      <sect2>
+
+        <title>Serviços</title>
+
+        <para>Os Serviços oferecidos pela Intelig exigem mais uma 
+        verificação de segurança do portal. Como o 
+        <classname>InterceptadorAutorizadorGeral</classname>, o 
+        <classname>InterceptadorAutorizadorServico</classname> é 
+        executado em todas as requisições pertinentes ao portal e 
+        garante que o usuário possui acesso à página requisitada 
+        através da busca pelo serviço que a página representa. Se a 
+        busca for bem – sucedida, o interceptador solicita que 
+        <classname>Autorizador</classname> configurado autorize o 
+        acesso do usuário ao serviço solicitado. O interceptador também 
+        garante que todas as páginas de serviços sejam acessadas com um 
+        cliente associado ao usuário, redirecionando para a página de 
+        seleção de cliente caso o usuário não tenha nenhum 
+        associado.</para>
+
+      </sect2>
+
+    </sect1>
+
+  </chapter>
+
+  <chapter>
+
+    <title>Componentes de infra – estrutura</title>
+
+    <sect1>
+
+      <title>Introdução</title>
+
+      <para>O portal oferece vários componentes de infra – estrutura 
+      para o desenvolvimento das funcionalidades do portal. A maioria 
+      destes componentes está localizada no pacote 
+      <classname>br.com.intelignet.infra</classname>.</para>
+
+    </sect1>
+
+    <sect1>
+
+      <title>Fontes de Dados</title>
+
+      <sect2>
+
+        <title>Bancos de Dados Relacionais</title>
+
+        <para>O acesso a bancos de dados relacionais é inteiramente 
+        gerenciado pelo Spring. Ele configura “DataSources” e 
+        “JdbcTemplates” para serem usados nos componentes de acesso a 
+        dados garantindo automaticamente que conexões aos bancos sejam 
+        fechadas e os recursos sejam liberados.</para>
+
+        <note>
+
+          <para>Os diagramas de acesso a dados abaixo não ilustram 
+          todas as classes presentes no portal, somente algumas para 
+          fins de exemplificação.</para>
+
+        </note>
+
+        <figure>
+
+          <title>Diagrama de Classes de Acesso a Dados do Portal</title>
+
+          <mediaobject><imageobject>
+          <imagedata fileref="imagens/classes_dao_portal.png"
+           format="png"/></imageobject></mediaobject>
+        </figure>
+
+        <figure>
+
+          <title>Diagrama de Classes de Acesso a Dados dos Serviços da 
+          Intelig</title>
+
+          <mediaobject><imageobject>
+          <imagedata fileref="imagens/classes_dao_servicos.png"
+           format="png"/></imageobject></mediaobject>
+        </figure>
+
+        <para>A criação de um DAO usando o Hibernate é feita com a 
+        criação de uma interface definindo o DAO.</para>
+
+        <programlisting>public interface ServicoDAO extends DAO&lt;Servico&gt; { 
+  
+ String FILTRO_NOME = &quot;filtroNomeServico&quot;; 
+  
+ /** 
+  * Recupera um serviço pela página. 
+  *  
+  * @param pagina Página do serviço. 
+  * @return Serviço recuperado ou null. 
+  */ 
+ Servico recuperarPelaPagina(String pagina); 
+}</programlisting>
+        <para>E uma implementação herdando de 
+        <classname>br.com.intelignet.dao.impl.HibernateDAO</classname> 
+        para usar as funcionalidades básicas do Hibernate.</para>
+
+        <programlisting>public class HibernateServicoDAO 
+ extends HibernateDAO&lt;Servico&gt;  
+ implements ServicoDAO { 
+  
+ private static final String QUERY_RECUPERAR_PELA_PAGINA = 
+  &quot;br.com.intelignet.modelo.Servico.recuperarPelaPagina&quot;; 
+ 
+ public HibernateServicoDAO() { 
+  super(Servico.class); 
+ } 
+  
+ @SuppressWarnings(&quot;unchecked&quot;) 
+ public Servico recuperarPelaPagina(String pagina) { 
+  List&lt;Servico&gt; lista = (List&lt;Servico&gt;)recuperarPorQuery( 
+   QUERY_RECUPERAR_PELA_PAGINA, 
+   new Parametro(&quot;pagina&quot;, pagina)); 
+   
+  if (lista.size() &gt; 0) { 
+   return lista.get(0); 
+  } else { 
+   return null; 
+  } 
+ } 
+}</programlisting>
+        <para>Também é necessário mapear a classe representando a 
+        entidade no Hibernate.</para>
+
+        <programlisting>&lt;hibernate-mapping&gt; 
+  &lt;class name=&quot;br.com.intelignet.modelo.Servico&quot; table=&quot;SERVICO&quot; where=&quot;ATIVO = 1&quot;&gt; 
+         
+    &lt;id name=&quot;id&quot; type=&quot;long&quot;&gt; 
+      &lt;column name=&quot;ID_SERVICO&quot; 
+              sql-type=&quot;MEDIUMINT&quot; 
+              length=&quot;9&quot; 
+              not-null=&quot;true&quot; /&gt; 
+      &lt;generator class=&quot;identity&quot; /&gt; 
+    &lt;/id&gt; 
+         
+    &lt;property name=&quot;nome&quot; type=&quot;string&quot;&gt; 
+      &lt;column name=&quot;NOME&quot; length=&quot;100&quot; not-null=&quot;true&quot; /&gt; 
+    &lt;/property&gt; 
+ 
+    &lt;property name=&quot;publico&quot; type=&quot;boolean&quot;&gt; 
+      &lt;column name=&quot;PUBLICO&quot; default=&quot;0&quot; /&gt; 
+    &lt;/property&gt; 
+         
+    &lt;property name=&quot;pagina&quot; type=&quot;string&quot;&gt; 
+      &lt;column name=&quot;PAGINA&quot; length=&quot;100&quot; not-null=&quot;true&quot; unique=&quot;true&quot; /&gt; 
+    &lt;/property&gt; 
+         
+    &lt;set name=&quot;planos&quot; 
+         table=&quot;PLANO_SERVICO&quot; 
+         inverse=&quot;true&quot; 
+         cascade=&quot;save-update&quot;&gt; 
+      &lt;key&gt; 
+        &lt;column name=&quot;ID_SERVICO&quot; 
+                sql-type=&quot;MEDIUMINT&quot; 
+                length=&quot;9&quot; 
+                not-null=&quot;true&quot; /&gt; 
+      &lt;/key&gt;
+      &lt;many-to-many class=&quot;br.com.intelignet.modelo.Plano&quot;&gt; 
+        &lt;column name=&quot;ID_PLANO&quot; 
+                sql-type=&quot;MEDIUMINT&quot; 
+                length=&quot;9&quot; 
+                not-null=&quot;true&quot; /&gt; 
+      &lt;/many-to-many&gt; 
+    &lt;/set&gt; 
+ 
+    &lt;!-- Auditoria --&gt; 
+    &lt;property name=&quot;idCriador&quot; type=&quot;long&quot;&gt; 
+      &lt;column name=&quot;ID_CRIADOR&quot; 
+              sql-type=&quot;MEDIUMINT&quot; 
+              length=&quot;9&quot; 
+              not-null=&quot;true&quot; /&gt; 
+    &lt;/property&gt; 
+         
+    &lt;property name=&quot;idModificador&quot; type=&quot;long&quot;&gt; 
+      &lt;column name=&quot;ID_MODIFICADOR&quot; 
+              sql-type=&quot;MEDIUMINT&quot; 
+              length=&quot;9&quot; 
+              not-null=&quot;true&quot; /&gt; 
+    &lt;/property&gt; 
+         
+    &lt;property name=&quot;dataCriacao&quot; type=&quot;timestamp&quot;&gt; 
+      &lt;column name=&quot;DATA_CRIACAO&quot; not-null=&quot;true&quot; /&gt; 
+    &lt;/property&gt; 
+         
+    &lt;property name=&quot;dataModificacao&quot; type=&quot;timestamp&quot;&gt; 
+      &lt;column name=&quot;DATA_MODIFICACAO&quot; not-null=&quot;true&quot; /&gt; 
+    &lt;/property&gt; 
+         
+    &lt;property name=&quot;ativo&quot; type=&quot;boolean&quot;&gt; 
+      &lt;column name=&quot;ATIVO&quot; default=&quot;1&quot; /&gt; 
+    &lt;/property&gt; 
+ 
+    &lt;filter name=&quot;filtroNomeServico&quot; condition=&quot;NOME like :nome&quot; /&gt; 
+ 
+    &lt;query name=&quot;recuperarPelaPagina&quot;&gt; 
+      &lt;![CDATA[ 
+      FROM br.com.intelignet.modelo.Servico AS servico 
+      WHERE servico.pagina = :pagina 
+      ]]&gt; 
+    &lt;/query&gt; 
+         
+  &lt;/class&gt; 
+     
+  &lt;filter-def name=&quot;filtroNomeServico&quot;&gt; 
+    &lt;filter-param name=&quot;nome&quot; type=&quot;string&quot; /&gt; 
+  &lt;/filter-def&gt; 
+ 
+&lt;/hibernate-mapping&gt;</programlisting>
+        <para>Como o Spring gerencia e configura o Hibernate, devemos 
+        registrar o arquivo de mapeamento no bean do Spring no arquivo 
+        <filename>portaldb.xml</filename>.</para>
+
+        <programlisting>&lt;value&gt;br/com/intelignet/dao/impl/hibernate/Servico.hbm.xml&lt;/value&gt;</programlisting>
+        <para>DAOs de serviços podem usar a classe 
+        <classname>br.com.intelignet.servico.dao.impl.AbstractDAOImpl</classname> 
+        como base e a 
+        <classname>br.com.intelignet.servico.dao.impl.ColunaAutomaticaRowMapper</classname> 
+        para fazer o mapeamento automático de linhas do banco de dados 
+        para objetos.</para>
+
+      </sect2>
+
+      <sect2>
+
+        <title>LDAP</title>
+
+        <para>O acesso ao LDAP é feito através da biblioteca 
+        <ulink url="http://www.springframework.org/ldap">
+        Spring-LDAP</ulink>. A implementação da Sun já distribuída com 
+        a JVM é utilizada.</para>
+
+        <figure>
+
+          <title>Diagrama de Classes de Acesso ao LDAP</title>
+
+          <mediaobject><imageobject>
+          <imagedata fileref="imagens/classes_ldap.png"
+           format="png"/></imageobject></mediaobject>
+        </figure>
+
+        <para>Para fazer acesso ao LDAP, obtenha uma referência ao bean 
+        <methodname>ldapTemplate</methodname> como no exemplo 
+        abaixo.</para>
+
+        <programlisting>public void atualizarSenha(Usuario usuario) { 
+  ModificationItem[] mods = new ModificationItem[1]; 
+  mods[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, new BasicAttribute(getAtributoSenha(), usuario.getSenha()));
+  getLdapTemplate().modifyAttributes(gerarDnUsuario(usuario), mods); 
+   
+  atualizarCache(usuario); 
+}</programlisting>
+      </sect2>
+
+      <sect2>
+
+        <title>Cricket</title>
+
+        <para>O acesso aos arquivos de configuração do Cricket é 
+        fornecido via configurações de rede, não exigindo esforço maior 
+        por parte do portal. Já a obtenção de gráficos é feita via um 
+        componente de infra – estrutura para comunicação sobre HTTP. No 
+        pacote <classname>br.com.intelignet.infra.cricket</classname> 
+        são implementadas classes para parsing de arquivos de 
+        configuração do Cricket.</para>
+
+        <figure>
+
+          <title>Diagrama de Classes de suporte à Cricket</title>
+
+          <mediaobject><imageobject>
+          <imagedata fileref="imagens/classes_cricket.png"
+           format="png"/></imageobject></mediaobject>
+        </figure>
+
+      </sect2>
+
+      <sect2>
+
+        <title>Subversion</title>
+
+        <para>O acesso ao Subversion é implementado no pacote 
+        <classname>br.com.intelignet.infra.svn</classname> através da 
+        classe <classname>RepositorioSVN</classname> que mantém um pool 
+        de conexões a servidores Subversion.</para>
+
+      </sect2>
+
+    </sect1>
+
+    <sect1>
+
+      <title>Parametrização</title>
+
+      <para>O portal fornece uma funcionalidade para configurações “à 
+      quente” pelo administrador do sistema. Essas configurações são 
+      mantidas no banco de dados do portal e possuem uma interface com 
+      usuário amigável na parte administrativa. Todos os objetos 
+      configurados pelo Spring podem ser registrados para receberem 
+      notificações sobre parâmetros atualizados mediante implementação 
+      da interface 
+      <classname>br.com.intelignet.infra.ListenerParametrosSistema</classname>.</para>
+
+      <figure>
+
+        <title>Diagrama de Classes de Suporte à Parametrização</title>
+
+        <mediaobject><imageobject>
+        <imagedata fileref="imagens/classes_parametros.png"
+         format="png"/></imageobject></mediaobject>
+      </figure>
+
+    </sect1>
+
+    <sect1>
+
+      <title>Comunicação</title>
+
+      <sect2>
+
+        <title>HTTP</title>
+
+        <para>É implementado um componente para execução de requisições 
+        HTTP de forma simplificada, 
+        <classname>br.com.intelignet.infra.http.HttpRequester</classname>.</para>
+
+      </sect2>
+
+      <sect2>
+
+        <title>E-mail</title>
+
+        <para>O portal implementa uma abstração sobre o envio de 
+        e-mails chamada Mensageiro. Os componentes do portal lidam com 
+        essa abstração sem saber se o que está sendo enviado é um 
+        e-mail ou outro tipo de mensagem. O mensageiro de e-mails dá 
+        suporte à processamento de templates no assunto e no corpo da 
+        mensagem e se encontra no pacote 
+        <classname>br.com.intelignet.infra.mail</classname>.</para>
+
+        <figure>
+
+          <title>Diagrama de Classes de Suporte à envio de 
+          E-mails</title>
+
+          <mediaobject><imageobject>
+          <imagedata fileref="imagens/classes_mail.png"
+           format="png"/></imageobject></mediaobject>
+        </figure>
+
+      </sect2>
+
+    </sect1>
+
+    <sect1>
+
+      <title>Processamento de Templates</title>
+
+      <para>Um componente para substituição de variáveis em modelos 
+      textuais com tags especiais, implementa a interface 
+      <classname>br.com.intelignet.util.ProcessadorTemplate</classname>. 
+      Existem duas implementações disponíveis: 
+      <classname>br.com.intelignet.util.ProcessadorTemplateSimples</classname> 
+      implementa um algoritmo simples de substituição de variáveis e 
+      formatação de datas fixa (implementação utilizada no portal), 
+      <classname>br.com.intelignet.util.ProcessadorTemplateFreeMarker</classname> 
+      utiliza a biblioteca 
+      <ulink url="http://freemarker.sourceforge.net/">
+      FreeMarker</ulink> para uma solução mais robusta e com mais 
+      recursos.</para>
+
+    </sect1>
+
+    <sect1>
+
+      <title>Agendamento de Tarefas</title>
+
+      <para>O agendamento de tarefas no portal é feito através da 
+      biblioteca <ulink url="http://www.opensymphony.com/quartz/">
+      Quartz</ulink> configurada pelo Spring. Qualquer objeto 
+      configurado pelo Spring pode ter sua execução agendada. Não há 
+      componentes implementados para facilitar ainda mais a execução de 
+      tarefas agendadas no portal.</para>
+
+    </sect1>
+
+    <sect1>
+
+      <title>Caching</title>
+
+      <para>O portal faz uso de caching para resultados de consultas 
+      JDBC nos bancos de dados da Intelig, geração de gráficos, pools 
+      de conexões ao Subversion e dados de usuários do LDAP. Uma 
+      instância de 
+      <classname>br.com.intelignet.infra.cache.GerenciadorCaches</classname> 
+      é usada para a configuração básica. Um 
+      <emphasis>aspecto</emphasis> implementado via AspectJ também é 
+      usado para fazer caching automático de execuções de métodos com 
+      parâmetros iguais no caso de caching JDBC.</para>
+
+    </sect1>
+
+    <sect1>
+
+      <title>Scripting</title>
+
+      <para>O portal dá suporte a outras linguagens de scripting tais 
+      como PHP ao invés de páginas JSP. Além de todas as verificações 
+      de segurança e disponibilização dos componentes de infra – 
+      estrutura do portal, algumas informações são disponibilizadas aos 
+      scripts como por exemplo o usuário logado atualmente. O suporte 
+      do Spring a objetos implementados via linguagens de scripting 
+      está disponível, mas não é usado.</para>
+
+      <warning>
+
+        <para>Como os scripts são usados para gerar o conteúdo interno 
+        das páginas, eles não podem usar tags de nível de página como 
+        por exemplo &lt;html&gt;, &lt;head&gt;, ou &lt;body&gt;.</para>
+
+      </warning>
+
+      <sect2>
+
+        <title>PHP como linguagem de scripting</title>
+
+        <para>O suporte à PHP como linguagem de scripting é 
+        implementado através da engine 
+        <ulink url="http://www.caucho.com/resin-3.1/doc/quercus.xtp">
+        <citetitle>Quercus</citetitle></ulink>.</para>
+
+        <para>São expostas as seguintes variáveis 
+        <emphasis>globais</emphasis> ao script:</para>
+
+        <variablelist>
+
+          <varlistentry>
+
+            <term><methodname>beanFactory</methodname></term>
+
+            <listitem>
+
+              <para>Bean Factory do Spring que criou a engine. Pode ser 
+              usada para obter referências a outros beans 
+              configurados.</para>
+
+            </listitem>
+
+          </varlistentry>
+
+          <varlistentry>
+
+            <term><methodname>usuarioCorrente</methodname></term>
+
+            <listitem>
+
+              <para>Objeto da classe 
+              <classname>br.com.intelignet.modelo.Usuario</classname> 
+              representando o usuário logado ou 
+              <methodname>null</methodname> caso não esteja logado no 
+              portal.</para>
+
+            </listitem>
+
+          </varlistentry>
+
+          <varlistentry>
+
+            <term><methodname>logado</methodname></term>
+
+            <listitem>
+
+              <para>Variável booleana indicando se o usuário está 
+              logado no portal.</para>
+
+            </listitem>
+
+          </varlistentry>
+
+        </variablelist>
+
+        <para>Para criar uma nova página PHP no portal, copie seu 
+        script para o diretório <filename>
+        ${intelignet.root}/dinamico/php</filename> e cadastre um novo 
+        Menu no seu Template apontando para o script, por exemplo, o 
+        script <filename>
+        ${intelignet.root}/dinamico/php/teste/teste1.php</filename> 
+        geraria a url 
+        <methodname>http://localhost/teste/teste1.php</methodname> se 
+        seu servidor fosse local.</para>
+
+        <para>Veja abaixo um exemplo de script PHP que exibe um 
+        formulário e mantém os valores dos campos após a 
+        submissão:</para>
+
+        <programlisting>&lt;form id=&quot;formulario&quot; method=&quot;post&quot; enctype=&quot;application/x-www-form-urlencoded&quot;&gt; 
+ &lt;table border=&quot;0&quot; width=&quot;50%&quot; align=&quot;center&quot;&gt; 
+  &lt;tr&gt; 
+   &lt;td&gt; 
+    Nome: 
+   &lt;/td&gt; 
+   &lt;td&gt; 
+    &lt;input type=&quot;text&quot; name=&quot;nome&quot; value=&quot;&lt;? echo $_POST[&apos;nome&apos;]; ?&gt;&quot; /&gt; 
+   &lt;/td&gt; 
+  &lt;/tr&gt; 
+  &lt;tr&gt; 
+   &lt;td&gt; 
+    Sobrenome: 
+   &lt;/td&gt; 
+   &lt;td&gt; 
+    &lt;input type=&quot;text&quot; name=&quot;sobrenome&quot; value=&quot;&lt;? echo $_POST[&apos;sobrenome&apos;]; ?&gt;&quot; /&gt; 
+   &lt;/td&gt; 
+  &lt;/tr&gt; 
+  &lt;tr align=&quot;center&quot;&gt; 
+   &lt;td colspan=&quot;2&quot;&gt; 
+    &lt;input type=&quot;submit&quot; value=&quot;Enviar&quot; /&gt; 
+   &lt;/td&gt; 
+  &lt;/tr&gt; 
+ &lt;/table&gt; 
+&lt;/form&gt; </programlisting>
+      </sect2>
+
+    </sect1>
+
+    <sect1>
+
+      <title>Logging</title>
+
+      <para>Um sistema de logging especial foi implementado no pacote 
+      <classname>br.com.intelignet.infra.log</classname> para enviar as 
+      mensagens de log a um banco de dados com informações a mais para 
+      administração. Estas mensagens podem ser vistas e filtradas 
+      através de uma interface amigável no portal.</para>
+
+    </sect1>
+
+  </chapter>
+
+  <chapter>
+
+    <title>Processos de Transporte, Coleta e Expurgo</title>
+
+    <sect1>
+
+      <title>Introdução</title>
+
+      <para>Os processos de transporte, coleta e expurgo são executados 
+      de forma independente do portal de serviços para obter, processar 
+      e armazenar os dados usados para a geração da maioria dos 
+      gráficos exibidos pelo portal.</para>
+
+      <para>Eles executam numa máquina virtual independente da do 
+      portal e gerenciada pelo 
+      <ulink url="http://wrapper.tanukisoftware.org/doc/english/introduction.html">
+      Java Service Wrapper</ulink>.</para>
+
+      <para>Os processos estão organizados na seguinte estrutura de 
+      diretórios:</para>
+
+      <variablelist>
+
+        <varlistentry>
+
+          <term><filename>bin</filename></term>
+
+          <listitem>
+
+            <para>Executável do Java Service Wrapper <filename>
+            wrapper</filename> e script de inicialização <filename>
+            processos-intelignet</filename>.</para>
+
+          </listitem>
+
+        </varlistentry>
+
+        <varlistentry>
+
+          <term><filename>conf</filename></term>
+
+          <listitem>
+
+            <para>Arquivos de configuração do spring com <filename>
+            main.xml</filename> como arquivo principal.</para>
+
+          </listitem>
+
+        </varlistentry>
+
+        <varlistentry>
+
+          <term><filename>lib</filename></term>
+
+          <listitem>
+
+            <para>Bibliotecas necessárias para execução dos 
+            processos.</para>
+
+          </listitem>
+
+        </varlistentry>
+
+        <varlistentry>
+
+          <term><filename>log</filename></term>
+
+          <listitem>
+
+            <para>Arquivos de log gerados pelos processos. As mensagens 
+            de log mais importantes também podem ser vistas pelo 
+            portal.</para>
+
+          </listitem>
+
+        </varlistentry>
+
+      </variablelist>
+
+    </sect1>
+
+    <sect1>
+
+      <title>Configuração</title>
+
+      <para>Os processos são configurados pelo portal. É possível 
+      especificar quais processos devem enviar notificações 
+      (normalmente por e-mail) de eventos ocorridos no processamento 
+      informando qual grupo de usuários as receberá, quais níveis de 
+      notificação devem ser enviados, e quais eventos devem ser 
+      enviados.</para>
+
+    </sect1>
+
+    <sect1>
+
+      <title>Transporte</title>
+
+      <para>O Transporte define objetos 
+      <emphasis>transportadores</emphasis> que acessam um servidor de 
+      arquivos e obtém os arquivos de interesse do portal para serem 
+      processados posteriormente pelos 
+      <emphasis>coletores</emphasis>.</para>
+
+      <para>Cada transportador sabe qual tipo de arquivo deve obter, de 
+      onde deve obter e onde deve colocar.</para>
+
+      <para>Foi implementado um transportador altamente parametrizável 
+      para ser usado para todos os tipos de arquivo necessários, ele 
+      faz uso de uma abstração da camada de comunicação para suportar 
+      diferentes combinações de sistema operacional e servidor 
+      FTP.</para>
+
+      <figure>
+
+        <title>Diagrama de Classes do processo de Transporte</title>
+
+        <mediaobject><imageobject>
+        <imagedata fileref="imagens/classes_processos_transporte.png"/></imageobject></mediaobject>
+      </figure>
+
+      <para>Os transportadores estão definidos no arquivo <filename>
+      transporte.xml</filename>.</para>
+
+    </sect1>
+
+    <sect1>
+
+      <title>Coleta</title>
+
+      <para>Os <emphasis>coletores</emphasis> processam os arquivos 
+      obtidos pelos transportadores fazendo validação e carga no banco 
+      de dados do portal. Cada coletor é implementado para um serviço 
+      específico.</para>
+
+      <para>Todos os coletores chamam uma URL no portal para avisar que 
+      uma coleta foi feita. Assim o portal pode fazer os ajustes 
+      necessários para exibir os novos dados como, por exemplo, limpeza 
+      do cache de dados.</para>
+
+      <figure>
+
+        <title>Diagrama de Classes da base dos Coletores</title>
+
+        <mediaobject><imageobject>
+        <imagedata fileref="imagens/classes_processos_coleta.png"/></imageobject></mediaobject>
+      </figure>
+
+      <sect2>
+
+        <title>600 Reverso</title>
+
+        <para>A coleta do 600 reverso é dividida em três tipos: 
+        consolidado, detalhado e siteID. O processo é semelhante nos 
+        dois primeiros diferenciando somente na quantidade de dados 
+        manipulados basicamente, já o terceiro tem um processo 
+        totalmente diferente mas também manipula dados relacionados ao 
+        serviço do 600 reverso.</para>
+
+        <para>Os coletores do 600 reverso estão definidos no arquivo 
+        <filename>reverso.xml</filename>.</para>
+
+        <figure>
+
+          <title>Diagrama de Classes da coleta do 600 Reverso</title>
+
+          <mediaobject><imageobject>
+          <imagedata fileref="imagens/classes_processos_coleta_reverso.png"/></imageobject></mediaobject>
+        </figure>
+
+      </sect2>
+
+      <sect2>
+
+        <title>SLA</title>
+
+        <para>A coleta do SLA é feita em cinco arquivos usando o mesmo 
+        processo para todos eles.</para>
+
+        <para>O coletor do SLA está definido no arquivo <filename>
+        sla.xml</filename>.</para>
+
+        <figure>
+
+          <title>Diagrama de Classes da coleta do SLA</title>
+
+          <mediaobject><imageobject>
+          <imagedata fileref="imagens/classes_processos_coleta_sla.png"/></imageobject></mediaobject>
+        </figure>
+
+      </sect2>
+
+      <sect2>
+
+        <title>Performance de Voz</title>
+
+        <para>A coleta do Performance de Voz é feita em vários 
+        diretórios com vários arquivos cada um. Cada diretório 
+        representa uma ramificação do serviços de Performance de Voz e 
+        tem diferentes regras de validação e destino para os 
+        dados.</para>
+
+        <para>O coletor de performance de voz 
+        <classname>br.com.intelignet.coleta.performancevoz.ColetorPerformanceVoz</classname> 
+        reflete essa estrutura numa hierarquia de &quot;mini - 
+        coletores&quot; que fazem uso de validadores para aplicar as 
+        regras de validação específicas a cada um.</para>
+
+        <para>Ao final do processo, é gerada uma tabela que relaciona 
+        os dados carregados com os clientes do portal, tarefa de uma 
+        classe que implementa a interface 
+        <classname>br.com.intelignet.coleta.performancevoz.CarregadorServicoTrail</classname>.</para>
+
+        <para>Os coletores do performance de voz estão definidos no 
+        arquivo <filename>performancevoz.xml</filename>.</para>
+
+        <note>
+
+          <para>O diagrama abaixo não ilustra todos os coletores e 
+          validadores de performance de voz, somente alguns para fins 
+          de exemplificação.</para>
+
+        </note>
+
+        <figure>
+
+          <title>Diagrama de Classes da coleta do Performance de 
+          Voz</title>
+
+          <mediaobject><imageobject>
+          <imagedata fileref="imagens/classes_processos_coleta_performancevoz.png"/></imageobject></mediaobject>
+        </figure>
+
+      </sect2>
+
+    </sect1>
+
+    <sect1>
+
+      <title>Expurgo</title>
+
+      <para>Os <emphasis>expurgadores</emphasis> excluem e geram 
+      arquivos de backup dos dados antigos do banco de dados. O 
+      processo é gerenciado pelo 
+      <classname>br.com.intelignet.expurgo.GerenciadorExpurgo</classname> 
+      que tem registrados todos os expurgadores que devem ser 
+      executados. O Gerenciador de Expurgo, de maneira semelhante aos 
+      coletores, notifica o portal quando o expurgo é finalizado.</para>
+
+      <para>Estão implementados dois tipos de expurgador: tabela única 
+      e múltiplas tabelas. Além de facilitar a configuração de expurgo, 
+      esses dois expurgadores são usados para expurgo de dados de todos 
+      os serviços do portal.</para>
+
+      <para>Os expurgadores estão definidos no arquivo <filename>
+      expurgo.xml</filename>.</para>
+
+      <figure>
+
+        <title>Diagrama de Classes do processo de Expurgo</title>
+
+        <mediaobject><imageobject>
+        <imagedata fileref="imagens/classes_processos_expurgo.png"/></imageobject></mediaobject>
+      </figure>
+
+    </sect1>
+
+    <sect1>
+
+      <title>Agendamento</title>
+
+      <para>Não é preciso configurar arquivos externos ou específicos a 
+      sistemas operacionais para configurar o agendamento dos 
+      processos, eles são agendados para executar com expressões 
+      parecidas com as do <emphasis>cron</emphasis> do linux utilizando 
+      a biblioteca <ulink url="http://www.opensymphony.com/quartz/">
+      Quartz</ulink>.</para>
+
+      <para>Os agendamentos são definidos no arquivo <filename>
+      agendamento.xml</filename>.</para>
+
+    </sect1>
+
+  </chapter>
+
+</book>
+
