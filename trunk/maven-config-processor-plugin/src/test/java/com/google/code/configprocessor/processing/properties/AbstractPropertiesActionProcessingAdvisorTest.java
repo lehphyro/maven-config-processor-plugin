@@ -25,6 +25,7 @@ import org.junit.*;
 import com.google.code.configprocessor.*;
 import com.google.code.configprocessor.processing.*;
 
+@Ignore
 public class AbstractPropertiesActionProcessingAdvisorTest {
 
 	private InputStream input;
