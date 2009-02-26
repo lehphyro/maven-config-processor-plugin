@@ -18,8 +18,6 @@ package com.google.code.configprocessor.processing.properties;
 import java.io.*;
 import java.util.*;
 
-import org.apache.commons.lang.*;
-
 import com.google.code.configprocessor.*;
 import com.google.code.configprocessor.processing.*;
 import com.google.code.configprocessor.processing.properties.model.*;
@@ -52,37 +50,9 @@ public class PropertiesActionProcessor implements ActionProcessor {
 				writer.append(LINE_SEPARATOR);
 			} else {
 				if (isComment(line)) {
-					boolean shouldContinue = true;
-					StringBuilder sb = new StringBuilder(line);
-					do {
-						reader.mark(READ_AHEAD_BUFFER_SIZE);
-						line = reader.readLine();
-						
-						if (line == null) {
-							shouldContinue = false;
-						} else {
-							if (isComment(line)) {
-								sb.append(LINE_SEPARATOR);
-								sb.append(line);
-							} else {
-								shouldContinue = false;
-								reader.reset();
-							}
-						}
-					} while (shouldContinue);
-					
-					currentItem = new Comment(sb.toString());
+					currentItem = readComment(reader, line);
 				} else {
-					StringBuilder sb = new StringBuilder(line);
-					while (line.endsWith(PropertyMapping.PROPERTY_VALUE_LINE_SEPARATOR)) {
-						line = reader.readLine();
-						if (line == null) {
-							break;
-						}
-						sb.append(LINE_SEPARATOR);
-						sb.append(line);
-					}
-					currentItem = parsePropertyMapping(sb.toString());
+					currentItem = readPropertyMapping(reader, line);
 				}
 				
 				advice = advisor.process(currentItem);
@@ -95,6 +65,46 @@ public class PropertiesActionProcessor implements ActionProcessor {
 		processAdvice(advice, null, writer);
 		
 		writer.flush();
+	}
+	
+	protected Comment readComment(BufferedReader reader, String line) throws IOException {
+		boolean shouldContinue = true;
+		StringBuilder sb = new StringBuilder(line);
+		do {
+			reader.mark(READ_AHEAD_BUFFER_SIZE);
+			line = reader.readLine();
+			
+			if (line == null) {
+				shouldContinue = false;
+			} else {
+				if (isComment(line)) {
+					sb.append(LINE_SEPARATOR);
+					sb.append(line);
+				} else {
+					shouldContinue = false;
+					reader.reset();
+				}
+			}
+		} while (shouldContinue);
+		
+		return new Comment(sb.toString());
+	}
+	
+	protected PropertyMapping readPropertyMapping(BufferedReader reader, String line) throws IOException {
+		StringBuilder sb = new StringBuilder(line);
+		while (line.endsWith(PropertyMapping.PROPERTY_VALUE_LINE_SEPARATOR)) {
+			line = reader.readLine();
+			if (line == null) {
+				break;
+			}
+			sb.append(LINE_SEPARATOR);
+			sb.append(line);
+		}
+
+		PropertyMapping propertyMapping = new PropertyMapping();
+		propertyMapping.parse(sb.toString(), false);
+		
+		return propertyMapping;
 	}
 	
 	protected void processAdvice(PropertiesFileItemAdvice advice,
@@ -136,6 +146,8 @@ public class PropertiesActionProcessor implements ActionProcessor {
 			return new PropertiesRemoveActionProcessingAdvisor((RemoveAction)action, expressionResolver);
 		} else if (action instanceof CommentAction) {
 			return new PropertiesCommentActionProcessingAdvisor((CommentAction)action, expressionResolver);
+		} else if (action instanceof UncommentAction) {
+			return new PropertiesUncommentActionProcessingAdvisor((UncommentAction)action, expressionResolver);
 		} else if (action instanceof NestedAction) {
 			List<PropertiesActionProcessingAdvisor> advisors = new ArrayList<PropertiesActionProcessingAdvisor>();
 			NestedAction nestedAction = (NestedAction)action;
@@ -157,13 +169,4 @@ public class PropertiesActionProcessor implements ActionProcessor {
 			   trimmedLine.startsWith(Comment.PREFIX_2);
 	}
 	
-	protected PropertyMapping parsePropertyMapping(String line) {
-		String[] splitted = StringUtils.split(line, PropertyMapping.SEPARATOR_1 + PropertyMapping.SEPARATOR_2);
-		
-		if (splitted.length == 1) {
-			return new PropertyMapping(splitted[0], null);
-		}
-		
-		return new PropertyMapping(splitted[0], splitted[1]);
-	}
 }
