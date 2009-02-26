@@ -17,6 +17,11 @@ package com.google.code.configprocessor.processing.properties.model;
 
 public class PropertyMapping implements PropertiesFileItem {
 
+	public static final String SEPARATOR_1 = "=";
+	public static final String SEPARATOR_2 = ":";
+	
+	public static final String PROPERTY_VALUE_LINE_SEPARATOR = "\\";
+	
 	private String propertyName;
 	private String propertyValue;
 	

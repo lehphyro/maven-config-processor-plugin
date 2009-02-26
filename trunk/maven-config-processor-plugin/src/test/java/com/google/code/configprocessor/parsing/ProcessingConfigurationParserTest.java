@@ -47,10 +47,12 @@ public class ProcessingConfigurationParserTest {
 			}
 		}
 		
-		assertEquals(3, action.getActions().size());
+		assertEquals(5, action.getActions().size());
 		assertEquals(new AddAction(null, "<test-property>test-value</test-property>", "/root/property3", null), action.getActions().get(0));
 		assertEquals(new ModifyAction("/root/property1", "<modified-property1>modified-value</modified-property1>"), action.getActions().get(1));
 		assertEquals(new RemoveAction("/root/property2"), action.getActions().get(2));
+		assertEquals(new CommentAction("property-to-comment"), action.getActions().get(3));
+		assertEquals(new UncommentAction("property-to-uncomment"), action.getActions().get(4));
 	}
 
 	@Test(expected = ParsingException.class)
@@ -65,21 +67,19 @@ public class ProcessingConfigurationParserTest {
 		parser.parse(getClass().getResourceAsStream("/com/google/code/configprocessor/data/xml-target-config.xml"));
 	}
 	
+	@Test
+	@Ignore
 	public void generationExample() {
-		XStream xstream = new XStream();
+		XStream xstream = new ProcessingConfigurationParser().getXStream();
 		
-		xstream.alias("processor", NestedAction.class);
-		xstream.alias("add", AddAction.class);
-		xstream.alias("modify", ModifyAction.class);
-		xstream.alias("remove", RemoveAction.class);
-		xstream.addImplicitCollection(NestedAction.class, "actions");
-
 		NestedAction config = new NestedAction();
 		config.addAction(new AddAction("/root", "<property5 attribute=\"value5\"></property3>", "/root/property2", null));
 		config.addAction(new ModifyAction("/root/property1", "new-value1"));
 		config.addAction(new ModifyAction("/root/property4", ""));
 		config.addAction(new RemoveAction("/root/property3"));
 		config.addAction(new RemoveAction("/root/property4[@attribute]"));
+		config.addAction(new CommentAction("property-to-comment"));
+		config.addAction(new UncommentAction("property-to-uncomment"));
 		
 		System.out.println(xstream.toXML(config));
 	}

@@ -27,7 +27,7 @@ import com.google.code.configprocessor.processing.properties.model.*;
 public class PropertiesActionProcessor implements ActionProcessor {
 
 	public static final String LINE_SEPARATOR = System.getProperty("line.separator");
-	public static final String PROPERTY_VALUE_SEPARATOR = "\\";
+	private static final int READ_AHEAD_BUFFER_SIZE = 1024 * 10;
 	
 	private ExpressionResolver expressionResolver;
 	
@@ -52,10 +52,29 @@ public class PropertiesActionProcessor implements ActionProcessor {
 				writer.append(LINE_SEPARATOR);
 			} else {
 				if (isComment(line)) {
-					currentItem = new Comment(line);
+					boolean shouldContinue = true;
+					StringBuilder sb = new StringBuilder(line);
+					do {
+						reader.mark(READ_AHEAD_BUFFER_SIZE);
+						line = reader.readLine();
+						
+						if (line == null) {
+							shouldContinue = false;
+						} else {
+							if (isComment(line)) {
+								sb.append(LINE_SEPARATOR);
+								sb.append(line);
+							} else {
+								shouldContinue = false;
+								reader.reset();
+							}
+						}
+					} while (shouldContinue);
+					
+					currentItem = new Comment(sb.toString());
 				} else {
 					StringBuilder sb = new StringBuilder(line);
-					while (line.endsWith(PROPERTY_VALUE_SEPARATOR)) {
+					while (line.endsWith(PropertyMapping.PROPERTY_VALUE_LINE_SEPARATOR)) {
 						line = reader.readLine();
 						if (line == null) {
 							break;
@@ -115,6 +134,8 @@ public class PropertiesActionProcessor implements ActionProcessor {
 			return new PropertiesModifyActionProcessingAdvisor((ModifyAction)action, expressionResolver);
 		} else if (action instanceof RemoveAction) {
 			return new PropertiesRemoveActionProcessingAdvisor((RemoveAction)action, expressionResolver);
+		} else if (action instanceof CommentAction) {
+			return new PropertiesCommentActionProcessingAdvisor((CommentAction)action, expressionResolver);
 		} else if (action instanceof NestedAction) {
 			List<PropertiesActionProcessingAdvisor> advisors = new ArrayList<PropertiesActionProcessingAdvisor>();
 			NestedAction nestedAction = (NestedAction)action;
@@ -132,11 +153,12 @@ public class PropertiesActionProcessor implements ActionProcessor {
 	
 	protected boolean isComment(String line) {
 		String trimmedLine = line.trim();
-		return trimmedLine.startsWith("#") || trimmedLine.startsWith("!");
+		return trimmedLine.startsWith(Comment.PREFIX_1) ||
+			   trimmedLine.startsWith(Comment.PREFIX_2);
 	}
 	
 	protected PropertyMapping parsePropertyMapping(String line) {
-		String[] splitted = StringUtils.split(line, "=:");
+		String[] splitted = StringUtils.split(line, PropertyMapping.SEPARATOR_1 + PropertyMapping.SEPARATOR_2);
 		
 		if (splitted.length == 1) {
 			return new PropertyMapping(splitted[0], null);

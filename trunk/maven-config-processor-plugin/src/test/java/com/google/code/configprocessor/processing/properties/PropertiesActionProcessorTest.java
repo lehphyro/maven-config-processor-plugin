@@ -15,8 +15,8 @@
  */
 package com.google.code.configprocessor.processing.properties;
 
-import static org.junit.Assert.*;
 import static com.google.code.configprocessor.processing.properties.PropertiesActionProcessor.*;
+import static org.easymock.EasyMock.*;
 
 import java.io.*;
 
@@ -24,123 +24,51 @@ import org.codehaus.plexus.component.configurator.expression.*;
 import org.junit.*;
 
 import com.google.code.configprocessor.*;
-import com.google.code.configprocessor.parsing.*;
 import com.google.code.configprocessor.processing.*;
+import com.google.code.configprocessor.processing.properties.model.*;
 
 public class PropertiesActionProcessorTest {
 
-	private static final String PROPERTIES_PATH = "/com/google/code/configprocessor/data/properties-target-config.properties";
-	private static final String PROPERTIES_CONFIG = "/com/google/code/configprocessor/data/properties-processing-configuration.xml";
-	
-	private InputStream input;
-	private ByteArrayOutputStream output;
-	private ActionProcessor processor;
-	
-	@Before
-	public void setup() {
-		processor = new PropertiesActionProcessor(new ExpressionResolver(new DefaultExpressionEvaluator()));
-		input = getClass().getResourceAsStream(PROPERTIES_PATH);
-		output = new ByteArrayOutputStream();
-	}
+	public static final String PROPERTIES_PATH = "/com/google/code/configprocessor/data/properties-target-config.properties";
 
+	private PropertiesActionProcessingAdvisor advisor;
+	
 	@Test
-	public void processAddFirst() throws Exception {
-		Action action = new AddAction("teste-property", "test-value", null, "property1.value");
-		String expected = "teste-property=test-value" + LINE_SEPARATOR + "property1.value=value1" + LINE_SEPARATOR + "property2.value=" + LINE_SEPARATOR + "# Comment" + LINE_SEPARATOR + "	property3.value=value3 \\" + LINE_SEPARATOR + "value 3 continuation" + LINE_SEPARATOR;
+	public void testProcess() throws Exception {
+		advisor = createStrictMock(PropertiesActionProcessingAdvisor.class);
 		
-		executeTest(action, expected);
-	}
-
-	@Test
-	public void processAddAfterProperty() throws Exception {
-		Action action = new AddAction("teste-property", "test-value", "property1.value", null);
-		String expected = "property1.value=value1" + LINE_SEPARATOR + "teste-property=test-value" + LINE_SEPARATOR + "property2.value=" + LINE_SEPARATOR + "# Comment" + LINE_SEPARATOR + "	property3.value=value3 \\" + LINE_SEPARATOR + "value 3 continuation" + LINE_SEPARATOR;
-
-		executeTest(action, expected);
-	}
-	
-	@Test
-	public void processAddBeforeCommentedProperty() throws Exception {
-		Action action = new AddAction("teste-property", "test-value", null, "property3.value");
-		String expected = "property1.value=value1" + LINE_SEPARATOR + "property2.value=" + LINE_SEPARATOR + "# Comment" + LINE_SEPARATOR + "teste-property=test-value" + LINE_SEPARATOR + "	property3.value=value3 \\" + LINE_SEPARATOR + "value 3 continuation" + LINE_SEPARATOR;
-
-		executeTest(action, expected);
-	}
-
-	@Test
-	public void processAddLast() throws Exception {
-		Action action = new AddAction("teste-property", "test-value", "property3.value", null);
-		String expected = "property1.value=value1" + LINE_SEPARATOR + "property2.value=" + LINE_SEPARATOR + "# Comment" + LINE_SEPARATOR + "	property3.value=value3 \\" + LINE_SEPARATOR + "value 3 continuation" + LINE_SEPARATOR + "teste-property=test-value" + LINE_SEPARATOR;
-
-		executeTest(action, expected);
-	}
-	
-	@Test
-	public void processModifyFirst() throws Exception {
-		Action action = new ModifyAction("property1.value", "modified-value");
-		String expected = "property1.value=modified-value" + LINE_SEPARATOR + "property2.value=" + LINE_SEPARATOR + "# Comment" + LINE_SEPARATOR + "	property3.value=value3 \\" + LINE_SEPARATOR + "value 3 continuation" + LINE_SEPARATOR;
-
-		executeTest(action, expected);
-	}
-
-	@Test
-	public void processModifyLast() throws Exception {
-		Action action = new ModifyAction("property3.value", "modified-value");
-		String expected = "property1.value=value1" + LINE_SEPARATOR + "property2.value=" + LINE_SEPARATOR + "# Comment" + LINE_SEPARATOR + "	property3.value=modified-value" + LINE_SEPARATOR;
-
-		executeTest(action, expected);
-	}
-
-	@Test
-	public void processRemoveFirst() throws Exception {
-		Action action = new RemoveAction("property1.value");
-		String expected = "property2.value=" + LINE_SEPARATOR + "# Comment" + LINE_SEPARATOR + "	property3.value=value3 \\" + LINE_SEPARATOR + "value 3 continuation" + LINE_SEPARATOR;
-
-		executeTest(action, expected);
-	}
-
-	@Test
-	public void processRemoveMiddle() throws Exception {
-		Action action = new RemoveAction("property2.value");
-		String expected = "property1.value=value1" + LINE_SEPARATOR + "# Comment" + LINE_SEPARATOR + "	property3.value=value3 \\" + LINE_SEPARATOR + "value 3 continuation" + LINE_SEPARATOR;
-
-		executeTest(action, expected);
-	}
-
-	@Test
-	public void processRemoveLast() throws Exception {
-		Action action = new RemoveAction("property3.value");
-		String expected = "property1.value=value1" + LINE_SEPARATOR + "property2.value=" + LINE_SEPARATOR + "# Comment" + LINE_SEPARATOR;
-
-		executeTest(action, expected);
-	}
-
-	@Test
-	public void processNestedActions() throws Exception {
-		NestedAction nestedAction = new NestedAction();
-		nestedAction.addAction(new AddAction("teste-property", "test-value", null, "property1.value"));
-		nestedAction.addAction(new ModifyAction("property1.value", "modified-value"));
-		nestedAction.addAction(new RemoveAction("property3.value"));
-		String expected = "teste-property=test-value" + LINE_SEPARATOR + "property1.value=modified-value" + LINE_SEPARATOR + "property2.value=" + LINE_SEPARATOR + "# Comment" + LINE_SEPARATOR;
-
-		executeTest(nestedAction, expected);
-	}
-
-	@Test
-	public void processParsedAction() throws Exception {
-		ProcessingConfigurationParser parser = new ProcessingConfigurationParser();
-		Action action = parser.parse(getClass().getResourceAsStream(PROPERTIES_CONFIG));
-		String expected = "teste-property=test-value" + LINE_SEPARATOR + "property1.value=modified-value" + LINE_SEPARATOR + "property2.value=" + LINE_SEPARATOR + "# Comment" + LINE_SEPARATOR;
+		expect(advisor.onStartProcessing()).andReturn(createDoNothingAdvice());
+		expect(advisor.process(new PropertyMapping("property1.value", "value1"))).andReturn(createDoNothingAdvice());
+		expect(advisor.process(new PropertyMapping("property2.value", null))).andReturn(createDoNothingAdvice());
+		expect(advisor.process(new Comment("# Comment"))).andReturn(createDoNothingAdvice());
+		expect(advisor.process(new PropertyMapping("	property3.value", "value3 \\" + LINE_SEPARATOR + "value 3 continuation"))).andReturn(createDoNothingAdvice());
+		expect(advisor.process(new Comment("# property4.value=value4 \\" + LINE_SEPARATOR + "#value 4 continuation"))).andReturn(createDoNothingAdvice());
+		expect(advisor.onEndProcessing()).andReturn(createDoNothingAdvice());
 		
-		executeTest(action, expected);
+		replay(advisor);
+		
+		PropertiesActionProcessor processor = new TestPropertiesActionProcessor();
+		InputStream input = getClass().getResourceAsStream(PROPERTIES_PATH);
+		OutputStream output = new ByteArrayOutputStream();
+		
+		processor.process(new InputStreamReader(input), new OutputStreamWriter(output), null);
+		
+		verify(advisor);
 	}
 	
-	protected void executeTest(Action action, String expected) throws Exception {
-		processor.process(new InputStreamReader(input), new OutputStreamWriter(output), action);
-		assertEquals(expected, getOutput());
+	protected PropertiesFileItemAdvice createDoNothingAdvice() {
+		return new PropertiesFileItemAdvice(PropertiesFileItemAdviceType.DO_NOTHING, null);
 	}
-
-	protected String getOutput() {
-		return new String(output.toByteArray());
+	
+	class TestPropertiesActionProcessor extends PropertiesActionProcessor {
+		
+		public TestPropertiesActionProcessor() {
+			super(new ExpressionResolver(new DefaultExpressionEvaluator()));
+		}
+		
+		@Override
+		protected PropertiesActionProcessingAdvisor getAdvisorFor(Action action) {
+			return advisor;
+		}
 	}
 }

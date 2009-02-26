@@ -31,14 +31,7 @@ public class ProcessingConfigurationParser {
 	}
 
 	public NestedAction parse(Reader is) throws ParsingException {
-		XStream xstream = new XStream();
-		
-		xstream.alias("processor", NestedAction.class);
-		xstream.alias("add", AddAction.class);
-		xstream.alias("modify", ModifyAction.class);
-		xstream.alias("remove", RemoveAction.class);
-		xstream.addImplicitCollection(NestedAction.class, "actions");
-		
+		XStream xstream = getXStream();
 		try {
 			return (NestedAction)xstream.fromXML(is);
 		} catch (Exception e) {
@@ -46,5 +39,17 @@ public class ProcessingConfigurationParser {
 		}
 	}
 	
-
+	protected XStream getXStream() {
+		XStream xstream = new XStream();
+		
+		xstream.alias("processor", NestedAction.class);
+		xstream.alias("add", AddAction.class);
+		xstream.alias("modify", ModifyAction.class);
+		xstream.alias("remove", RemoveAction.class);
+		xstream.alias("comment", CommentAction.class);
+		xstream.alias("uncomment", UncommentAction.class);
+		xstream.addImplicitCollection(NestedAction.class, "actions");
+		
+		return xstream;
+	}
 }
