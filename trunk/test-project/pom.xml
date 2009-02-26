@@ -90,36 +90,6 @@
                     <releaseProfiles>release</releaseProfiles>
                 </configuration>
             </plugin>
-
-            <plugin>
-                <groupId>com.agilejava.docbkx</groupId>
-                <artifactId>docbkx-maven-plugin</artifactId>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.docbook</groupId>
-                        <artifactId>docbook-xml</artifactId>
-                        <version>4.4</version>
-                        <scope>runtime</scope>
-                    </dependency>
-                </dependencies>
-                <configuration>
-                    <sourceDirectory>${basedir}/src/manual</sourceDirectory>
-                    <targetDirectory>${project.build.directory}/site/manual</targetDirectory> 
-                    <htmlStylesheet>../css/manual.css</htmlStylesheet>
-                    <postProcess>
-                        <copy todir="${project.build.directory}/site/css" file="src/manual/css/manual.css" />
-                    </postProcess>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>pre-site</phase>
-                        <goals>
-                            <goal>generate-html</goal>
-                            <goal>generate-pdf</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
 
         <extensions>
