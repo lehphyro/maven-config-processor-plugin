@@ -43,6 +43,7 @@ public class PropertiesActionProcessorTest {
 		expect(advisor.process(new Comment("# Comment"))).andReturn(createDoNothingAdvice());
 		expect(advisor.process(new PropertyMapping("	property3.value", "value3 \\" + LINE_SEPARATOR + "value 3 continuation"))).andReturn(createDoNothingAdvice());
 		expect(advisor.process(new Comment("# property4.value=value4 \\" + LINE_SEPARATOR + "#value 4 continuation"))).andReturn(createDoNothingAdvice());
+		expect(advisor.process(new PropertyMapping("property5.value", "value5=value"))).andReturn(createDoNothingAdvice());
 		expect(advisor.onEndProcessing()).andReturn(createDoNothingAdvice());
 		
 		replay(advisor);
