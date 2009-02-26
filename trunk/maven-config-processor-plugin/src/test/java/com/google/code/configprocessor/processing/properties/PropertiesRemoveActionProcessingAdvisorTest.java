@@ -26,7 +26,7 @@ public class PropertiesRemoveActionProcessingAdvisorTest extends AbstractPropert
 	@Test
 	public void processRemoveFirst() throws Exception {
 		Action action = new RemoveAction("property1.value");
-		String expected = "property2.value=" + LINE_SEPARATOR + "# Comment" + LINE_SEPARATOR + "	property3.value=value3 \\" + LINE_SEPARATOR + "value 3 continuation" + LINE_SEPARATOR + "# property4.value=value4 \\" + LINE_SEPARATOR + "#value 4 continuation" + LINE_SEPARATOR;
+		String expected = "property2.value=" + LINE_SEPARATOR + "# Comment" + LINE_SEPARATOR + "	property3.value=value3 \\" + LINE_SEPARATOR + "value 3 continuation" + LINE_SEPARATOR + "# property4.value=value4 \\" + LINE_SEPARATOR + "#value 4 continuation" + LINE_SEPARATOR + "property5.value=value5=value" + LINE_SEPARATOR;
 
 		executeTest(action, expected);
 	}
@@ -34,7 +34,7 @@ public class PropertiesRemoveActionProcessingAdvisorTest extends AbstractPropert
 	@Test
 	public void processRemoveMiddle() throws Exception {
 		Action action = new RemoveAction("property2.value");
-		String expected = "property1.value=value1" + LINE_SEPARATOR + "# Comment" + LINE_SEPARATOR + "	property3.value=value3 \\" + LINE_SEPARATOR + "value 3 continuation" + LINE_SEPARATOR + "# property4.value=value4 \\" + LINE_SEPARATOR + "#value 4 continuation" + LINE_SEPARATOR;
+		String expected = "property1.value=value1" + LINE_SEPARATOR + "# Comment" + LINE_SEPARATOR + "	property3.value=value3 \\" + LINE_SEPARATOR + "value 3 continuation" + LINE_SEPARATOR + "# property4.value=value4 \\" + LINE_SEPARATOR + "#value 4 continuation" + LINE_SEPARATOR + "property5.value=value5=value" + LINE_SEPARATOR;
 
 		executeTest(action, expected);
 	}
@@ -42,7 +42,7 @@ public class PropertiesRemoveActionProcessingAdvisorTest extends AbstractPropert
 	@Test
 	public void processRemoveLast() throws Exception {
 		Action action = new RemoveAction("property3.value");
-		String expected = "property1.value=value1" + LINE_SEPARATOR + "property2.value=" + LINE_SEPARATOR + "# Comment" + LINE_SEPARATOR + "# property4.value=value4 \\" + LINE_SEPARATOR + "#value 4 continuation" + LINE_SEPARATOR;
+		String expected = "property1.value=value1" + LINE_SEPARATOR + "property2.value=" + LINE_SEPARATOR + "# Comment" + LINE_SEPARATOR + "# property4.value=value4 \\" + LINE_SEPARATOR + "#value 4 continuation" + LINE_SEPARATOR + "property5.value=value5=value" + LINE_SEPARATOR;
 
 		executeTest(action, expected);
 	}

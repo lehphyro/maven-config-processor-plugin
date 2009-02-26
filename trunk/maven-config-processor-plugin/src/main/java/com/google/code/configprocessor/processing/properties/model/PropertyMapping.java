@@ -37,7 +37,7 @@ public class PropertyMapping implements PropertiesFileItem {
 	}
 	
 	public void parse(String text, boolean trim) {
-		String[] splitted = StringUtils.split(text, SEPARATOR_1 + SEPARATOR_2);
+		String[] splitted = StringUtils.split(text, SEPARATOR_1 + SEPARATOR_2, 2);
 		
 		if (trim) {
 			this.propertyName = splitted[0].trim();
