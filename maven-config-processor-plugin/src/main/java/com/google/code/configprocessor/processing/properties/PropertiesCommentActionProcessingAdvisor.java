@@ -19,7 +19,7 @@ import com.google.code.configprocessor.*;
 import com.google.code.configprocessor.processing.*;
 import com.google.code.configprocessor.processing.properties.model.*;
 
-public class PropertiesCommentActionProcessingAdvisor extends AbstractPropertiesActionProcessingAdvisor{
+public class PropertiesCommentActionProcessingAdvisor extends AbstractPropertiesActionProcessingAdvisor {
 
 	private static final int INSERT_OFFSET = 1;
 	

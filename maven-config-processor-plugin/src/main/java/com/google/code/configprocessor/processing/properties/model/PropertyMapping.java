@@ -15,6 +15,8 @@
  */
 package com.google.code.configprocessor.processing.properties.model;
 
+import org.apache.commons.lang.*;
+
 public class PropertyMapping implements PropertiesFileItem {
 
 	public static final String SEPARATOR_1 = "=";
@@ -25,9 +27,29 @@ public class PropertyMapping implements PropertiesFileItem {
 	private String propertyName;
 	private String propertyValue;
 	
+	public PropertyMapping() {
+		this(null, null);
+	}
+	
 	public PropertyMapping(String propertyName, String propertyValue) {
 		this.propertyName = propertyName;
 		this.propertyValue = propertyValue;
+	}
+	
+	public void parse(String text, boolean trim) {
+		String[] splitted = StringUtils.split(text, SEPARATOR_1 + SEPARATOR_2);
+		
+		if (trim) {
+			this.propertyName = splitted[0].trim();
+		} else {
+			this.propertyName = splitted[0];
+		}
+		
+		if (splitted.length == 1) {
+			this.propertyValue = null;
+		} else {
+			this.propertyValue = splitted[1];
+		}
 	}
 	
 	public String getAsText() {
