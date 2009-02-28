@@ -64,3 +64,35 @@ Properties Processing
 
  This fragment will instruct the config processor to clear the value of the property
  <property.test.example.first>.
+
+* Commenting/Uncommenting
+
+ As of version 1.5, it is possible to specify properties to comment/uncomment. Single and
+ multi-line properties are supported.
+ 
+ To comment a property, you configure its name.
+
++-----+
+<processor>
+  ...
+  <comment>
+    <name>property.test.example.first</name>
+  </comment>
+  ...
+</processor>
++-----+
+
+ Uncommenting is very simple too.
+
++-----+
+<processor>
+  ...
+  <uncomment>
+    <name>property.test.example.first</name>
+  </uncomment>
+  ...
+</processor>
++-----+
+
+ Of course, the property must be commented before it is uncommented. Uncommenting a
+ non-commented property is a no-op.

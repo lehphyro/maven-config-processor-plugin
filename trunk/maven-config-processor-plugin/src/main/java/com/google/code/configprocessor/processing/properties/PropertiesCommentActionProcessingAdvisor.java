@@ -42,19 +42,21 @@ public class PropertiesCommentActionProcessingAdvisor extends AbstractProperties
 				sb.append(PropertyMapping.SEPARATOR_1);
 				
 				String value = mapping.getPropertyValue();
-				sb.append(value);
-				
-				int lineBreakIndex = value.indexOf(PropertyMapping.PROPERTY_VALUE_LINE_SEPARATOR);
-				while (lineBreakIndex >= 0) {
-					int index = Comment.PREFIX_1.length();
-					index += mapping.getPropertyName().length();
-					index += lineBreakIndex;
-					index += PropertyMapping.PROPERTY_VALUE_LINE_SEPARATOR.length();
-					index += PropertiesActionProcessor.LINE_SEPARATOR.length();
-					index += INSERT_OFFSET;
+				if (value != null) {
+					sb.append(value);
 					
-					sb.insert(index, Comment.PREFIX_1);
-					lineBreakIndex = value.indexOf(PropertyMapping.PROPERTY_VALUE_LINE_SEPARATOR, lineBreakIndex + INSERT_OFFSET);
+					int lineBreakIndex = value.indexOf(PropertyMapping.PROPERTY_VALUE_LINE_SEPARATOR);
+					while (lineBreakIndex >= 0) {
+						int index = Comment.PREFIX_1.length();
+						index += mapping.getPropertyName().length();
+						index += lineBreakIndex;
+						index += PropertyMapping.PROPERTY_VALUE_LINE_SEPARATOR.length();
+						index += PropertiesActionProcessor.LINE_SEPARATOR.length();
+						index += INSERT_OFFSET;
+						
+						sb.insert(index, Comment.PREFIX_1);
+						lineBreakIndex = value.indexOf(PropertyMapping.PROPERTY_VALUE_LINE_SEPARATOR, lineBreakIndex + INSERT_OFFSET);
+					}
 				}
 				
 				return new PropertiesFileItemAdvice(PropertiesFileItemAdviceType.MODIFY,
