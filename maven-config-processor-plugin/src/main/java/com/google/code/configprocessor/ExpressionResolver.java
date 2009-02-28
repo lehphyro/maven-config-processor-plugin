@@ -17,9 +17,22 @@ package com.google.code.configprocessor;
 
 import org.codehaus.plexus.component.configurator.expression.*;
 
+/**
+ * Resolver of placeholders.
+ * 
+ * @author Leandro Aparecido
+ * @see org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator
+ */
 public class ExpressionResolver {
 
+	/**
+	 * True if placeholders must be replaced.
+	 */
 	private boolean replacePlaceholders;
+	
+	/**
+	 * Evaluator of expressions to use.
+	 */
 	private ExpressionEvaluator evaluator;
 	
 	public ExpressionResolver(ExpressionEvaluator evaluator) {
@@ -31,6 +44,12 @@ public class ExpressionResolver {
 		this.replacePlaceholders = replacePlaceholders;
 	}
 	
+	/**
+	 * Resolves the given text replacing any placeholders if necessary.
+	 * 
+	 * @param value Value to resolve.
+	 * @return Resolved value with values replaced as necessary.
+	 */
 	public String resolve(String value) {
 		String resolvedValue;
 		
