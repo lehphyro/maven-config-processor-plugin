@@ -31,4 +31,12 @@ public class PropertiesUncommentActionProcessingAdvisorTest extends AbstractProp
 		executeTest(action, expected);
 	}
 
+	@Test
+	public void processUncommentAfterComment() throws Exception {
+		Action action = new UncommentAction("property5.value");
+		String expected = "property1.value=value1" + LINE_SEPARATOR + "property2.value=" + LINE_SEPARATOR + "# Comment" + LINE_SEPARATOR + "	property3.value=value3 \\" + LINE_SEPARATOR + "value 3 continuation" + LINE_SEPARATOR + "# property4.value=value4 \\" + LINE_SEPARATOR + "#value 4 continuation" + LINE_SEPARATOR + "property5.value=value5" + LINE_SEPARATOR + "property6.value=value6=value" + LINE_SEPARATOR;
+
+		executeTest(action, expected);
+	}
+
 }
