@@ -9,7 +9,7 @@ Below is the documentation about the file format and usage.
 
 = File Format =
 
-There are three basic operations that can be performed on target files: add, remove and modify properties.
+There are five basic operations that can be performed on target files: add, remove, modify, comment and uncomment properties.
 
 The transformation configuration file is an _XML_ file that defines those operations:
 
@@ -29,12 +29,21 @@ The transformation configuration file is an _XML_ file that defines those operat
     <remove>
         <name></name>
     </remove>
+
+    <!-- Only for properties file processing -->
+    <comment>
+        <name></name>
+    </comment>
+
+    <uncomment>
+        <name></name>
+    </uncomment>
 </processor>
 }}}
 
 It is very simple and intuitive.
 
-It is possible to configure as many _add_,_modify_ and _remove_ tags as necessary.
+It is possible to configure as many tags as necessary.
 
 = Properties File Processing =
 
@@ -49,16 +58,21 @@ Here is an example of a configuration file to process properties files.
         <before>property1.value</before>
     </add>
 
-    <!-- Modify a property value -->  
+    <!-- Modify a property value -->
     <modify>
         <name>property1.value</name>
         <value>${test-project.property1}</value>
     </modify>
 
-    <!-- Remove a property -->    
+    <!-- Remove a property -->
     <remove>
         <name>property3.value</name>
     </remove>
+
+    <!-- Commenting a property -->
+    <comment>
+        <name>property4.value</name>
+    </comment>
 </processor>
 }}}
 
@@ -67,6 +81,8 @@ This file instructs the plugin to add the property _test-property_ before the pr
 In addition the plugin will modify the value of the property _property1.value_ to _${test-project.property1}_ which should be defined in your command-line, pom.xml or specific properties file.
 
 The property _property3.value_ will not appear in the generated file since it is configured to be removed.
+
+The property _property4.value_ will be commented out in the generated file.
 
 = XML File Processing =
 
