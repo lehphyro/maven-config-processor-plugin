@@ -3,7 +3,7 @@
 
 = STEP 1: Set Maven 2 Repository =
 
-You can use the [http://repo1.maven.org/maven2/com/google/code/maven-config-processor-plugin/maven-config-processor-plugin/ maven central repository] or configure your *pom.xml* to download plugins from the [http://maven-config-processor-plugin.googlecode.com/svn/maven-repo/ GoogleCode repository] we have set up to distribute the most recent plugin releases.
+You can just use the [http://repo1.maven.org/maven2/com/google/code/maven-config-processor-plugin/maven-config-processor-plugin/ maven central repository] or configure your *pom.xml* to download plugins from the [http://maven-config-processor-plugin.googlecode.com/svn/maven-repo/ GoogleCode repository] we have set up to distribute the most recent plugin releases.
 
 Just add the following:
 
