@@ -15,6 +15,11 @@
  */
 package com.google.code.configprocessor;
 
+/**
+ * Configuration of a file transformation.
+ * 
+ * @author Leandro Aparecido
+ */
 public class Transformation {
 	
 	public static final String PROPERTIES_TYPE = "properties";

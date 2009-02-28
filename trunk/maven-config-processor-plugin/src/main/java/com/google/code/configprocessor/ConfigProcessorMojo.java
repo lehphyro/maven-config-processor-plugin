@@ -33,10 +33,11 @@ import java.util.*;
 
 /**
  * Generates modified configuration files according to configuration.
- * Includes, excludes and modify properties.
- *  
+ * Includes, excludes, modify, comment and uncomment properties.
+ * 
  * @phase process-resources
  * @goal process
+ * @author Leandro Aparecido
  */
 public class ConfigProcessorMojo extends AbstractMojo {
 	
@@ -137,6 +138,9 @@ public class ConfigProcessorMojo extends AbstractMojo {
      */
     private MojoExecution mojoExecution;
 
+    /**
+     * {@inheritDoc}
+     */
 	public void execute() throws MojoExecutionException {
 		File actualOutputDirectory = null;
 		if (useOutputDirectory) {
@@ -171,6 +175,16 @@ public class ConfigProcessorMojo extends AbstractMojo {
 		}
 	}
 	
+	/**
+	 * Processes a file.
+	 * 
+	 * @param input Input file to read from.
+	 * @param output Output file to write to.
+	 * @param config File containing rules to process the input.
+	 * @param type Type of the input file. Properties, XML or null if it is to be auto-detected.
+	 * @param replacePlaceholders True if placeholders must be replaced on output files.
+	 * @throws MojoExecutionException If processing cannot be performed.
+	 */
 	protected void process(File input, File output, File config, String type, boolean replacePlaceholders) throws MojoExecutionException {
 		getLog().info("Processing file [" + input + "], outputing to [" + output + "]");
 		
@@ -201,7 +215,16 @@ public class ConfigProcessorMojo extends AbstractMojo {
 			throw new MojoExecutionException("Error reading/writing files. Input is [" + input + "], configuration is [" + config + "]", e);
 		}
 	}
-	
+
+	/**
+	 * Obtain the action processor for the input.
+	 * 
+	 * @param input Input file to read from.
+	 * @param specifiedType Type of the input file. Properties, XML or null if it is to be auto-detected.
+	 * @param replacePlaceholders True if placeholders must be replaced on output files.
+	 * @return ActionProcessor for the input file.
+	 * @throws MojoExecutionException If processing cannot be performed.
+	 */
 	protected ActionProcessor getActionProcessor(File input, String specifiedType, boolean replacePlaceholders) throws MojoExecutionException {
 		String type = getInputType(input, specifiedType);
 		
@@ -214,6 +237,13 @@ public class ConfigProcessorMojo extends AbstractMojo {
 		}
 	}
 	
+	/**
+	 * Detects input file type.
+	 * 
+	 * @param input File to read from.
+	 * @param specifiedType Type specified by user, will be used if set, can be null.
+	 * @return Input file type.
+	 */
 	protected String getInputType(File input, String specifiedType) {
 		String type;
 		
@@ -233,6 +263,13 @@ public class ConfigProcessorMojo extends AbstractMojo {
 		return type;
 	}
 	
+	/**
+	 * Creates a expression resolver to replace placeholders.
+	 * 
+	 * @param replacePlaceholders True if placeholders must be replaced on output files.
+	 * @return Created ExpressionResolver.
+	 * @throws MojoExecutionException If processing cannot be performed.
+	 */
 	protected ExpressionResolver getExpressionResolver(boolean replacePlaceholders) throws MojoExecutionException {
 		return new ExpressionResolver(
 			new PluginParameterExpressionEvaluator(mavenSession,
@@ -244,6 +281,12 @@ public class ConfigProcessorMojo extends AbstractMojo {
 			replacePlaceholders);
 	}
 	
+	/**
+	 * Read additional properties file if specified.
+	 * 
+	 * @return Properties read or empty properties if not specified.
+	 * @throws MojoExecutionException If processing cannot be performed.
+	 */
 	protected Properties getAdditionalProperties() throws MojoExecutionException {
 		Properties additional = new Properties();
 		if (specificProperties == null) {
@@ -272,6 +315,12 @@ public class ConfigProcessorMojo extends AbstractMojo {
 		}
 	}
 	
+	/**
+	 * Creates output file and required directories.
+	 * 
+	 * @param output Output file to create.
+	 * @throws MojoExecutionException If processing cannot be performed.
+	 */
 	protected void createOutputFile(File output) throws MojoExecutionException {
 		try {
 			File directory = output.getParentFile();

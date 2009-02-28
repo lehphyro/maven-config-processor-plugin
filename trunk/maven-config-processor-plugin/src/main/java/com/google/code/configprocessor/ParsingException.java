@@ -15,6 +15,11 @@
  */
 package com.google.code.configprocessor;
 
+/**
+ * Represents a generic parsing error of the plugin.
+ * 
+ * @author Leandro Aparecido
+ */
 public class ParsingException extends Exception {
 
 	private static final long serialVersionUID = 8201051595655822844L;
