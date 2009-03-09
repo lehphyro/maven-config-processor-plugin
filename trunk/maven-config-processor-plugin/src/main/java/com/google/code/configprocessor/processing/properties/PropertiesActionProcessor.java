@@ -68,10 +68,14 @@ public class PropertiesActionProcessor implements ActionProcessor {
 	}
 	
 	protected Comment readComment(BufferedReader reader, String line) throws IOException {
+		if (line == null) {
+			return new Comment("");
+		}
+		
 		boolean shouldContinue = true;
 		StringBuilder sb = new StringBuilder(line);
 		
-		while (shouldContinue && line.endsWith(PropertyMapping.PROPERTY_VALUE_LINE_SEPARATOR)) {
+		while (shouldContinue && line != null && line.endsWith(PropertyMapping.PROPERTY_VALUE_LINE_SEPARATOR)) {
 			reader.mark(READ_AHEAD_BUFFER_SIZE);
 			line = reader.readLine();
 			
