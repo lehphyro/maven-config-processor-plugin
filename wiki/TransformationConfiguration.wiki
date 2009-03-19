@@ -142,7 +142,7 @@ As you can see, we can add completely new XML nodes specifying after or before w
 
 It is possible to add node attributes as well, but you should use the _name_ attribute instead of after/before attributes because node attribute ordering is not supported.
 
-You can remove entire nodes or just some attributes using XPath expressions to select the attributes such as _/beans/bean[@id='service']/@scope_, this expression will remove the _scope_ of the bean with id="service".
+You can remove entire nodes or just some attributes using XPath expressions to select the attributes such as _/beans/bean{{{[@id='service']}}}/@scope_, this expression will remove the _scope_ of the bean with id="service".
 
 Also, it is possible to replace nodes with entirely new nodes. Modifying attributes is specially nice because the _value_ attribute can hold only the new value while the _name_ attribute holds the XPath query.
 
