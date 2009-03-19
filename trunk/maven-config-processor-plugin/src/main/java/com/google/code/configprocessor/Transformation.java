@@ -15,6 +15,9 @@
  */
 package com.google.code.configprocessor;
 
+import com.google.code.configprocessor.log.LogAdapter;
+
+
 /**
  * Configuration of a file transformation.
  * 
@@ -65,6 +68,16 @@ public class Transformation {
 	 * @parameter default-value="true"
 	 */
 	private boolean replacePlaceholders;
+	
+	private LogAdapter log = null;
+
+	public LogAdapter getLog() {
+		return log;
+	}
+
+	public Transformation(LogAdapter log) {
+		this.log = log;
+	}
 
 	public String getInput() {
 		return input;
@@ -84,5 +97,53 @@ public class Transformation {
 	
 	public boolean isReplacePlaceholders() {
 		return replacePlaceholders;
+	}
+	
+	public void setInput(String input) {
+		this.input = input;
+	}
+
+	public void setOutput(String output) {
+		this.output = output;
+	}
+
+	public void setConfig(String config) {
+		this.config = config;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public void setReplacePlaceholders(boolean replacePlaceholders) {
+		this.replacePlaceholders = replacePlaceholders;
+	}
+
+	/**
+	 * Detects input file type.
+	 * 
+	 * @param input File to read from.
+	 * @param specifiedType Type specified by user, will be used if set, can be null.
+	 * @return Input file type.
+	 */
+	protected String getInputType() {
+		String type;
+		
+		if (getType() == null) {
+			if (getInput().endsWith(".properties")) {
+				type = Transformation.PROPERTIES_TYPE;
+			} else if (getInput().endsWith(".xml")) {
+				type = Transformation.XML_TYPE;
+			} else {
+				if (getLog()!=null) {
+					getLog().warn("Could not auto-detect type of input [" + input + "], trying XML. It is recommended that you configure it in your pom.xml (tag: transformations/transformation/type) to avoid errors");
+				}
+				type = Transformation.XML_TYPE;
+			}
+		} else {
+			type = getType();
+		}
+		
+		return type;
 	}
 }
