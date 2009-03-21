@@ -17,9 +17,7 @@ package com.google.code.configprocessor.log;
 
 /**
  * Simple Adapter to use different log mechanism in the ConfigProcessor
- * 
  */
-
 public interface LogAdapter {
 
 	public void info(String msg);
@@ -28,7 +26,7 @@ public interface LogAdapter {
 
 	public void warn(String msg);
 
-	public void error(String msg);
+	public void error(String msg, Throwable t);
 
 	public void verbose(String msg);
 

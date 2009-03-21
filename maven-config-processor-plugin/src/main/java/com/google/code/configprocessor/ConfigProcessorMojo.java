@@ -15,6 +15,8 @@
  */
 package com.google.code.configprocessor;
 
+import static com.google.code.configprocessor.util.PropertiesUtils.*;
+
 import java.io.*;
 import java.util.*;
 
@@ -26,6 +28,7 @@ import org.codehaus.plexus.logging.*;
 import org.codehaus.plexus.logging.console.*;
 
 import com.google.code.configprocessor.log.*;
+import com.google.code.configprocessor.maven.*;
 
 /**
  * Generates modified configuration files according to configuration. Includes, excludes, modify, comment and uncomment properties.
@@ -134,17 +137,22 @@ public class ConfigProcessorMojo extends AbstractMojo {
 	 * {@inheritDoc}
 	 */
 	public void execute() throws MojoExecutionException {
-		ConfigProcessor processor = new ConfigProcessor(encoding, indentSize, lineWidth, namespaceContexts, outputDirectory, useOutputDirectory, new LogMaven(getLog()));
-		for (Transformation transformation : transformations) {
-			try {
-				ExpressionResolver resolver = getExpressionResolver(transformation.isReplacePlaceholders(), ConfigProcessor.getAdditionalProperties(specificProperties));
+		try {
+			LogAdapter logAdapter = new LogMaven(getLog());
+			ConfigProcessor processor = new ConfigProcessor(encoding, indentSize, lineWidth, namespaceContexts, outputDirectory, useOutputDirectory, logAdapter);
+			processor.init();
+			
+			Properties additionalProperties = loadIfPossible(specificProperties, logAdapter);
+			
+			for (Transformation transformation : transformations) {
+				ExpressionResolver resolver = getExpressionResolver(transformation.isReplacePlaceholders(), additionalProperties);
 				processor.execute(resolver, transformation);
-			} catch (ConfigProcessException e) {
-				throw new MojoExecutionException("Error during config processing", e);
 			}
+		} catch (ConfigProcessException e) {
+			throw new MojoExecutionException("Error during config processing", e);
 		}
 	}
-
+	
 	/**
 	 * Creates a expression resolver to replace placeholders.
 	 * 

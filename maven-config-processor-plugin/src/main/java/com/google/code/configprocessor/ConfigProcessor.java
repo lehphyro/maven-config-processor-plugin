@@ -15,6 +15,8 @@
  */
 package com.google.code.configprocessor;
 
+import static com.google.code.configprocessor.util.IOUtils.*;
+
 import java.io.*;
 import java.util.*;
 
@@ -37,6 +39,8 @@ public class ConfigProcessor {
 	private boolean useOutputDirectory;
 	private File outputDirectory;
 	private LogAdapter log;
+	
+	private File actualOutputDirectory;
 
 	public ConfigProcessor(String encoding, int indentSize, int lineWidth, Map<String, String> namespaceContexts, File outputDirectory, boolean useOutputDirectory, LogAdapter log) {
 		this.encoding = encoding;
@@ -47,13 +51,8 @@ public class ConfigProcessor {
 		this.useOutputDirectory = useOutputDirectory;
 		this.log = log;
 	}
-
-	public LogAdapter getLog() {
-		return log;
-	}
-
-	public void execute(ExpressionResolver resolver, Transformation transformation) throws ConfigProcessException {
-		File actualOutputDirectory = null;
+	
+	public void init() {
 		if (useOutputDirectory) {
 			if (!outputDirectory.exists()) {
 				outputDirectory.mkdirs();
@@ -67,7 +66,9 @@ public class ConfigProcessor {
 
 		getLog().debug("Using output directory [" + actualOutputDirectory + "]");
 		getLog().debug("File encodig is [" + encoding + "]");
+	}
 
+	public void execute(ExpressionResolver resolver, Transformation transformation) throws ConfigProcessException {
 		File input = new File(transformation.getInput());
 		File output = new File(actualOutputDirectory, transformation.getOutput());
 		File config = new File(transformation.getConfig());
@@ -154,6 +155,10 @@ public class ConfigProcessor {
 			throw new ConfigProcessException("Error processing file [" + input + "] using configuration [" + config + "]", e);
 		} catch (IOException e) {
 			throw new ConfigProcessException("Error reading/writing files. Input is [" + input + "], configuration is [" + config + "]", e);
+		} finally {
+			close(configStreamReader, getLog());
+			close(inputStreamReader, getLog());
+			close(outputStreamWriter, getLog());
 		}
 	}
 
@@ -179,42 +184,6 @@ public class ConfigProcessor {
 	}
 
 	/**
-	 * Read additional properties file if specified.
-	 * 
-	 * @param specificProperties
-	 * 
-	 * @return Properties read or empty properties if not specified.
-	 * @throws ConfigProcessException If processing cannot be performed.
-	 */
-	static public Properties getAdditionalProperties(File specificProperties) throws ConfigProcessException {
-		Properties additional = new Properties();
-		if (specificProperties == null) {
-			return additional;
-		}
-
-		if (!specificProperties.exists()) {
-			throw new ConfigProcessException("Additional properties file [" + specificProperties + "] does not exist");
-		}
-
-		FileInputStream fis = null;
-		try {
-			fis = new FileInputStream(specificProperties);
-			additional.load(fis);
-			return additional;
-		} catch (Exception e) {
-			throw new ConfigProcessException("Error loading additional properties", e);
-		} finally {
-			if (fis != null) {
-				try {
-					fis.close();
-				} catch (IOException e) {
-					throw new ConfigProcessException("Error closing additional properties file", e);
-				}
-			}
-		}
-	}
-
-	/**
 	 * Creates output file and required directories.
 	 * 
 	 * @param output Output file to create.
@@ -232,4 +201,7 @@ public class ConfigProcessor {
 		}
 	}
 
+	public LogAdapter getLog() {
+		return log;
+	}
 }
