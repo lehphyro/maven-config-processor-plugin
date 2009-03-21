@@ -13,38 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.google.code.configprocessor.ant;
+package com.google.code.configprocessor.maven;
 
-import org.apache.tools.ant.*;
+import org.apache.maven.plugin.logging.*;
 
 import com.google.code.configprocessor.log.*;
 
-public class LogAnt implements LogAdapter {
+public class LogMaven implements LogAdapter {
 
-	private Task task;
+	private Log log;
 
-	public LogAnt(Task task) {
-		this.task = task;
+	public LogMaven(Log log) {
+		this.log = log;
 	}
 
 	public void debug(String msg) {
-		task.log(msg, Project.MSG_DEBUG);
+		log.debug(msg);
 	}
 
 	public void error(String msg, Throwable t) {
-		task.log(msg, t, Project.MSG_ERR);
+		log.error(msg, t);
 	}
 
 	public void info(String msg) {
-		task.log(msg, Project.MSG_INFO);
+		log.info(msg);
 	}
 
 	public void warn(String msg) {
-		task.log(msg, Project.MSG_WARN);
+		log.warn(msg);
 	}
 
 	public void verbose(String msg) {
-		task.log(msg, Project.MSG_VERBOSE);
+		log.debug(msg);
 	}
 
 }

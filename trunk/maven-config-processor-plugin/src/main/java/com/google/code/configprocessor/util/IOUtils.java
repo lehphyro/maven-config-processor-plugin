@@ -13,36 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.google.code.configprocessor.log;
+package com.google.code.configprocessor.util;
 
-import org.apache.maven.plugin.logging.*;
+import java.io.*;
 
-public class LogMaven implements LogAdapter {
+import com.google.code.configprocessor.log.*;
 
-	private Log log;
+public abstract class IOUtils {
 
-	public LogMaven(Log log) {
-		this.log = log;
+	public static final void close(Closeable closeable, LogAdapter logAdapter) {
+		if (closeable != null) {
+			try {
+				closeable.close();
+			} catch (IOException e) {
+				logAdapter.error("Error closing: " + closeable, e);
+			}
+		}
 	}
-
-	public void debug(String msg) {
-		log.debug(msg);
-	}
-
-	public void error(String msg) {
-		log.error(msg);
-	}
-
-	public void info(String msg) {
-		log.info(msg);
-	}
-
-	public void warn(String msg) {
-		log.warn(msg);
-	}
-
-	public void verbose(String msg) {
-		log.debug(msg);
-	}
-
 }

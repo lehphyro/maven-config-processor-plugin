@@ -15,6 +15,8 @@
  */
 package com.google.code.configprocessor.ant;
 
+import static com.google.code.configprocessor.util.PropertiesUtils.*;
+
 import java.io.*;
 import java.util.*;
 
@@ -40,19 +42,22 @@ public class ConfigProcessorTask extends Task {
 
 	@Override
 	public void execute() {
-		Map<String, String> namespaceContextsMap = new HashMap<String, String>();
-		for (NamespaceContext nsContext : namespaceContexts) {
-			namespaceContextsMap.put(nsContext.getPrefix(), nsContext.getUrl());
-		}
-		ConfigProcessor processor = new ConfigProcessor(encoding, indentSize, lineWidth, namespaceContextsMap, outputDirectory, useOutputDirectory, log);
-		for (Transformation transformation : transforms) {
-			try {
-				ExpressionResolver resolver = new ExpressionResolver(new ExpressionEvaluatorAnt(getProject(), ConfigProcessor.getAdditionalProperties(specificProperties)), transformation
-						.isReplacePlaceholders());
-				processor.execute(resolver, transformation);
-			} catch (ConfigProcessException e) {
-				throw new BuildException("Error during config processing", e);
+		try {
+			Map<String, String> namespaceContextsMap = new HashMap<String, String>();
+			for (NamespaceContext nsContext : namespaceContexts) {
+				namespaceContextsMap.put(nsContext.getPrefix(), nsContext.getUrl());
 			}
+			ConfigProcessor processor = new ConfigProcessor(encoding, indentSize, lineWidth, namespaceContextsMap, outputDirectory, useOutputDirectory, log);
+			processor.init();
+			
+			Properties additionalProperties = loadIfPossible(specificProperties, log);
+			
+			for (Transformation transformation : transforms) {
+					ExpressionResolver resolver = getExpressionResolver(transformation.isReplacePlaceholders(), additionalProperties);
+					processor.execute(resolver, transformation);
+			}
+		} catch (ConfigProcessException e) {
+			throw new BuildException("Error during config processing", e);
 		}
 	}
 
@@ -68,6 +73,10 @@ public class ConfigProcessorTask extends Task {
 		return namespaceContext;
 	}
 
+	protected ExpressionResolver getExpressionResolver(boolean replacePlaceholders, Properties additionalProperties) {
+		return new ExpressionResolver(new ExpressionEvaluatorAnt(getProject(), additionalProperties), replacePlaceholders);
+	}
+	
 	public void setEncoding(String encoding) {
 		this.encoding = encoding;
 	}
