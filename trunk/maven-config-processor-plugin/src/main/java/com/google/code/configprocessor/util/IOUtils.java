@@ -21,6 +21,15 @@ import com.google.code.configprocessor.log.*;
 
 public abstract class IOUtils {
 
+	public static final void forceMkdirs(File file) throws IOException {
+		if (file.exists() && file.isFile()) {
+			throw new IOException("File " + file + " exists and is not a directory. Unable to create directory.");
+		}
+		if (!file.mkdirs()) {
+			throw new IOException("Unable to create directory: " + file);
+		}
+	}
+
 	public static final void close(Closeable closeable, LogAdapter logAdapter) {
 		if (closeable != null) {
 			try {

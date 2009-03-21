@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.google.code.configprocessor;
+package com.google.code.configprocessor.maven;
 
 import org.codehaus.plexus.component.configurator.expression.*;
+
+import com.google.code.configprocessor.expression.*;
 
 /**
  * Resolver of placeholders.
@@ -23,7 +25,7 @@ import org.codehaus.plexus.component.configurator.expression.*;
  * @author Leandro Aparecido
  * @see org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator
  */
-public class ExpressionResolver {
+public class MavenExpressionResolver implements ExpressionResolver {
 
 	/**
 	 * True if placeholders must be replaced.
@@ -35,11 +37,11 @@ public class ExpressionResolver {
 	 */
 	private ExpressionEvaluator evaluator;
 
-	public ExpressionResolver(ExpressionEvaluator evaluator) {
+	public MavenExpressionResolver(ExpressionEvaluator evaluator) {
 		this(evaluator, true);
 	}
 
-	public ExpressionResolver(ExpressionEvaluator evaluator, boolean replacePlaceholders) {
+	public MavenExpressionResolver(ExpressionEvaluator evaluator, boolean replacePlaceholders) {
 		this.evaluator = evaluator;
 		this.replacePlaceholders = replacePlaceholders;
 	}

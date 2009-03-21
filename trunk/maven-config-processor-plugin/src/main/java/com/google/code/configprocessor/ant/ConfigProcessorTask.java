@@ -23,6 +23,7 @@ import java.util.*;
 import org.apache.tools.ant.*;
 
 import com.google.code.configprocessor.*;
+import com.google.code.configprocessor.expression.*;
 import com.google.code.configprocessor.log.*;
 
 /**
@@ -41,6 +42,15 @@ public class ConfigProcessorTask extends Task {
 	private LogAdapter log = new LogAnt(this);
 
 	@Override
+	public void init() throws BuildException {
+		super.init();
+		indentSize = 4;
+		lineWidth = 80;
+		outputDirectory = getProject().getBaseDir();
+		useOutputDirectory = true;
+	}
+	
+	@Override
 	public void execute() {
 		try {
 			Map<String, String> namespaceContextsMap = new HashMap<String, String>();
@@ -57,6 +67,7 @@ public class ConfigProcessorTask extends Task {
 					processor.execute(resolver, transformation);
 			}
 		} catch (ConfigProcessException e) {
+			e.printStackTrace();
 			throw new BuildException("Error during config processing", e);
 		}
 	}
@@ -74,7 +85,7 @@ public class ConfigProcessorTask extends Task {
 	}
 
 	protected ExpressionResolver getExpressionResolver(boolean replacePlaceholders, Properties additionalProperties) {
-		return new ExpressionResolver(new ExpressionEvaluatorAnt(getProject(), additionalProperties), replacePlaceholders);
+		return new AntExpressionResolver(getProject(), additionalProperties, replacePlaceholders);
 	}
 	
 	public void setEncoding(String encoding) {

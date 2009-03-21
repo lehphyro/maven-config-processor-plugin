@@ -19,6 +19,7 @@ import java.io.*;
 import java.util.*;
 
 import com.google.code.configprocessor.*;
+import com.google.code.configprocessor.expression.*;
 import com.google.code.configprocessor.processing.*;
 import com.google.code.configprocessor.processing.properties.model.*;
 

@@ -145,7 +145,7 @@ public class ConfigProcessorMojo extends AbstractMojo {
 			Properties additionalProperties = loadIfPossible(specificProperties, logAdapter);
 			
 			for (Transformation transformation : transformations) {
-				ExpressionResolver resolver = getExpressionResolver(transformation.isReplacePlaceholders(), additionalProperties);
+				MavenExpressionResolver resolver = getExpressionResolver(transformation.isReplacePlaceholders(), additionalProperties);
 				processor.execute(resolver, transformation);
 			}
 		} catch (ConfigProcessException e) {
@@ -161,8 +161,8 @@ public class ConfigProcessorMojo extends AbstractMojo {
 	 * @return Created ExpressionResolver.
 	 * @throws MojoExecutionException If processing cannot be performed.
 	 */
-	protected ExpressionResolver getExpressionResolver(boolean replacePlaceholders, Properties additionalProperties) throws MojoExecutionException {
-		return new ExpressionResolver(new PluginParameterExpressionEvaluator(mavenSession, mojoExecution, new DefaultPathTranslator(), new ConsoleLogger(Logger.LEVEL_INFO, "ConfigProcessorMojo"),
+	protected MavenExpressionResolver getExpressionResolver(boolean replacePlaceholders, Properties additionalProperties) throws MojoExecutionException {
+		return new MavenExpressionResolver(new PluginParameterExpressionEvaluator(mavenSession, mojoExecution, new DefaultPathTranslator(), new ConsoleLogger(Logger.LEVEL_INFO, "ConfigProcessorMojo"),
 			mavenProject, additionalProperties), replacePlaceholders);
 	}
 

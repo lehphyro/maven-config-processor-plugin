@@ -21,6 +21,7 @@ import javax.xml.xpath.*;
 import org.w3c.dom.*;
 
 import com.google.code.configprocessor.*;
+import com.google.code.configprocessor.expression.*;
 
 public abstract class AbstractXmlActionProcessingAdvisor implements XmlActionProcessingAdvisor {
 

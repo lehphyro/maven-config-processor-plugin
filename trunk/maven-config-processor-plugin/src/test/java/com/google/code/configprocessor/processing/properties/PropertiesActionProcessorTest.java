@@ -23,7 +23,7 @@ import java.io.*;
 import org.codehaus.plexus.component.configurator.expression.*;
 import org.junit.*;
 
-import com.google.code.configprocessor.*;
+import com.google.code.configprocessor.maven.*;
 import com.google.code.configprocessor.processing.*;
 import com.google.code.configprocessor.processing.properties.model.*;
 
@@ -65,7 +65,7 @@ public class PropertiesActionProcessorTest {
 	class TestPropertiesActionProcessor extends PropertiesActionProcessor {
 		
 		public TestPropertiesActionProcessor() {
-			super(new ExpressionResolver(new DefaultExpressionEvaluator()));
+			super(new MavenExpressionResolver(new DefaultExpressionEvaluator()));
 		}
 		
 		@Override
