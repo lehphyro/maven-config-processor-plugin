@@ -20,8 +20,7 @@ import static com.google.code.configprocessor.util.IOUtils.*;
 import java.io.*;
 import java.util.*;
 
-import org.codehaus.plexus.util.*;
-
+import com.google.code.configprocessor.expression.*;
 import com.google.code.configprocessor.log.*;
 import com.google.code.configprocessor.parsing.*;
 import com.google.code.configprocessor.processing.*;
@@ -194,7 +193,7 @@ public class ConfigProcessor {
 			File directory = output.getParentFile();
 			getLog().debug(output.toString());
 			if (!directory.exists()) {
-				FileUtils.forceMkdir(output.getParentFile());
+				forceMkdirs(output.getParentFile());
 			}
 		} catch (IOException e) {
 			throw new ConfigProcessException(e.getMessage(), e);

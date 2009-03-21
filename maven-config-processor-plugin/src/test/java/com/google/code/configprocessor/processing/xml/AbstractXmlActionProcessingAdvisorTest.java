@@ -23,17 +23,17 @@ import org.codehaus.plexus.component.configurator.expression.*;
 import org.junit.*;
 import org.w3c.dom.*;
 
-import com.google.code.configprocessor.*;
+import com.google.code.configprocessor.maven.*;
 
 @Ignore
 public class AbstractXmlActionProcessingAdvisorTest {
 
-	protected ExpressionResolver expressionResolver;
+	protected MavenExpressionResolver expressionResolver;
 	protected NamespaceContext namespaceContext;
 	protected Document document;
 
 	public AbstractXmlActionProcessingAdvisorTest() {
-		expressionResolver = new ExpressionResolver(new DefaultExpressionEvaluator());
+		expressionResolver = new MavenExpressionResolver(new DefaultExpressionEvaluator());
 		namespaceContext = new EmptyNamespaceContext();
 	}
 	

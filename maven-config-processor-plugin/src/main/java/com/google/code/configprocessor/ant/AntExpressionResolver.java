@@ -15,30 +15,46 @@
  */
 package com.google.code.configprocessor.ant;
 
-import java.io.*;
 import java.util.*;
 
 import org.apache.tools.ant.*;
-import org.codehaus.plexus.component.configurator.expression.*;
 
-public class ExpressionEvaluatorAnt implements ExpressionEvaluator {
+import com.google.code.configprocessor.expression.*;
 
+public class AntExpressionResolver implements ExpressionResolver {
+
+	/**
+	 * True if placeholders must be replaced.
+	 */
+	private boolean replacePlaceholders;
+
+	/**
+	 * Ant project.
+	 */
 	private Project project;
+	
+	/**
+	 * Properties to use when resolving.
+	 */
 	private Hashtable<Object, Object> properties;
 
-	public ExpressionEvaluatorAnt(Project project, Hashtable<Object, Object> properties) {
+	public AntExpressionResolver(Project project, Hashtable<Object, Object> properties, boolean replacePlaceholders) {
 		this.project = project;
 		this.properties = properties;
+		this.replacePlaceholders = replacePlaceholders;
 	}
-
-	public File alignToBaseDirectory(File file) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Object evaluate(String expression) throws ExpressionEvaluationException {
-		PropertyHelper ph = PropertyHelper.getPropertyHelper(project);
-		return ph.replaceProperties(null, expression, properties);
+	
+	public String resolve(String value) {
+		String resolvedValue;
+		
+		if (replacePlaceholders) {
+			PropertyHelper ph = PropertyHelper.getPropertyHelper(project);
+			resolvedValue = ph.replaceProperties(null, value, properties);
+		} else {
+			resolvedValue = value;
+		}
+		
+		return resolvedValue;
 	}
 
 }

@@ -24,6 +24,7 @@ import org.w3c.dom.*;
 import org.xml.sax.*;
 
 import com.google.code.configprocessor.*;
+import com.google.code.configprocessor.expression.*;
 import com.google.code.configprocessor.processing.*;
 
 public class XmlAddActionProcessingAdvisor extends AbstractXmlActionProcessingAdvisor {

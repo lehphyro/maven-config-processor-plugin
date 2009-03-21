@@ -22,7 +22,7 @@ import java.io.*;
 import org.codehaus.plexus.component.configurator.expression.*;
 import org.junit.*;
 
-import com.google.code.configprocessor.*;
+import com.google.code.configprocessor.maven.*;
 import com.google.code.configprocessor.processing.*;
 
 @Ignore
@@ -34,7 +34,7 @@ public class AbstractPropertiesActionProcessingAdvisorTest {
 	
 	@Before
 	public void setup() {
-		processor = new PropertiesActionProcessor(new ExpressionResolver(new DefaultExpressionEvaluator()));
+		processor = new PropertiesActionProcessor(new MavenExpressionResolver(new DefaultExpressionEvaluator()));
 		input = getClass().getResourceAsStream(PropertiesActionProcessorTest.PROPERTIES_PATH);
 		output = new ByteArrayOutputStream();
 	}
