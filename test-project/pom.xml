@@ -127,7 +127,7 @@
                     <plugin>
                         <groupId>com.google.code.maven-config-processor-plugin</groupId>
                         <artifactId>maven-config-processor-plugin</artifactId>
-                        <version>1.5</version>
+                        <version>1.6-SNAPSHOT</version>
                         <configuration>
                             <specificProperties>src/main/assembly/qa.properties</specificProperties>
                             <transformations>
@@ -214,12 +214,12 @@
             <url>http://download.java.net/maven/2/</url>
         </repository>
     </repositories>
-    <!--
+
     <pluginRepositories>
         <pluginRepository>
             <id>maven-config-processor-repo-releases</id>
             <url>http://maven-config-processor-plugin.googlecode.com/svn/maven-repo/releases</url>
         </pluginRepository>
     </pluginRepositories>
-    -->
+
 </project>
