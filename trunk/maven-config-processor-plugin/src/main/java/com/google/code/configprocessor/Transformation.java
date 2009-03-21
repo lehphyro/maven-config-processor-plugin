@@ -15,19 +15,16 @@
  */
 package com.google.code.configprocessor;
 
-import com.google.code.configprocessor.log.LogAdapter;
-
-
 /**
  * Configuration of a file transformation.
  * 
  * @author Leandro Aparecido
  */
 public class Transformation {
-	
+
 	public static final String PROPERTIES_TYPE = "properties";
 	public static final String XML_TYPE = "xml";
-	
+
 	/**
 	 * File to process.
 	 * 
@@ -35,7 +32,7 @@ public class Transformation {
 	 * @required
 	 */
 	private String input;
-	
+
 	/**
 	 * Output file to generate the result of processing.
 	 * 
@@ -43,7 +40,7 @@ public class Transformation {
 	 * @required
 	 */
 	private String output;
-	
+
 	/**
 	 * Configuration file describing the processing to be performed.
 	 * 
@@ -51,54 +48,42 @@ public class Transformation {
 	 * @required
 	 */
 	private String config;
-	
+
 	/**
-	 * Type of the file to transform. If not specified, the plugin will try to auto-detect.
-	 * Possible values: properties, xml.
+	 * Type of the file to transform. If not specified, the plugin will try to auto-detect. Possible values: properties, xml.
 	 * 
 	 * @parameter
 	 * @required
 	 */
 	private String type;
-	
+
 	/**
-	 * Indicates if the plugin should replace values in ${} with properties of the maven
-	 * environment.
+	 * Indicates if the plugin should replace values in ${} with properties of the maven environment.
 	 * 
 	 * @parameter default-value="true"
 	 */
 	private boolean replacePlaceholders;
-	
-	private LogAdapter log = null;
-
-	public LogAdapter getLog() {
-		return log;
-	}
-
-	public Transformation(LogAdapter log) {
-		this.log = log;
-	}
 
 	public String getInput() {
 		return input;
 	}
-	
+
 	public String getOutput() {
 		return output;
 	}
-	
+
 	public String getConfig() {
 		return config;
 	}
-	
+
 	public String getType() {
 		return type;
 	}
-	
+
 	public boolean isReplacePlaceholders() {
 		return replacePlaceholders;
 	}
-	
+
 	public void setInput(String input) {
 		this.input = input;
 	}
@@ -119,31 +104,4 @@ public class Transformation {
 		this.replacePlaceholders = replacePlaceholders;
 	}
 
-	/**
-	 * Detects input file type.
-	 * 
-	 * @param input File to read from.
-	 * @param specifiedType Type specified by user, will be used if set, can be null.
-	 * @return Input file type.
-	 */
-	protected String getInputType() {
-		String type;
-		
-		if (getType() == null) {
-			if (getInput().endsWith(".properties")) {
-				type = Transformation.PROPERTIES_TYPE;
-			} else if (getInput().endsWith(".xml")) {
-				type = Transformation.XML_TYPE;
-			} else {
-				if (getLog()!=null) {
-					getLog().warn("Could not auto-detect type of input [" + input + "], trying XML. It is recommended that you configure it in your pom.xml (tag: transformations/transformation/type) to avoid errors");
-				}
-				type = Transformation.XML_TYPE;
-			}
-		} else {
-			type = getType();
-		}
-		
-		return type;
-	}
 }

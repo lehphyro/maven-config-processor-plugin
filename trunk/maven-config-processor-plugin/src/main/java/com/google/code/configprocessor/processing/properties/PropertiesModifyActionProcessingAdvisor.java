@@ -22,24 +22,24 @@ import com.google.code.configprocessor.processing.properties.model.*;
 public class PropertiesModifyActionProcessingAdvisor extends AbstractPropertiesActionProcessingAdvisor {
 
 	private ModifyAction action;
-	
+
 	public PropertiesModifyActionProcessingAdvisor(ModifyAction action, ExpressionResolver expressionResolver) {
 		super(expressionResolver);
 		this.action = action;
 	}
-	
+
 	@Override
 	public PropertiesFileItemAdvice process(PropertiesFileItem item) {
 		if (item instanceof PropertyMapping) {
-			PropertyMapping mapping = (PropertyMapping)item;
+			PropertyMapping mapping = (PropertyMapping) item;
 
 			if (mapping.getPropertyName().trim().equals(action.getName())) {
 				PropertyMapping aux = createPropertyMapping(mapping.getPropertyName(), action.getValue());
 				return new PropertiesFileItemAdvice(PropertiesFileItemAdviceType.MODIFY, aux);
 			}
 		}
-		
+
 		return super.process(item);
 	}
-	
+
 }

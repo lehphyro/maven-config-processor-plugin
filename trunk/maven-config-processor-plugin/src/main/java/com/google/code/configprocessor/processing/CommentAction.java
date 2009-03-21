@@ -20,11 +20,11 @@ public class CommentAction extends AbstractAction {
 	public CommentAction() {
 		this(null);
 	}
-	
+
 	public CommentAction(String name) {
 		super(name, null);
 	}
-	
+
 	@Override
 	protected String getActionName() {
 		return "Comment";

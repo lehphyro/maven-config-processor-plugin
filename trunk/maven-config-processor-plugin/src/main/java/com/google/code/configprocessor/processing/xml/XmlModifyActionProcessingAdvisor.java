@@ -27,21 +27,20 @@ import com.google.code.configprocessor.processing.*;
 public class XmlModifyActionProcessingAdvisor extends AbstractXmlActionProcessingAdvisor {
 
 	private String textFragment;
-	
-	public XmlModifyActionProcessingAdvisor(ModifyAction action, ExpressionResolver expressionResolver, NamespaceContext namespaceContext)
-	throws ParsingException {
+
+	public XmlModifyActionProcessingAdvisor(ModifyAction action, ExpressionResolver expressionResolver, NamespaceContext namespaceContext) throws ParsingException {
 		super(expressionResolver, namespaceContext);
-		
+
 		compile(action.getName());
-		this.textFragment = resolve(action.getValue());
+		textFragment = resolve(action.getValue());
 	}
-	
+
 	public void process(Document document) throws ParsingException {
 		try {
 			Node node = evaluateForSingleNode(document, true, true);
-			
+
 			if (node instanceof Attr) {
-				modifyAttribute(document, (Attr)node);
+				modifyAttribute(document, (Attr) node);
 			} else {
 				modifyNode(document, node);
 			}
@@ -51,14 +50,14 @@ public class XmlModifyActionProcessingAdvisor extends AbstractXmlActionProcessin
 			throw new ParsingException(e);
 		}
 	}
-	
+
 	protected void modifyNode(Document document, Node oldNode) throws SAXException, ParserConfigurationException {
 		Document fragment = XmlHelper.parse(textFragment, false);
 		Node parent = oldNode.getParentNode();
 		Node importedNode = document.importNode(fragment.getDocumentElement(), true);
 		parent.replaceChild(importedNode, oldNode);
 	}
-	
+
 	protected void modifyAttribute(Document document, Attr oldAttr) {
 		oldAttr.setValue(textFragment);
 	}

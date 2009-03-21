@@ -30,7 +30,7 @@ import com.google.code.configprocessor.processing.*;
 public class XmlActionProcessor implements ActionProcessor {
 
 	public static final String LINE_SEPARATOR = System.getProperty("line.separator");
-	
+
 	private String encoding;
 	private int lineWidth;
 	private int indentSize;
@@ -42,9 +42,9 @@ public class XmlActionProcessor implements ActionProcessor {
 		this.lineWidth = lineWidth;
 		this.indentSize = indentSize;
 		this.expressionResolver = expressionResolver;
-		this.namespaceContext = new MapBasedNamespaceContext(contextMappings);
+		namespaceContext = new MapBasedNamespaceContext(contextMappings);
 	}
-	
+
 	public void process(InputStreamReader input, OutputStreamWriter output, Action action) throws ParsingException, IOException {
 		XmlActionProcessingAdvisor advisor = getAdvisorFor(action);
 		try {
@@ -60,14 +60,14 @@ public class XmlActionProcessor implements ActionProcessor {
 
 	protected XmlActionProcessingAdvisor getAdvisorFor(Action action) throws ParsingException {
 		if (action instanceof AddAction) {
-			return new XmlAddActionProcessingAdvisor((AddAction)action, expressionResolver, namespaceContext);
+			return new XmlAddActionProcessingAdvisor((AddAction) action, expressionResolver, namespaceContext);
 		} else if (action instanceof ModifyAction) {
-			return new XmlModifyActionProcessingAdvisor((ModifyAction)action, expressionResolver, namespaceContext);
+			return new XmlModifyActionProcessingAdvisor((ModifyAction) action, expressionResolver, namespaceContext);
 		} else if (action instanceof RemoveAction) {
-			return new XmlRemoveActionProcessingAdvisor((RemoveAction)action, expressionResolver, namespaceContext);
+			return new XmlRemoveActionProcessingAdvisor((RemoveAction) action, expressionResolver, namespaceContext);
 		} else if (action instanceof NestedAction) {
 			List<XmlActionProcessingAdvisor> advisors = new ArrayList<XmlActionProcessingAdvisor>();
-			NestedAction nestedAction = (NestedAction)action;
+			NestedAction nestedAction = (NestedAction) action;
 			for (Action nested : nestedAction.getActions()) {
 				advisors.add(getAdvisorFor(nested));
 			}

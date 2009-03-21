@@ -26,7 +26,7 @@ public abstract class AbstractAction implements Action {
 		this.name = name;
 		this.value = value;
 	}
-	
+
 	public String getName() {
 		return StringUtils.trimToNull(name);
 	}
@@ -44,7 +44,7 @@ public abstract class AbstractAction implements Action {
 	}
 
 	protected abstract String getActionName();
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

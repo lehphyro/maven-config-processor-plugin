@@ -17,19 +17,19 @@ package com.google.code.configprocessor.log;
 
 /**
  * Simple Adapter to use different log mechanism in the ConfigProcessor
- *
+ * 
  */
 
 public interface LogAdapter {
-	
+
 	public void info(String msg);
-	
+
 	public void debug(String msg);
-	
+
 	public void warn(String msg);
-	
+
 	public void error(String msg);
-	
+
 	public void verbose(String msg);
 
 }

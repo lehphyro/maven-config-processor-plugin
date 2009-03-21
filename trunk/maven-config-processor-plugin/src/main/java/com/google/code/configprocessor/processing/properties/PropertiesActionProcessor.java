@@ -26,13 +26,13 @@ public class PropertiesActionProcessor implements ActionProcessor {
 
 	public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 	private static final int READ_AHEAD_BUFFER_SIZE = 1024 * 10;
-	
+
 	private ExpressionResolver expressionResolver;
-	
+
 	public PropertiesActionProcessor(ExpressionResolver expressionResolver) {
 		this.expressionResolver = expressionResolver;
 	}
-	
+
 	public void process(InputStreamReader input, OutputStreamWriter output, Action action) throws ParsingException, IOException {
 		PropertiesActionProcessingAdvisor advisor = getAdvisorFor(action);
 		BufferedReader reader = new BufferedReader(input);
@@ -41,7 +41,7 @@ public class PropertiesActionProcessor implements ActionProcessor {
 		// Start
 		PropertiesFileItemAdvice advice = advisor.onStartProcessing();
 		processAdvice(advice, null, writer);
-		
+
 		// Process
 		PropertiesFileItem currentItem = null;
 		String line;
@@ -54,7 +54,7 @@ public class PropertiesActionProcessor implements ActionProcessor {
 				} else {
 					currentItem = readPropertyMapping(reader, line);
 				}
-				
+
 				advice = advisor.process(currentItem);
 				processAdvice(advice, currentItem, writer);
 			}
@@ -63,22 +63,22 @@ public class PropertiesActionProcessor implements ActionProcessor {
 		// End
 		advice = advisor.onEndProcessing();
 		processAdvice(advice, null, writer);
-		
+
 		writer.flush();
 	}
-	
+
 	protected Comment readComment(BufferedReader reader, String line) throws IOException {
 		if (line == null) {
 			return new Comment("");
 		}
-		
+
 		boolean shouldContinue = true;
 		StringBuilder sb = new StringBuilder(line);
-		
-		while (shouldContinue && line != null && line.endsWith(PropertyMapping.PROPERTY_VALUE_LINE_SEPARATOR)) {
+
+		while (shouldContinue && (line != null) && line.endsWith(PropertyMapping.PROPERTY_VALUE_LINE_SEPARATOR)) {
 			reader.mark(READ_AHEAD_BUFFER_SIZE);
 			line = reader.readLine();
-			
+
 			if (line == null) {
 				shouldContinue = false;
 			} else {
@@ -91,10 +91,10 @@ public class PropertiesActionProcessor implements ActionProcessor {
 				}
 			}
 		}
-		
+
 		return new Comment(sb.toString());
 	}
-	
+
 	protected PropertyMapping readPropertyMapping(BufferedReader reader, String line) throws IOException {
 		StringBuilder sb = new StringBuilder(line);
 		while (line.endsWith(PropertyMapping.PROPERTY_VALUE_LINE_SEPARATOR)) {
@@ -108,13 +108,11 @@ public class PropertiesActionProcessor implements ActionProcessor {
 
 		PropertyMapping propertyMapping = new PropertyMapping();
 		propertyMapping.parse(sb.toString(), false);
-		
+
 		return propertyMapping;
 	}
-	
-	protected void processAdvice(PropertiesFileItemAdvice advice,
-	                             PropertiesFileItem currentItem,
-	                             BufferedWriter writer) throws IOException {
+
+	protected void processAdvice(PropertiesFileItemAdvice advice, PropertiesFileItem currentItem, BufferedWriter writer) throws IOException {
 		switch (advice.getType()) {
 			case DO_NOTHING:
 				append(currentItem, writer);
@@ -134,28 +132,28 @@ public class PropertiesActionProcessor implements ActionProcessor {
 				break;
 		}
 	}
-	
+
 	protected void append(PropertiesFileItem item, BufferedWriter writer) throws IOException {
 		if (item != null) {
 			writer.append(item.getAsText());
 			writer.append(LINE_SEPARATOR);
 		}
 	}
-	
+
 	protected PropertiesActionProcessingAdvisor getAdvisorFor(Action action) {
 		if (action instanceof AddAction) {
-			return new PropertiesAddActionProcessingAdvisor((AddAction)action, expressionResolver);
+			return new PropertiesAddActionProcessingAdvisor((AddAction) action, expressionResolver);
 		} else if (action instanceof ModifyAction) {
-			return new PropertiesModifyActionProcessingAdvisor((ModifyAction)action, expressionResolver);
+			return new PropertiesModifyActionProcessingAdvisor((ModifyAction) action, expressionResolver);
 		} else if (action instanceof RemoveAction) {
-			return new PropertiesRemoveActionProcessingAdvisor((RemoveAction)action, expressionResolver);
+			return new PropertiesRemoveActionProcessingAdvisor((RemoveAction) action, expressionResolver);
 		} else if (action instanceof CommentAction) {
-			return new PropertiesCommentActionProcessingAdvisor((CommentAction)action, expressionResolver);
+			return new PropertiesCommentActionProcessingAdvisor((CommentAction) action, expressionResolver);
 		} else if (action instanceof UncommentAction) {
-			return new PropertiesUncommentActionProcessingAdvisor((UncommentAction)action, expressionResolver);
+			return new PropertiesUncommentActionProcessingAdvisor((UncommentAction) action, expressionResolver);
 		} else if (action instanceof NestedAction) {
 			List<PropertiesActionProcessingAdvisor> advisors = new ArrayList<PropertiesActionProcessingAdvisor>();
-			NestedAction nestedAction = (NestedAction)action;
+			NestedAction nestedAction = (NestedAction) action;
 			for (Action nested : nestedAction.getActions()) {
 				advisors.add(getAdvisorFor(nested));
 			}
@@ -163,15 +161,14 @@ public class PropertiesActionProcessor implements ActionProcessor {
 		}
 		throw new IllegalArgumentException("Unknown action: " + action);
 	}
-	
+
 	protected boolean isBlankLine(String line) {
 		return line.trim().length() == 0;
 	}
-	
+
 	protected boolean isComment(String line) {
 		String trimmedLine = line.trim();
-		return trimmedLine.startsWith(Comment.PREFIX_1) ||
-			   trimmedLine.startsWith(Comment.PREFIX_2);
+		return trimmedLine.startsWith(Comment.PREFIX_1) || trimmedLine.startsWith(Comment.PREFIX_2);
 	}
-	
+
 }

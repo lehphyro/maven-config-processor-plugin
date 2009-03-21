@@ -15,21 +15,18 @@
  */
 package com.google.code.configprocessor.ant;
 
-import java.io.File;
-import java.util.Hashtable;
+import java.io.*;
+import java.util.*;
 
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.PropertyHelper;
-import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
-import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
+import org.apache.tools.ant.*;
+import org.codehaus.plexus.component.configurator.expression.*;
 
 public class ExpressionEvaluatorAnt implements ExpressionEvaluator {
-	
+
 	private Project project;
 	private Hashtable<Object, Object> properties;
 
-	public ExpressionEvaluatorAnt(Project project,
-			Hashtable<Object, Object> properties) {
+	public ExpressionEvaluatorAnt(Project project, Hashtable<Object, Object> properties) {
 		this.project = project;
 		this.properties = properties;
 	}
@@ -39,10 +36,9 @@ public class ExpressionEvaluatorAnt implements ExpressionEvaluator {
 		return null;
 	}
 
-	public Object evaluate(String expression)
-			throws ExpressionEvaluationException {
+	public Object evaluate(String expression) throws ExpressionEvaluationException {
 		PropertyHelper ph = PropertyHelper.getPropertyHelper(project);
-        return ph.replaceProperties(null, expression, properties);
+		return ph.replaceProperties(null, expression, properties);
 	}
 
 }

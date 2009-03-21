@@ -15,30 +15,19 @@
  */
 package com.google.code.configprocessor.ant;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
+import org.apache.tools.ant.*;
 
-import com.google.code.configprocessor.ConfigProcessException;
-import com.google.code.configprocessor.ConfigProcessor;
-import com.google.code.configprocessor.ExpressionResolver;
-import com.google.code.configprocessor.Transformation;
-import com.google.code.configprocessor.log.LogAdapter;
+import com.google.code.configprocessor.*;
+import com.google.code.configprocessor.log.*;
 
 /**
- * Ant task
- * Generates modified configuration files according to configuration. Includes,
- * excludes, modify, comment and uncomment properties.
- * 
+ * Ant task Generates modified configuration files according to configuration. Includes, excludes, modify, comment and uncomment properties.
  */
-
 public class ConfigProcessorTask extends Task {
-	
+
 	private List<Transformation> transforms = new ArrayList<Transformation>();
 	private String encoding;
 	private int indentSize;
@@ -48,33 +37,31 @@ public class ConfigProcessorTask extends Task {
 	private boolean useOutputDirectory;
 	private File specificProperties;
 	private LogAdapter log = new LogAnt(this);
-	
+
+	@Override
 	public void execute() {
 		Map<String, String> namespaceContextsMap = new HashMap<String, String>();
-		for (NamespaceContext nsContext:namespaceContexts) {
+		for (NamespaceContext nsContext : namespaceContexts) {
 			namespaceContextsMap.put(nsContext.getPrefix(), nsContext.getUrl());
 		}
-		ConfigProcessor processor = new ConfigProcessor(encoding, indentSize,
-				lineWidth, namespaceContextsMap, outputDirectory,
-				useOutputDirectory, log);
+		ConfigProcessor processor = new ConfigProcessor(encoding, indentSize, lineWidth, namespaceContextsMap, outputDirectory, useOutputDirectory, log);
 		for (Transformation transformation : transforms) {
 			try {
-				ExpressionResolver resolver = new ExpressionResolver(new ExpressionEvaluatorAnt(this.getProject(), ConfigProcessor
-						.getAdditionalProperties(specificProperties)), transformation.isReplacePlaceholders());
+				ExpressionResolver resolver = new ExpressionResolver(new ExpressionEvaluatorAnt(getProject(), ConfigProcessor.getAdditionalProperties(specificProperties)), transformation
+						.isReplacePlaceholders());
 				processor.execute(resolver, transformation);
 			} catch (ConfigProcessException e) {
-				throw new BuildException(
-						"Error during config processing", e);
+				throw new BuildException("Error during config processing", e);
 			}
 		}
 	}
-	
+
 	public Transformation createTransformation() {
-		Transformation transformation = new Transformation(log);
+		Transformation transformation = new Transformation();
 		transforms.add(transformation);
 		return transformation;
 	}
-	
+
 	public NamespaceContext createNamespaceContext() {
 		NamespaceContext namespaceContext = new NamespaceContext();
 		namespaceContexts.add(namespaceContext);
@@ -104,19 +91,23 @@ public class ConfigProcessorTask extends Task {
 	public void setSpecificProperties(File specificProperties) {
 		this.specificProperties = specificProperties;
 	}
-	
+
 	public class NamespaceContext {
 		private String prefix;
 		private String url;
+
 		public String getPrefix() {
 			return prefix;
 		}
+
 		public void setPrefix(String prefix) {
 			this.prefix = prefix;
 		}
+
 		public String getUrl() {
 			return url;
 		}
+
 		public void setUrl(String url) {
 			this.url = url;
 		}

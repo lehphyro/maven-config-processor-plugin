@@ -23,29 +23,29 @@ import org.w3c.dom.*;
 import com.google.code.configprocessor.*;
 
 public abstract class AbstractXmlActionProcessingAdvisor implements XmlActionProcessingAdvisor {
-	
+
 	private ExpressionResolver expressionResolver;
 	private NamespaceContext namespaceContext;
 	private String textExpression;
 	private XPathExpression xpathExpression;
-	
+
 	public AbstractXmlActionProcessingAdvisor(ExpressionResolver expressionResolver, NamespaceContext namespaceContext) {
 		this.expressionResolver = expressionResolver;
 		this.namespaceContext = namespaceContext;
 	}
-	
+
 	protected void compile(String expression) throws ParsingException {
 		XPathFactory factory = XPathFactory.newInstance();
 		XPath xpath = factory.newXPath();
 		xpath.setNamespaceContext(namespaceContext);
 		try {
-			this.xpathExpression = xpath.compile(resolve(expression));
-			this.textExpression = expression;
+			xpathExpression = xpath.compile(resolve(expression));
+			textExpression = expression;
 		} catch (XPathExpressionException e) {
 			throw new ParsingException(e);
 		}
 	}
-	
+
 	protected Node evaluateForSingleNode(Document document, boolean orphanOK, boolean attributeOk) throws ParsingException {
 		Node node = evaluateForNode(document);
 
@@ -55,32 +55,32 @@ public abstract class AbstractXmlActionProcessingAdvisor implements XmlActionPro
 				throw new ParsingException("Cannot manipulate node without a parent");
 			}
 		}
-		
-		if (!attributeOk && node instanceof Attr) {
+
+		if (!attributeOk && (node instanceof Attr)) {
 			throw new ParsingException("Expression resolved to attribute. It must resolve to node element: " + textExpression);
 		}
-		
+
 		return node;
 	}
-	
+
 	private Node evaluateForNode(Document document) throws ParsingException {
 		try {
-			Node node = (Node)getXPathExpression().evaluate(document, XPathConstants.NODE);
+			Node node = (Node) getXPathExpression().evaluate(document, XPathConstants.NODE);
 
 			if (node == null) {
 				throw new ParsingException("XPath expression did not find nodes: " + textExpression);
 			}
-			
+
 			return node;
 		} catch (XPathExpressionException e) {
 			throw new ParsingException(e);
 		}
 	}
-	
+
 	protected String resolve(String value) {
 		return expressionResolver.resolve(value);
 	}
-	
+
 	protected XPathExpression getXPathExpression() {
 		return xpathExpression;
 	}

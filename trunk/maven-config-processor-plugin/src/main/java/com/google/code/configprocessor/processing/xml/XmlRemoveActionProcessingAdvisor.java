@@ -24,8 +24,7 @@ import com.google.code.configprocessor.processing.*;
 
 public class XmlRemoveActionProcessingAdvisor extends AbstractXmlActionProcessingAdvisor {
 
-	public XmlRemoveActionProcessingAdvisor(RemoveAction action, ExpressionResolver expressionResolver, NamespaceContext namespaceContext)
-	throws ParsingException {
+	public XmlRemoveActionProcessingAdvisor(RemoveAction action, ExpressionResolver expressionResolver, NamespaceContext namespaceContext) throws ParsingException {
 		super(expressionResolver, namespaceContext);
 
 		if (action.getName() == null) {
@@ -33,22 +32,22 @@ public class XmlRemoveActionProcessingAdvisor extends AbstractXmlActionProcessin
 		}
 		compile(action.getName());
 	}
-	
+
 	public void process(Document document) throws ParsingException {
 		Node node = evaluateForSingleNode(document, true, true);
-		
+
 		if (node instanceof Attr) {
-			removeAttribute((Attr)node);
+			removeAttribute((Attr) node);
 		} else {
 			removeNode(node);
 		}
 	}
-	
+
 	protected void removeNode(Node node) {
 		Node parent = node.getParentNode();
 		parent.removeChild(node);
 	}
-	
+
 	protected void removeAttribute(Attr attr) {
 		Node owner = attr.getOwnerElement();
 		owner.getAttributes().removeNamedItemNS(attr.getNamespaceURI(), attr.getLocalName());

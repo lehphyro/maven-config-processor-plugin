@@ -30,23 +30,23 @@ public class XmlHelper {
 	public static final String NODE_END = ">";
 	public static final String CLOSING_NODE_START = "</";
 	public static final String CLOSING_NODE_END = NODE_END;
-	
+
 	public static final String ROOT_TAG = "root";
-	
+
 	public static Document parse(String text, boolean prefixAndSuffix) throws SAXException, ParserConfigurationException {
 		String textToParse;
-		
+
 		if (prefixAndSuffix) {
 			StringBuilder sb = new StringBuilder();
 			sb.append(NODE_START).append(ROOT_TAG).append(NODE_END);
 			sb.append(text);
 			sb.append(CLOSING_NODE_START).append(ROOT_TAG).append(CLOSING_NODE_END);
-			
+
 			textToParse = sb.toString();
 		} else {
 			textToParse = text;
 		}
-		
+
 		try {
 			return newDocumentBuilder().parse(new InputSource(new StringReader(textToParse)));
 		} catch (IOException e) {
@@ -54,7 +54,7 @@ public class XmlHelper {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	public static Document parse(InputStreamReader reader) throws SAXException, ParserConfigurationException {
 		try {
 			return newDocumentBuilder().parse(new InputSource(reader));
@@ -70,56 +70,56 @@ public class XmlHelper {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	public static List<Attr> parseAttributes(String text) throws SAXException, ParserConfigurationException {
 		StringBuilder sb = new StringBuilder();
-		
+
 		sb.append(NODE_START).append(ROOT_TAG).append(" ");
 		sb.append(text);
 		sb.append(NODE_END);
 		sb.append(CLOSING_NODE_START).append(ROOT_TAG).append(CLOSING_NODE_END);
-		
+
 		try {
 			Document document = newDocumentBuilder().parse(new InputSource(new StringReader(sb.toString())));
 			NamedNodeMap nodeMap = document.getFirstChild().getAttributes();
 			List<Attr> attributes = new ArrayList<Attr>();
-			
+
 			for (int i = 0; i < nodeMap.getLength(); i++) {
-				attributes.add((Attr)nodeMap.item(i));
+				attributes.add((Attr) nodeMap.item(i));
 			}
-			
+
 			return attributes;
 		} catch (IOException e) {
 			// Should never happen
 			throw new RuntimeException(e);
 		}
 	}
-	
-	public static String write(Document document, String encoding, int lineWidth, int indentSize) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        write(new OutputStreamWriter(baos), document, encoding, lineWidth, indentSize);
 
-        try {
+	public static String write(Document document, String encoding, int lineWidth, int indentSize) {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		write(new OutputStreamWriter(baos), document, encoding, lineWidth, indentSize);
+
+		try {
 			return new String(baos.toByteArray(), encoding);
 		} catch (UnsupportedEncodingException e) {
 			// Should never happen
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	public static void write(OutputStreamWriter writer, Document document, String encoding, int lineWidth, int indentSize) {
-        OutputFormat format = new OutputFormat(document, encoding, true);
-        format.setLineSeparator(XmlActionProcessor.LINE_SEPARATOR);
-        format.setLineWidth(lineWidth);
-        format.setIndent(indentSize);
-        XMLSerializer serializer = new XMLSerializer(writer, format);
-        try {
+		OutputFormat format = new OutputFormat(document, encoding, true);
+		format.setLineSeparator(XmlActionProcessor.LINE_SEPARATOR);
+		format.setLineWidth(lineWidth);
+		format.setIndent(indentSize);
+		XMLSerializer serializer = new XMLSerializer(writer, format);
+		try {
 			serializer.serialize(document);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	public static boolean representsNodeElement(String fragment) {
 		return fragment.startsWith(NODE_START);
 	}

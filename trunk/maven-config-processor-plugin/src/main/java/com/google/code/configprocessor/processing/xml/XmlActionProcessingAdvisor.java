@@ -22,5 +22,5 @@ import com.google.code.configprocessor.*;
 public interface XmlActionProcessingAdvisor {
 
 	void process(Document document) throws ParsingException;
-	
+
 }
