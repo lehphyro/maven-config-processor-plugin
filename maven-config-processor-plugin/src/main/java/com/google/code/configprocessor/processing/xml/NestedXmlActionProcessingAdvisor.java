@@ -24,11 +24,11 @@ import com.google.code.configprocessor.*;
 public class NestedXmlActionProcessingAdvisor implements XmlActionProcessingAdvisor {
 
 	private List<XmlActionProcessingAdvisor> advisors;
-	
+
 	public NestedXmlActionProcessingAdvisor(List<XmlActionProcessingAdvisor> advisors) {
 		this.advisors = advisors;
 	}
-	
+
 	public void process(Document document) throws ParsingException {
 		for (XmlActionProcessingAdvisor advisor : advisors) {
 			advisor.process(document);

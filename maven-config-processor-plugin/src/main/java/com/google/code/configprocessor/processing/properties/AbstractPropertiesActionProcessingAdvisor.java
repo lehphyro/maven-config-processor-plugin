@@ -21,11 +21,11 @@ import com.google.code.configprocessor.processing.properties.model.*;
 public abstract class AbstractPropertiesActionProcessingAdvisor implements PropertiesActionProcessingAdvisor {
 
 	private ExpressionResolver expressionResolver;
-	
+
 	public AbstractPropertiesActionProcessingAdvisor(ExpressionResolver expressionResolver) {
 		this.expressionResolver = expressionResolver;
 	}
-	
+
 	/**
 	 * Default implementation to indicate do nothing.
 	 */
@@ -39,14 +39,14 @@ public abstract class AbstractPropertiesActionProcessingAdvisor implements Prope
 	public PropertiesFileItemAdvice process(PropertiesFileItem item) {
 		return new PropertiesFileItemAdvice(PropertiesFileItemAdviceType.DO_NOTHING, null);
 	}
-	
+
 	/**
 	 * Default implementation to indicate do nothing.
 	 */
 	public PropertiesFileItemAdvice onEndProcessing() {
 		return new PropertiesFileItemAdvice(PropertiesFileItemAdviceType.DO_NOTHING, null);
 	}
-	
+
 	protected PropertyMapping createPropertyMapping(String name, String value) {
 		return new PropertyMapping(name, resolve(value));
 	}

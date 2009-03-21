@@ -21,24 +21,24 @@ public class AddAction extends AbstractAction {
 
 	private String after;
 	private String before;
-	
+
 	public AddAction() {
 		this(null, null);
 	}
-	
+
 	public AddAction(String name, String value) {
 		this(name, value, null, null);
 	}
 
 	public AddAction(String name, String value, String after, String before) {
 		super(name, value);
-		
+
 		this.after = after;
 		this.before = before;
-		
-		if (getName() == null && getAfter() == null && getBefore() == null) {
+
+		if ((getName() == null) && (getAfter() == null) && (getBefore() == null)) {
 			throw new IllegalArgumentException("Either before or after is required if no name is provided for property: " + name);
-		} else if (getAfter() != null && getBefore() != null) {
+		} else if ((getAfter() != null) && (getBefore() != null)) {
 			throw new IllegalArgumentException("Choose only one of either before or after to set for property: " + name);
 		}
 	}
@@ -47,15 +47,15 @@ public class AddAction extends AbstractAction {
 	protected String getActionName() {
 		return "Add";
 	}
-	
+
 	public String getAfter() {
 		return StringUtils.trimToNull(after);
 	}
-	
+
 	public String getBefore() {
 		return StringUtils.trimToNull(before);
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -94,7 +94,7 @@ public class AddAction extends AbstractAction {
 		}
 		return true;
 	}
-	
+
 	@Override
 	public String toString() {
 		return getActionName() + " [name=" + getName() + ";value=" + getValue() + ";after=" + getAfter() + ";before=" + getBefore() + "]";

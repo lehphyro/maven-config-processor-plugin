@@ -15,10 +15,10 @@
  */
 package com.google.code.configprocessor.log;
 
-import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugin.logging.*;
 
 public class LogMaven implements LogAdapter {
-	
+
 	private Log log;
 
 	public LogMaven(Log log) {

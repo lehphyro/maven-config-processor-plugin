@@ -22,24 +22,24 @@ import com.google.code.configprocessor.processing.properties.model.*;
 public class NestedPropertiesActionProcessingAdvisor extends AbstractPropertiesActionProcessingAdvisor {
 
 	private List<PropertiesActionProcessingAdvisor> advisors;
-	
+
 	public NestedPropertiesActionProcessingAdvisor(List<PropertiesActionProcessingAdvisor> advisors) {
 		super(null);
 		this.advisors = advisors;
 	}
-	
+
 	@Override
 	public PropertiesFileItemAdvice onStartProcessing() {
 		NestedPropertiesFileItemAdvice advice = new NestedPropertiesFileItemAdvice(null);
-		
+
 		for (PropertiesActionProcessingAdvisor advisor : advisors) {
 			PropertiesFileItemAdvice aux = advisor.onStartProcessing();
 			advice.addAdvice(aux);
 		}
-		
+
 		return advice;
 	}
-	
+
 	@Override
 	public PropertiesFileItemAdvice process(PropertiesFileItem item) {
 		NestedPropertiesFileItemAdvice advice = new NestedPropertiesFileItemAdvice(null);
@@ -48,10 +48,10 @@ public class NestedPropertiesActionProcessingAdvisor extends AbstractPropertiesA
 			PropertiesFileItemAdvice aux = advisor.process(item);
 			advice.addAdvice(aux);
 		}
-		
+
 		return advice;
 	}
-	
+
 	@Override
 	public PropertiesFileItemAdvice onEndProcessing() {
 		NestedPropertiesFileItemAdvice advice = new NestedPropertiesFileItemAdvice(null);
@@ -60,7 +60,7 @@ public class NestedPropertiesActionProcessingAdvisor extends AbstractPropertiesA
 			PropertiesFileItemAdvice aux = advisor.onEndProcessing();
 			advice.addAdvice(aux);
 		}
-		
+
 		return advice;
 	}
 

@@ -30,14 +30,13 @@ public class XmlAddActionProcessingAdvisor extends AbstractXmlActionProcessingAd
 
 	private AddAction action;
 	private String textFragment;
-	
-	public XmlAddActionProcessingAdvisor(AddAction action, ExpressionResolver expressionResolver, NamespaceContext namespaceContext)
-	throws ParsingException {
+
+	public XmlAddActionProcessingAdvisor(AddAction action, ExpressionResolver expressionResolver, NamespaceContext namespaceContext) throws ParsingException {
 		super(expressionResolver, namespaceContext);
-		
+
 		this.action = action;
-		this.textFragment = resolve(action.getValue());
-		
+		textFragment = resolve(action.getValue());
+
 		if (action.getBefore() != null) {
 			compile(action.getBefore());
 		} else if (action.getAfter() != null) {
@@ -52,7 +51,7 @@ public class XmlAddActionProcessingAdvisor extends AbstractXmlActionProcessingAd
 			compile(action.getName());
 		}
 	}
-	
+
 	public void process(Document document) throws ParsingException {
 		if (XmlHelper.representsNodeElement(textFragment)) {
 			Node node = evaluateForSingleNode(document, false, false);
@@ -62,13 +61,13 @@ public class XmlAddActionProcessingAdvisor extends AbstractXmlActionProcessingAd
 			addAttribute(document, node);
 		}
 	}
-	
+
 	protected void addNode(Document document, Node node) throws ParsingException {
 		Node parent = node.getParentNode();
 
 		try {
 			Document fragment = XmlHelper.parse(textFragment, true);
-			
+
 			Node referenceNode;
 			if (action.getBefore() != null) {
 				referenceNode = node;
@@ -78,7 +77,7 @@ public class XmlAddActionProcessingAdvisor extends AbstractXmlActionProcessingAd
 					referenceNode = node;
 				}
 			}
-			
+
 			NodeList nodeList = fragment.getFirstChild().getChildNodes();
 			for (int i = 0; i < nodeList.getLength(); i++) {
 				Node importedNode = document.importNode(nodeList.item(i), true);
@@ -90,14 +89,14 @@ public class XmlAddActionProcessingAdvisor extends AbstractXmlActionProcessingAd
 			throw new ParsingException(e);
 		}
 	}
-	
+
 	protected void addAttribute(Document document, Node node) throws ParsingException {
 		try {
 			List<Attr> attributes = XmlHelper.parseAttributes(textFragment);
-			
+
 			NamedNodeMap nodeMap = node.getAttributes();
 			for (Attr attr : attributes) {
-				Attr importedAttr = (Attr)document.importNode(attr, false);
+				Attr importedAttr = (Attr) document.importNode(attr, false);
 				nodeMap.setNamedItemNS(importedAttr);
 			}
 		} catch (SAXException e) {

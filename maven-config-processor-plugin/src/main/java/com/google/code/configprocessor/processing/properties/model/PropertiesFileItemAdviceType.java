@@ -16,10 +16,5 @@
 package com.google.code.configprocessor.processing.properties.model;
 
 public enum PropertiesFileItemAdviceType {
-	DO_NOTHING,
-	ADD_BEFORE,
-	ADD_AFTER,
-	MODIFY,
-	REMOVE,
-	;
+	DO_NOTHING, ADD_BEFORE, ADD_AFTER, MODIFY, REMOVE, ;
 }

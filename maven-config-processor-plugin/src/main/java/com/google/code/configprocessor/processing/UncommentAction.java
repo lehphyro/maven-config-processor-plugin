@@ -20,11 +20,11 @@ public class UncommentAction extends AbstractAction {
 	public UncommentAction() {
 		this(null);
 	}
-	
+
 	public UncommentAction(String name) {
 		super(name, null);
 	}
-	
+
 	@Override
 	protected String getActionName() {
 		return "Uncomment";

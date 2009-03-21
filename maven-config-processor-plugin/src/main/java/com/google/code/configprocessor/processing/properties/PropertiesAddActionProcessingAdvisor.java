@@ -22,19 +22,18 @@ import com.google.code.configprocessor.processing.properties.model.*;
 public class PropertiesAddActionProcessingAdvisor extends AbstractPropertiesActionProcessingAdvisor {
 
 	private AddAction action;
-	
+
 	public PropertiesAddActionProcessingAdvisor(AddAction action, ExpressionResolver expressionResolver) {
 		super(expressionResolver);
 		this.action = action;
 	}
-	
+
 	@Override
 	public PropertiesFileItemAdvice process(PropertiesFileItem item) {
 		if (item instanceof PropertyMapping) {
-			PropertyMapping mapping = (PropertyMapping)item;
-			
-			if (mapping.getPropertyName().trim().equals(action.getBefore()) ||
-				mapping.getPropertyName().trim().equals(action.getAfter())) {
+			PropertyMapping mapping = (PropertyMapping) item;
+
+			if (mapping.getPropertyName().trim().equals(action.getBefore()) || mapping.getPropertyName().trim().equals(action.getAfter())) {
 
 				PropertyMapping aux = createPropertyMapping(action.getName(), action.getValue());
 				PropertiesFileItemAdvice advice;
@@ -43,12 +42,12 @@ public class PropertiesAddActionProcessingAdvisor extends AbstractPropertiesActi
 				} else {
 					advice = new PropertiesFileItemAdvice(PropertiesFileItemAdviceType.ADD_AFTER, aux);
 				}
-				
+
 				return advice;
 			}
 		}
-		
+
 		return super.process(item);
 	}
-	
+
 }

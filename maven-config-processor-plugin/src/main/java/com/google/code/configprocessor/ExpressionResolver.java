@@ -29,12 +29,12 @@ public class ExpressionResolver {
 	 * True if placeholders must be replaced.
 	 */
 	private boolean replacePlaceholders;
-	
+
 	/**
 	 * Evaluator of expressions to use.
 	 */
 	private ExpressionEvaluator evaluator;
-	
+
 	public ExpressionResolver(ExpressionEvaluator evaluator) {
 		this(evaluator, true);
 	}
@@ -43,7 +43,7 @@ public class ExpressionResolver {
 		this.evaluator = evaluator;
 		this.replacePlaceholders = replacePlaceholders;
 	}
-	
+
 	/**
 	 * Resolves the given text replacing any placeholders if necessary.
 	 * 
@@ -52,22 +52,22 @@ public class ExpressionResolver {
 	 */
 	public String resolve(String value) {
 		String resolvedValue;
-		
+
 		if (replacePlaceholders) {
 			try {
 				Object aux = evaluator.evaluate(value);
-				if (aux != null && !(aux instanceof String)) {
+				if ((aux != null) && !(aux instanceof String)) {
 					throw new IllegalArgumentException("Expression [" + value + "] did not resolve to String");
 				}
-				resolvedValue = (String)aux;
+				resolvedValue = (String) aux;
 			} catch (ExpressionEvaluationException e) {
 				throw new RuntimeException("Error resolving expression [" + value + "]", e);
 			}
 		} else {
 			resolvedValue = value;
 		}
-		
+
 		return resolvedValue;
 	}
-	
+
 }

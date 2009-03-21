@@ -24,7 +24,7 @@ public interface PropertiesActionProcessingAdvisor {
 	 * @return Advice for processing.
 	 */
 	PropertiesFileItemAdvice onStartProcessing();
-	
+
 	/**
 	 * Process a properties file item.
 	 * 
@@ -32,7 +32,7 @@ public interface PropertiesActionProcessingAdvisor {
 	 * @return Advice for processing.
 	 */
 	PropertiesFileItemAdvice process(PropertiesFileItem item);
-	
+
 	/**
 	 * Called when processing of a properties file has been finished.
 	 * 

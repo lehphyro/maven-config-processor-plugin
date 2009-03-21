@@ -19,16 +19,16 @@ public class PropertiesFileItemAdvice {
 
 	private PropertiesFileItemAdviceType type;
 	private PropertiesFileItem item;
-	
+
 	public PropertiesFileItemAdvice(PropertiesFileItemAdviceType type, PropertiesFileItem item) {
 		this.type = type;
 		this.item = item;
 	}
-	
+
 	public PropertiesFileItemAdviceType getType() {
 		return type;
 	}
-	
+
 	public PropertiesFileItem getItem() {
 		return item;
 	}

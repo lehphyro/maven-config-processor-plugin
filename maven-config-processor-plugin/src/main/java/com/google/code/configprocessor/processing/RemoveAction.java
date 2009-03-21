@@ -20,11 +20,11 @@ public class RemoveAction extends AbstractAction {
 	public RemoveAction() {
 		this(null);
 	}
-	
+
 	public RemoveAction(String name) {
 		super(name, name);
 	}
-	
+
 	@Override
 	protected String getActionName() {
 		return "Remove";

@@ -15,13 +15,12 @@
  */
 package com.google.code.configprocessor.ant;
 
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.Task;
+import org.apache.tools.ant.*;
 
-import com.google.code.configprocessor.log.LogAdapter;
+import com.google.code.configprocessor.log.*;
 
 public class LogAnt implements LogAdapter {
-	
+
 	private Task task;
 
 	public LogAnt(Task task) {

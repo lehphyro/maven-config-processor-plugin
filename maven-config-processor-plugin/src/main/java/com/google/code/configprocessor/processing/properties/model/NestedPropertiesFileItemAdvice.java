@@ -21,17 +21,17 @@ public class NestedPropertiesFileItemAdvice extends PropertiesFileItemAdvice {
 
 	private PropertiesFileItem currentItem;
 	private List<PropertiesFileItem> items;
-	
+
 	private boolean removeAdviced;
-	
+
 	public NestedPropertiesFileItemAdvice(PropertiesFileItem currentItem) {
 		super(null, null);
-		
+
 		this.currentItem = currentItem;
-		this.items = new ArrayList<PropertiesFileItem>();
-		
+		items = new ArrayList<PropertiesFileItem>();
+
 		if (currentItem != null) {
-			this.items.add(currentItem);
+			items.add(currentItem);
 		}
 	}
 
@@ -65,7 +65,7 @@ public class NestedPropertiesFileItemAdvice extends PropertiesFileItemAdvice {
 				break;
 		}
 	}
-	
+
 	@Override
 	public PropertiesFileItemAdviceType getType() {
 		if (items.isEmpty()) {
@@ -76,12 +76,12 @@ public class NestedPropertiesFileItemAdvice extends PropertiesFileItemAdvice {
 		}
 		return PropertiesFileItemAdviceType.MODIFY;
 	}
-	
+
 	@Override
 	public PropertiesFileItem getItem() {
 		CompositePropertiesFileItem composite = new CompositePropertiesFileItem();
 		composite.addAllPropertiesFileItems(items);
-		
+
 		return composite;
 	}
 }

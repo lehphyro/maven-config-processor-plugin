@@ -20,7 +20,7 @@ public class ModifyAction extends AbstractAction {
 	public ModifyAction() {
 		this(null, null);
 	}
-	
+
 	public ModifyAction(String name, String value) {
 		super(name, value);
 	}

@@ -15,26 +15,20 @@
  */
 package com.google.code.configprocessor;
 
-import java.io.File;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.io.*;
+import java.util.*;
 
-import org.apache.maven.execution.MavenSession;
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecution;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.PluginParameterExpressionEvaluator;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.path.DefaultPathTranslator;
-import org.codehaus.plexus.logging.Logger;
-import org.codehaus.plexus.logging.console.ConsoleLogger;
+import org.apache.maven.execution.*;
+import org.apache.maven.plugin.*;
+import org.apache.maven.project.*;
+import org.apache.maven.project.path.*;
+import org.codehaus.plexus.logging.*;
+import org.codehaus.plexus.logging.console.*;
 
-import com.google.code.configprocessor.log.LogMaven;
+import com.google.code.configprocessor.log.*;
 
 /**
- * Generates modified configuration files according to configuration. Includes,
- * excludes, modify, comment and uncomment properties.
+ * Generates modified configuration files according to configuration. Includes, excludes, modify, comment and uncomment properties.
  * 
  * @phase process-resources
  * @goal process
@@ -52,8 +46,7 @@ public class ConfigProcessorMojo extends AbstractMojo {
 	private File outputDirectory;
 
 	/**
-	 * Indicate if should prefix file paths with the outputDirectory
-	 * configuration property.
+	 * Indicate if should prefix file paths with the outputDirectory configuration property.
 	 * 
 	 * @parameter default-value="true"
 	 * @required
@@ -103,8 +96,7 @@ public class ConfigProcessorMojo extends AbstractMojo {
 	private List<Transformation> transformations;
 
 	/**
-	 * Namespace contexts for XPath expressions. Mapping in the form prefix =>
-	 * url
+	 * Namespace contexts for XPath expressions. Mapping in the form prefix => url
 	 * 
 	 * @parameter
 	 * @since 1.2
@@ -142,18 +134,13 @@ public class ConfigProcessorMojo extends AbstractMojo {
 	 * {@inheritDoc}
 	 */
 	public void execute() throws MojoExecutionException {
-		ConfigProcessor processor = new ConfigProcessor(encoding, indentSize,
-				lineWidth, namespaceContexts, outputDirectory,
-				useOutputDirectory, new LogMaven(getLog()));
+		ConfigProcessor processor = new ConfigProcessor(encoding, indentSize, lineWidth, namespaceContexts, outputDirectory, useOutputDirectory, new LogMaven(getLog()));
 		for (Transformation transformation : transformations) {
 			try {
-				ExpressionResolver resolver = getExpressionResolver(
-						transformation.isReplacePlaceholders(), ConfigProcessor
-								.getAdditionalProperties(specificProperties));
+				ExpressionResolver resolver = getExpressionResolver(transformation.isReplacePlaceholders(), ConfigProcessor.getAdditionalProperties(specificProperties));
 				processor.execute(resolver, transformation);
 			} catch (ConfigProcessException e) {
-				throw new MojoExecutionException(
-						"Error during config processing", e);
+				throw new MojoExecutionException("Error during config processing", e);
 			}
 		}
 	}
@@ -161,20 +148,14 @@ public class ConfigProcessorMojo extends AbstractMojo {
 	/**
 	 * Creates a expression resolver to replace placeholders.
 	 * 
-	 * @param replacePlaceholders
-	 *            True if placeholders must be replaced on output files.
+	 * @param replacePlaceholders True if placeholders must be replaced on output files.
 	 * @param additionalProperties
 	 * @return Created ExpressionResolver.
-	 * @throws MojoExecutionException
-	 *             If processing cannot be performed.
+	 * @throws MojoExecutionException If processing cannot be performed.
 	 */
-	protected ExpressionResolver getExpressionResolver(
-			boolean replacePlaceholders, Properties additionalProperties)
-			throws MojoExecutionException {
-		return new ExpressionResolver(new PluginParameterExpressionEvaluator(
-				mavenSession, mojoExecution, new DefaultPathTranslator(),
-				new ConsoleLogger(Logger.LEVEL_INFO, "ConfigProcessorMojo"),
-				mavenProject, additionalProperties), replacePlaceholders);
+	protected ExpressionResolver getExpressionResolver(boolean replacePlaceholders, Properties additionalProperties) throws MojoExecutionException {
+		return new ExpressionResolver(new PluginParameterExpressionEvaluator(mavenSession, mojoExecution, new DefaultPathTranslator(), new ConsoleLogger(Logger.LEVEL_INFO, "ConfigProcessorMojo"),
+			mavenProject, additionalProperties), replacePlaceholders);
 	}
 
 }

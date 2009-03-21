@@ -22,25 +22,25 @@ import javax.xml.namespace.*;
 public class MapBasedNamespaceContext implements NamespaceContext {
 
 	private Map<String, String> mappings;
-	
+
 	public MapBasedNamespaceContext(Map<String, String> mappings) {
 		this.mappings = new HashMap<String, String>();
 		if (mappings != null) {
 			this.mappings.putAll(mappings);
 		}
 	}
-	
+
 	public String getNamespaceURI(String prefix) {
 		return mappings.get(prefix);
 	}
-	
+
 	/**
 	 * Not used for XPath processing
 	 */
 	public String getPrefix(String namespaceURI) {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	/**
 	 * Not used for XPath processing
 	 */

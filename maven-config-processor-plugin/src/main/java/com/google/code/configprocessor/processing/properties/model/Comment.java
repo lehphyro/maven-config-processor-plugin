@@ -16,16 +16,16 @@
 package com.google.code.configprocessor.processing.properties.model;
 
 public class Comment implements PropertiesFileItem {
-	
+
 	public static final String PREFIX_1 = "#";
 	public static final String PREFIX_2 = "!";
-	
+
 	private String text;
-	
+
 	public Comment(String text) {
 		this.text = text;
 	}
-	
+
 	public String getAsText() {
 		return text;
 	}
@@ -59,7 +59,7 @@ public class Comment implements PropertiesFileItem {
 		}
 		return true;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "Comment [" + text + "]";
