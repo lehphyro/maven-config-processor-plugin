@@ -28,6 +28,8 @@ Ant Task
 </taskdef>
 +-----+
 
+ These JARs are included in the zip distribution of the ant task.
+
 * Task usage
 
  With the Config Processor task declaration in place, we can use it like the following:
@@ -46,4 +48,5 @@ Ant Task
 +-----+
 
  It is possible to declare more than one transformation in a single task.
+
  The Ant task parameters have the same names and meanings as the Maven plugin.
