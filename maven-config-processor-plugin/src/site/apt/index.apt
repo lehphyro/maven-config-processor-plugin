@@ -47,3 +47,5 @@ Configuration Processor Maven Plugin
   * {{{examples/properties-processing.html}Processing Properties Files}}
 
   * {{{examples/xml-processing.html}Processing XML Files}}
+
+  * {{{examples/ant-task.html}Using the Ant Task}}
