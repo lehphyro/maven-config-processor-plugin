@@ -64,6 +64,10 @@ public class Transformation {
 	 */
 	private boolean replacePlaceholders;
 
+	public Transformation() {
+		replacePlaceholders = true;
+	}
+	
 	public String getInput() {
 		return input;
 	}

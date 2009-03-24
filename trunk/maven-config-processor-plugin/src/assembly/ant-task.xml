@@ -17,6 +17,12 @@
             <filtered>true</filtered>
         </fileSet>
         <fileSet>
+            <directory>${basedir}/src/assembly/examples</directory>
+            <outputDirectory>/examples</outputDirectory>
+            <fileMode>0755</fileMode>
+            <lineEnding>lf</lineEnding>
+        </fileSet>
+        <fileSet>
             <directory>${project.build.directory}/site</directory>
             <outputDirectory>docs/site</outputDirectory>
             <fileMode>0755</fileMode>
