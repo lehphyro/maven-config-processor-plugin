@@ -1,7 +1,7 @@
 <processor>
     <!-- Add non-existing property -->
     <add>
-        <name>teste-property</name>
+        <name>test-property</name>
         <value>${project.build.directory}</value>
         <before>property1.value</before>
     </add>
