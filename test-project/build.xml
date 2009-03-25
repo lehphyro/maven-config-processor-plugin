@@ -10,10 +10,6 @@
 	<property name="COMMONS-LANG" value="${M2_REPO}/commons-lang/commons-lang/2.4/commons-lang-2.4.jar" />
 	<property name="XERCES" value="${M2_REPO}/xerces/xercesImpl/2.8.1/xercesImpl-2.8.1.jar" />
 	
-	<fileset id="configProcessorClasspath" dir="target/jars">
-	    <include name="*.jar" />
-	</fileset>
-
 	<taskdef name="config-processor"
 			 classname="com.google.code.configprocessor.ant.ConfigProcessorTask">
 		<classpath>
