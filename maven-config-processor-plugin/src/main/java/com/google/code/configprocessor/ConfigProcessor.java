@@ -131,7 +131,7 @@ public class ConfigProcessor {
 
 		InputStream configStream = null;
 		InputStream inputStream = null;
-		OutputStream outputStream = null;
+		ByteArrayOutputStream outputStream = null;
 
 		InputStreamReader configStreamReader = null;
 		InputStreamReader inputStreamReader = null;
@@ -139,7 +139,7 @@ public class ConfigProcessor {
 		try {
 			configStream = new FileInputStream(config);
 			inputStream = new FileInputStream(input);
-			outputStream = new FileOutputStream(output);
+			outputStream = new ByteArrayOutputStream();
 
 			inputStreamReader = new InputStreamReader(inputStream, encoding);
 			configStreamReader = new InputStreamReader(configStream, encoding);
@@ -157,7 +157,18 @@ public class ConfigProcessor {
 		} finally {
 			close(configStreamReader, getLog());
 			close(inputStreamReader, getLog());
+		}
+		FileOutputStream fileOut = null;
+		try {
+			fileOut = new FileOutputStream(output);
+			outputStream.writeTo(fileOut);
+		} catch (FileNotFoundException e) {
+			getLog().error("Error opening file [" + input + "]", e);
+		} catch (IOException e) {
+			getLog().error("Error writing file [" + input + "]", e);
+		} finally {
 			close(outputStreamWriter, getLog());
+			close(fileOut, getLog());
 		}
 	}
 
