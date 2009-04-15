@@ -1,0 +1,36 @@
+<processor>
+    <!-- Add non-existing property -->
+    <add>
+        <value>
+            <![CDATA[
+                <test-property>test-value</test-property>
+            ]]>
+        </value>
+        <after>/root/property3</after>
+    </add>
+
+    <!-- Modify a property value -->  
+    <modify>
+        <name>/root/property1</name>
+        <value>
+            <![CDATA[
+                <modified-property1>modified-value</modified-property1>
+            ]]>
+        </value>
+    </modify>
+
+    <!-- Remove a property -->    
+    <remove>
+        <name>/root/property2</name>
+    </remove>
+    
+    <!-- Comment a property -->
+    <comment>
+        <name>property-to-comment</name>
+    </comment>
+
+    <!-- Uncomment a property -->
+    <uncomment>
+        <name>property-to-uncomment</name>
+    </uncomment>
+</processor>
