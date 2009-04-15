@@ -50,11 +50,6 @@
         <url>http://code.google.com/p/maven-config-processor-plugin/source/browse</url>
     </scm>
     
-    <ciManagement>
-        <system>hudson</system>
-        <url>http://lehphyro.dyndns.org/hudson/job/Config%20Processor%20Maven%20Plugin%20Continuous%20Integration/</url>
-    </ciManagement>
-    
     <dependencies>
     	<dependency>
 			<groupId>org.apache.ant</groupId>

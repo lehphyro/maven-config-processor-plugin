@@ -112,7 +112,7 @@ public class ConfigProcessorTask extends Task {
 		this.specificProperties = specificProperties;
 	}
 
-	public class NamespaceContext {
+	public static class NamespaceContext {
 		private String prefix;
 		private String url;
 
