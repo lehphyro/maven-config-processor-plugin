@@ -10,7 +10,7 @@ It tries to implement the same ideas implemented by XConf
 and using standard ways of processing XML (XPath) and includes better
 support for properties files processing.
 
-Please, see the maven generated site by opening the docs/site/index.html file
+Please, see the maven generated site opening the docs/site/index.html file
 in your browser for examples of use with Maven 2 and Ant.
 
 Alternatively, you can execute maven and ant on the example project in
