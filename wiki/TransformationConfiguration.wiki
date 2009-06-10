@@ -78,7 +78,7 @@ Here is an example of a configuration file to process properties files.
 
 This file instructs the plugin to add the property _test-property_ before the property _property1.value_ and its value must be _${project.build.directory}_ which by default would be replaced by the project build output directory (target by default).
 
-In addition the plugin will modify the value of the property _property1.value_ to _${test-project.property1}_ which should be defined in your command-line, pom.xml or specific properties file.
+In addition the plugin will modify the value of the property _property1.value_ to _${test-project.property1}_ which should be defined in your command-line, pom.xml or specific properties file (in the plugin configuration - specificProperties element).
 
 The property _property3.value_ will not appear in the generated file since it is configured to be removed.
 
