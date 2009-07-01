@@ -28,9 +28,9 @@ import com.google.code.configprocessor.processing.*;
 @Ignore
 public class AbstractPropertiesActionProcessingAdvisorTest {
 
-	private InputStream input;
-	private ByteArrayOutputStream output;
-	private ActionProcessor processor;
+	protected InputStream input;
+	protected ByteArrayOutputStream output;
+	protected ActionProcessor processor;
 	
 	@Before
 	public void setup() {

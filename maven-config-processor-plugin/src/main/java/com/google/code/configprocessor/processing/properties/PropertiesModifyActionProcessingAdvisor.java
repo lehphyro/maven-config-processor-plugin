@@ -15,6 +15,8 @@
  */
 package com.google.code.configprocessor.processing.properties;
 
+import java.util.regex.*;
+
 import com.google.code.configprocessor.expression.*;
 import com.google.code.configprocessor.processing.*;
 import com.google.code.configprocessor.processing.properties.model.*;
@@ -26,6 +28,7 @@ public class PropertiesModifyActionProcessingAdvisor extends AbstractPropertiesA
 	public PropertiesModifyActionProcessingAdvisor(ModifyAction action, ExpressionResolver expressionResolver) {
 		super(expressionResolver);
 		this.action = action;
+		this.action.validate();
 	}
 
 	@Override
@@ -35,6 +38,23 @@ public class PropertiesModifyActionProcessingAdvisor extends AbstractPropertiesA
 
 			if (mapping.getPropertyName().trim().equals(action.getName())) {
 				PropertyMapping aux = createPropertyMapping(mapping.getPropertyName(), action.getValue());
+				return new PropertiesFileItemAdvice(PropertiesFileItemAdviceType.MODIFY, aux);
+			}
+
+			if (action.getFind() != null && mapping.getPropertyValue() != null) {
+				Matcher matcher = action.getPattern().matcher(mapping.getPropertyValue());
+				String newValue = matcher.replaceAll(action.getReplace());
+				PropertyMapping aux = createPropertyMapping(mapping.getPropertyName(), newValue);
+				return new PropertiesFileItemAdvice(PropertiesFileItemAdviceType.MODIFY, aux);
+			}
+		}
+		
+		if (item instanceof Comment && action.getFind() != null) {
+			Comment comment = (Comment) item;
+			if (comment.getAsText() != null) {
+				Matcher matcher = action.getPattern().matcher(comment.getAsText());
+				String newValue = matcher.replaceAll(resolve(action.getReplace()));
+				Comment aux = new Comment(newValue);
 				return new PropertiesFileItemAdvice(PropertiesFileItemAdviceType.MODIFY, aux);
 			}
 		}

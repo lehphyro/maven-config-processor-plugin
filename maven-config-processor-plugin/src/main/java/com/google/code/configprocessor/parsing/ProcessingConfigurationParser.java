@@ -25,7 +25,7 @@ public class ProcessingConfigurationParser {
 
 	public NestedAction parse(InputStream is) throws ParsingException {
 		if (is == null) {
-			throw new ParsingException("Invalid inputstream");
+			throw new NullPointerException("InputStream is null");
 		}
 		return parse(new InputStreamReader(is));
 	}
