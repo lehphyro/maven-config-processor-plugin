@@ -28,15 +28,13 @@ import com.thoughtworks.xstream.*;
 public class ProcessingConfigurationParserTest {
 
 	@Test
-	public void parsingOk() {
+	public void parsingOk() throws Exception {
 		InputStream is = getClass().getResourceAsStream("/com/google/code/configprocessor/data/xml-processing-configuration.xml");
 		
 		ProcessingConfigurationParser parser = new ProcessingConfigurationParser();
 		NestedAction action = null;
 		try {
 			action = parser.parse(is);
-		} catch (ParsingException e) {
-			throw new RuntimeException(e);
 		} finally {
 			try {
 				if (is != null) {
@@ -47,15 +45,21 @@ public class ProcessingConfigurationParserTest {
 			}
 		}
 		
-		assertEquals(5, action.getActions().size());
+		assertEquals(6, action.getActions().size());
 		assertEquals(new AddAction(null, "<test-property>test-value</test-property>", "/root/property3", null), action.getActions().get(0));
 		assertEquals(new ModifyAction("/root/property1", "<modified-property1>modified-value</modified-property1>"), action.getActions().get(1));
 		assertEquals(new RemoveAction("/root/property2"), action.getActions().get(2));
 		assertEquals(new CommentAction("property-to-comment"), action.getActions().get(3));
 		assertEquals(new UncommentAction("property-to-uncomment"), action.getActions().get(4));
+		
+		ModifyAction modifyFindReplace = new ModifyAction();
+		modifyFindReplace.setFind("[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]+");
+		modifyFindReplace.setReplace("my-email@server.com");
+		modifyFindReplace.setFlags("CASE_INSENSITIVE,COMMENTS");
+		assertEquals(modifyFindReplace, action.getActions().get(5));
 	}
 
-	@Test(expected = ParsingException.class)
+	@Test(expected = NullPointerException.class)
 	public void parsingInexistentInput() throws Exception {
 		ProcessingConfigurationParser parser = new ProcessingConfigurationParser();
 		parser.parse(getClass().getResourceAsStream("inexistent"));
@@ -80,6 +84,12 @@ public class ProcessingConfigurationParserTest {
 		config.addAction(new RemoveAction("/root/property4[@attribute]"));
 		config.addAction(new CommentAction("property-to-comment"));
 		config.addAction(new UncommentAction("property-to-uncomment"));
+
+		ModifyAction modifyFindReplace = new ModifyAction();
+		modifyFindReplace.setFind("[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]+");
+		modifyFindReplace.setReplace("my-email@server.com");
+		modifyFindReplace.setFlags("CASE_INSENSITIVE,COMMENTS");
+		config.addAction(modifyFindReplace);
 		
 		System.out.println(xstream.toXML(config));
 	}

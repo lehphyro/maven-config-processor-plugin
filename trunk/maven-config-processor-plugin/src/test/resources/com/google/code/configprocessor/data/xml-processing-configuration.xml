@@ -33,4 +33,13 @@
     <uncomment>
         <name>property-to-uncomment</name>
     </uncomment>
+
+	<!-- Find/Replace -->
+	<modify>
+		<!-- Matches e-mail addresses -->
+		<find>[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]+</find>
+		<replace>my-email@server.com</replace>
+		<flags>CASE_INSENSITIVE,COMMENTS</flags>
+	</modify>
+
 </processor>

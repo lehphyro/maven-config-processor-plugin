@@ -23,10 +23,18 @@ import com.google.code.configprocessor.processing.*;
 
 public class PropertiesModifyActionProcessingAdvisorTest extends AbstractPropertiesActionProcessingAdvisorTest {
 
+	public static final String PROPERTIES_PATH = "/com/google/code/configprocessor/data/modify-properties-target-config.properties";
+	
+	@Override
+	public void setup() {
+		super.setup();
+		input = getClass().getResourceAsStream(PROPERTIES_PATH);
+	}
+	
 	@Test
 	public void processModifyFirst() throws Exception {
 		Action action = new ModifyAction("property1.value", "modified-value");
-		String expected = "property1.value=modified-value" + LINE_SEPARATOR + "property2.value=" + LINE_SEPARATOR + "# Comment" + LINE_SEPARATOR + "	property3.value=value3 \\" + LINE_SEPARATOR + "value 3 continuation" + LINE_SEPARATOR + "# property4.value=value4 \\" + LINE_SEPARATOR + "#value 4 continuation" + LINE_SEPARATOR + "#property5.value=value5" + LINE_SEPARATOR + "property6.value=value6=value" + LINE_SEPARATOR;
+		String expected = "property1.value=modified-value" + LINE_SEPARATOR + "property2.value=" + LINE_SEPARATOR + "# Comment" + LINE_SEPARATOR + "	property3.value=value3 \\" + LINE_SEPARATOR + "value 3 continuation" + LINE_SEPARATOR + "# property4.value=value4 \\" + LINE_SEPARATOR + "#value 4 continuation" + LINE_SEPARATOR + "#property5.value=value5" + LINE_SEPARATOR + "property6.value=value6=value" + LINE_SEPARATOR + "property7.value=test@test.com" + LINE_SEPARATOR + "# This email will be modified too: test@test.com" + LINE_SEPARATOR;
 
 		executeTest(action, expected);
 	}
@@ -34,9 +42,18 @@ public class PropertiesModifyActionProcessingAdvisorTest extends AbstractPropert
 	@Test
 	public void processModifyLast() throws Exception {
 		Action action = new ModifyAction("property3.value", "modified-value");
-		String expected = "property1.value=value1" + LINE_SEPARATOR + "property2.value=" + LINE_SEPARATOR + "# Comment" + LINE_SEPARATOR + "	property3.value=modified-value" + LINE_SEPARATOR + "# property4.value=value4 \\" + LINE_SEPARATOR + "#value 4 continuation" + LINE_SEPARATOR + "#property5.value=value5" + LINE_SEPARATOR + "property6.value=value6=value" + LINE_SEPARATOR;
+		String expected = "property1.value=value1" + LINE_SEPARATOR + "property2.value=" + LINE_SEPARATOR + "# Comment" + LINE_SEPARATOR + "	property3.value=modified-value" + LINE_SEPARATOR + "# property4.value=value4 \\" + LINE_SEPARATOR + "#value 4 continuation" + LINE_SEPARATOR + "#property5.value=value5" + LINE_SEPARATOR + "property6.value=value6=value" + LINE_SEPARATOR + "property7.value=test@test.com" + LINE_SEPARATOR + "# This email will be modified too: test@test.com" + LINE_SEPARATOR;
 
 		executeTest(action, expected);
 	}
 
+	@Test
+	public void processModifyFindReplace() throws Exception {
+		ModifyAction action = new ModifyAction();
+		action.setFind("[\\w\\-]+@\\w+\\.\\w+");
+		action.setReplace("my-email@server.com");
+		
+		String expected = "property1.value=value1" + LINE_SEPARATOR + "property2.value=" + LINE_SEPARATOR + "# Comment" + LINE_SEPARATOR + "	property3.value=value3 \\" + LINE_SEPARATOR + "value 3 continuation" + LINE_SEPARATOR + "# property4.value=value4 \\" + LINE_SEPARATOR + "#value 4 continuation" + LINE_SEPARATOR + "#property5.value=value5" + LINE_SEPARATOR + "property6.value=value6=value" + LINE_SEPARATOR + "property7.value=my-email@server.com" + LINE_SEPARATOR + "# This email will be modified too: my-email@server.com" + LINE_SEPARATOR;
+		executeTest(action, expected);
+	}
 }
