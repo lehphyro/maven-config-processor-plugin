@@ -17,6 +17,8 @@ package com.google.code.configprocessor.processing.properties;
 
 import java.util.regex.*;
 
+import org.apache.commons.lang.*;
+
 import com.google.code.configprocessor.expression.*;
 import com.google.code.configprocessor.processing.*;
 import com.google.code.configprocessor.processing.properties.model.*;
@@ -40,11 +42,13 @@ public class PropertiesUncommentActionProcessingAdvisor extends AbstractProperti
 			String text = commentPrefixPattern.matcher(comment.getAsText()).replaceAll("");
 			text = resolve(text);
 
-			PropertyMapping mapping = new PropertyMapping();
-			mapping.parse(text, true);
-
-			if (mapping.getPropertyName().trim().equals(action.getName())) {
-				return new PropertiesFileItemAdvice(PropertiesFileItemAdviceType.MODIFY, mapping);
+			if (!StringUtils.isBlank(text)) {
+				PropertyMapping mapping = new PropertyMapping();
+				mapping.parse(text, true);
+	
+				if (mapping.getPropertyName().trim().equals(action.getName())) {
+					return new PropertiesFileItemAdvice(PropertiesFileItemAdviceType.MODIFY, mapping);
+				}
 			}
 		}
 		return super.process(item);
