@@ -23,11 +23,18 @@ import com.google.code.configprocessor.processing.*;
 
 public class XmlModifyActionProcessingAdvisorTest extends AbstractXmlActionProcessingAdvisorTest {
 
+	private static final String XML_PATH = "/com/google/code/configprocessor/data/modify-xml-target-config.xml";
+
+	@Override
+	public void setup() throws Exception {
+		document = XmlHelper.parse(getClass().getResourceAsStream(XML_PATH));
+	}
+	
 	@Test
 	public void modifySingleElement() throws Exception {
 		ModifyAction action = new ModifyAction("/root/property1", "<test-property>test-value</test-property>");
 		XmlModifyActionProcessingAdvisor advisor = new XmlModifyActionProcessingAdvisor(action, expressionResolver, namespaceContext);
-		String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + LINE_SEPARATOR + "<root>" + LINE_SEPARATOR + " <test-property>test-value</test-property>" + LINE_SEPARATOR + " <property2/>" + LINE_SEPARATOR + " <property3 attribute=\"value3\">value3</property3>" + LINE_SEPARATOR + " <property4 attribute=\"value4\">value4</property4>" + LINE_SEPARATOR + " <property5>" + LINE_SEPARATOR + "  <nested1 a=\"1\"/>" + LINE_SEPARATOR + " </property5>" + LINE_SEPARATOR + "</root>" + LINE_SEPARATOR;
+		String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + LINE_SEPARATOR + "<root>" + LINE_SEPARATOR + " <test-property>test-value</test-property>" + LINE_SEPARATOR + " <property2/>" + LINE_SEPARATOR + " <property3 attribute=\"value3\">value3</property3>" + LINE_SEPARATOR + " <property4 attribute=\"value4\">value4</property4>" + LINE_SEPARATOR + " <property5>" + LINE_SEPARATOR + "  <nested1 a=\"1\"/>" + LINE_SEPARATOR + " </property5>" + LINE_SEPARATOR + " <property6 a=\"test@test.com\">" + LINE_SEPARATOR + "  <nested2>test@test.com</nested2>" + LINE_SEPARATOR + " </property6>" + LINE_SEPARATOR + " <!-- This email will be modified too: test@test.com -->" + LINE_SEPARATOR + "</root>" + LINE_SEPARATOR;
 		executeTest(advisor, expected);
 	}
 
@@ -35,7 +42,7 @@ public class XmlModifyActionProcessingAdvisorTest extends AbstractXmlActionProce
 	public void modifySubtree() throws Exception {
 		ModifyAction action = new ModifyAction("/root/property5", "<test-property>test-value</test-property>");
 		XmlModifyActionProcessingAdvisor advisor = new XmlModifyActionProcessingAdvisor(action, expressionResolver, namespaceContext);
-		String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + LINE_SEPARATOR + "<root>" + LINE_SEPARATOR + " <property1>value1</property1>" + LINE_SEPARATOR + " <property2/>" + LINE_SEPARATOR + " <property3 attribute=\"value3\">value3</property3>" + LINE_SEPARATOR + " <property4 attribute=\"value4\">value4</property4>" + LINE_SEPARATOR + " <test-property>test-value</test-property>" + LINE_SEPARATOR + "</root>" + LINE_SEPARATOR;
+		String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + LINE_SEPARATOR + "<root>" + LINE_SEPARATOR + " <property1>value1</property1>" + LINE_SEPARATOR + " <property2/>" + LINE_SEPARATOR + " <property3 attribute=\"value3\">value3</property3>" + LINE_SEPARATOR + " <property4 attribute=\"value4\">value4</property4>" + LINE_SEPARATOR + " <test-property>test-value</test-property>" + LINE_SEPARATOR + " <property6 a=\"test@test.com\">" + LINE_SEPARATOR + "  <nested2>test@test.com</nested2>" + LINE_SEPARATOR + " </property6>" + LINE_SEPARATOR + " <!-- This email will be modified too: test@test.com -->" + LINE_SEPARATOR + "</root>" + LINE_SEPARATOR;
 		executeTest(advisor, expected);
 	}
 
@@ -43,7 +50,7 @@ public class XmlModifyActionProcessingAdvisorTest extends AbstractXmlActionProce
 	public void modifyAttribute() throws Exception {
 		ModifyAction action = new ModifyAction("/root/property5/nested1/@a", "test-value");
 		XmlModifyActionProcessingAdvisor advisor = new XmlModifyActionProcessingAdvisor(action, expressionResolver, namespaceContext);
-		String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + LINE_SEPARATOR + "<root>" + LINE_SEPARATOR + " <property1>value1</property1>" + LINE_SEPARATOR + " <property2/>" + LINE_SEPARATOR + " <property3 attribute=\"value3\">value3</property3>" + LINE_SEPARATOR + " <property4 attribute=\"value4\">value4</property4>" + LINE_SEPARATOR + " <property5>" + LINE_SEPARATOR + "  <nested1 a=\"test-value\"/>" + LINE_SEPARATOR + " </property5>" + LINE_SEPARATOR + "</root>" + LINE_SEPARATOR;
+		String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + LINE_SEPARATOR + "<root>" + LINE_SEPARATOR + " <property1>value1</property1>" + LINE_SEPARATOR + " <property2/>" + LINE_SEPARATOR + " <property3 attribute=\"value3\">value3</property3>" + LINE_SEPARATOR + " <property4 attribute=\"value4\">value4</property4>" + LINE_SEPARATOR + " <property5>" + LINE_SEPARATOR + "  <nested1 a=\"test-value\"/>" + LINE_SEPARATOR + " </property5>" + LINE_SEPARATOR + " <property6 a=\"test@test.com\">" + LINE_SEPARATOR + "  <nested2>test@test.com</nested2>" + LINE_SEPARATOR + " </property6>" + LINE_SEPARATOR + " <!-- This email will be modified too: test@test.com -->" + LINE_SEPARATOR + "</root>" + LINE_SEPARATOR;
 		executeTest(advisor, expected);
 	}
 
@@ -51,7 +58,7 @@ public class XmlModifyActionProcessingAdvisorTest extends AbstractXmlActionProce
 	public void modifyAttributeToEmpty() throws Exception {
 		ModifyAction action = new ModifyAction("/root/property5/nested1/@a", null);
 		XmlModifyActionProcessingAdvisor advisor = new XmlModifyActionProcessingAdvisor(action, expressionResolver, namespaceContext);
-		String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + LINE_SEPARATOR + "<root>" + LINE_SEPARATOR + " <property1>value1</property1>" + LINE_SEPARATOR + " <property2/>" + LINE_SEPARATOR + " <property3 attribute=\"value3\">value3</property3>" + LINE_SEPARATOR + " <property4 attribute=\"value4\">value4</property4>" + LINE_SEPARATOR + " <property5>" + LINE_SEPARATOR + "  <nested1 a=\"\"/>" + LINE_SEPARATOR + " </property5>" + LINE_SEPARATOR + "</root>" + LINE_SEPARATOR;
+		String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + LINE_SEPARATOR + "<root>" + LINE_SEPARATOR + " <property1>value1</property1>" + LINE_SEPARATOR + " <property2/>" + LINE_SEPARATOR + " <property3 attribute=\"value3\">value3</property3>" + LINE_SEPARATOR + " <property4 attribute=\"value4\">value4</property4>" + LINE_SEPARATOR + " <property5>" + LINE_SEPARATOR + "  <nested1 a=\"\"/>" + LINE_SEPARATOR + " </property5>" + LINE_SEPARATOR + " <property6 a=\"test@test.com\">" + LINE_SEPARATOR + "  <nested2>test@test.com</nested2>" + LINE_SEPARATOR + " </property6>" + LINE_SEPARATOR + " <!-- This email will be modified too: test@test.com -->" + LINE_SEPARATOR + "</root>" + LINE_SEPARATOR;
 		executeTest(advisor, expected);
 	}
 }
