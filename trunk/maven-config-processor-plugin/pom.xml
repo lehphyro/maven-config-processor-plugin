@@ -205,6 +205,7 @@
                 <artifactId>maven-release-plugin</artifactId>
                 <configuration>
                     <goals>deploy site source:jar javadoc:jar repository:bundle-create assembly:assembly</goals>
+                    <releaseProfiles>gpg</releaseProfiles>
                 </configuration>
             </plugin>
         </plugins>
@@ -326,6 +327,29 @@
             <uniqueVersion>false</uniqueVersion>
         </snapshotRepository>
     </distributionManagement>
+    
+    <profiles>
+    	<profile>
+    		<id>gpg</id>
+    		<build>
+    			<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+    			</plugins>
+    		</build>
+    	</profile>
+    </profiles>
 
     <developers>
         <developer>
