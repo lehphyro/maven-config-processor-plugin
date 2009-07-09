@@ -11,7 +11,7 @@
             <plugin>
                 <groupId>com.google.code.maven-config-processor-plugin</groupId>
                 <artifactId>maven-config-processor-plugin</artifactId>
-                <version>1.6-SNAPSHOT</version>
+                <version>1.6</version>
                 <configuration>
                     <specificProperties>my-specific.properties</specificProperties>
 
@@ -43,12 +43,5 @@
             </plugin>
         </plugins>
     </build>
-
-    <pluginRepositories>
-        <pluginRepository>
-            <id>maven-config-processor-repo-releases</id>
-            <url>http://maven-config-processor-plugin.googlecode.com/svn/maven-repo/releases</url>
-        </pluginRepository>
-    </pluginRepositories>
 
 </project>
