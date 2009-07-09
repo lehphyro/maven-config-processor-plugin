@@ -1,0 +1,284 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.google.code.maven-config-processor-plugin</groupId>
+    <artifactId>maven-config-processor-plugin</artifactId>
+    <packaging>maven-plugin</packaging>
+    <version>1.2</version>
+    
+    <name>Configuration Processor Maven Plugin</name>
+    <description>Apply transformations to configuration files to prepare then for different environments</description>
+    <url>http://code.google.com/p/maven-config-processor-plugin</url>
+    <inceptionYear>2009</inceptionYear>
+    
+    <prerequisites>
+        <maven>2.0</maven>
+    </prerequisites>
+
+    <issueManagement>
+        <system>googlecode</system>
+        <url>http://code.google.com/p/maven-config-processor-plugin/issues/list</url>
+    </issueManagement>
+    
+    <mailingLists>
+        <mailingList>
+            <name>Plugin users</name>
+            <post>maven-config-processor-users@googlegroups.com</post>
+            <subscribe>maven-config-processor-users-subscribe@googlegroups.com</subscribe>
+            <unsubscribe>maven-config-processor-users-unsubscribe@googlegroups.com</unsubscribe>
+            <archive>http://groups.google.com/group/maven-config-processor-users/topics</archive>
+        </mailingList>
+    </mailingLists>
+
+    <licenses>
+        <license>
+            <name>Apache 2</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>A business-friendly OSS license</comments>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:svn:https://maven-config-processor-plugin.googlecode.com/svn/tags/maven-config-processor-plugin-1.2</connection>
+        <developerConnection>scm:svn:https://maven-config-processor-plugin.googlecode.com/svn/tags/maven-config-processor-plugin-1.2</developerConnection>
+        <url>http://code.google.com/p/maven-config-processor-plugin/source/browse/tags/maven-config-processor-plugin-1.2</url>
+    </scm>
+    
+    <organization>
+        <name>None</name>
+        <url>http://code.google.com/p/maven-config-processor-plugin</url>
+    </organization>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-plugin-api</artifactId>
+            <version>2.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-core</artifactId>
+            <version>2.0.9</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-project</artifactId>
+            <version>2.0.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.thoughtworks.xstream</groupId>
+            <artifactId>xstream</artifactId>
+            <version>1.3.1</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>xpp3</groupId>
+            <artifactId>xpp3</artifactId>
+            <version>1.1.4c</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+            <version>2.8.1</version>
+        </dependency>
+        
+        <!-- Test -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.5</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>src/main/etc</directory>
+            </resource>
+        </resources>
+
+        <plugins>
+            <!-- Java compiler -->
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                </configuration>
+            </plugin>
+
+            <!-- Unit tests -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/*Test.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+            
+            <!-- Source code license -->
+            <plugin>
+                <groupId>com.google.code.maven-license-plugin</groupId>
+                <artifactId>maven-license-plugin</artifactId>
+                <version>1.4.0</version>
+                <configuration>
+                    <header>src/main/etc/source-license-header.txt</header>
+                    <includes>
+                        <include>src/main/java/**</include>
+                        <include>src/test/java/**</include>
+                    </includes>
+                    <mapping>
+                        <java>SLASHSTAR_STYLE</java>
+                    </mapping>
+                    <properties>
+                        <year>2009</year>
+                        <name>Leandro de Oliveira Aparecido</name>
+                        <email>lehphyro@gmail.com</email>
+                    </properties>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>format</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+
+        <extensions>
+            <extension>
+                <groupId>org.jvnet.wagon-svn</groupId>
+                <artifactId>wagon-svn</artifactId>
+                <version>1.9</version>
+            </extension>
+        </extensions>
+    </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <stylesheet>maven</stylesheet>
+                </configuration>
+            </plugin>
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <outputDirectory>${project.reporting.outputDirectory}</outputDirectory>
+                    <targetDirectory>${project.reporting.outputDirectory}</targetDirectory>
+                    <targetJdk>1.6</targetJdk>
+                </configuration>
+            </plugin>
+            
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>javancss-maven-plugin</artifactId>
+                <version>2.0-beta-2</version>
+                <configuration>
+                    <xmlOutputDirectory>${project.reporting.outputDirectory}</xmlOutputDirectory>
+                </configuration>
+            </plugin>
+            
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <version>1.2</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <version>2.2</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jxr-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </reporting>
+
+    <distributionManagement>
+        <repository>
+            <id>maven-config-processor-plugin-repo-releases</id>
+            <name>Maven Repository for Config Processor Plugin (releases)</name>
+            <url>svn:https://maven-config-processor-plugin.googlecode.com/svn/maven-repo/releases</url>
+            <uniqueVersion>false</uniqueVersion>
+        </repository>
+        <snapshotRepository>
+            <id>maven-config-processor-plugin-repo-releases</id>
+            <name>Maven Repository for Config Processor Plugin (snapshots)</name>
+            <url>svn:https://maven-config-processor-plugin.googlecode.com/svn/maven-repo/snapshots</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
+    <profiles>
+    	<profile>
+    		<id>gpg</id>
+    		<build>
+    			<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+    			</plugins>
+    		</build>
+    	</profile>
+    </profiles>
+
+    <developers>
+        <developer>
+            <id>leandro.aparecido</id>
+            <name>Leandro de Oliveira Aparecido</name>
+            <email>lehphyro@gmail.com</email>
+            <url />
+            <roles>
+                <role>Leader</role>
+                <role>Developer</role>
+            </roles>
+            <timezone>-3</timezone>
+            <properties />
+        </developer>
+    </developers>
+
+    <repositories>
+        <repository>
+            <id>maven2-repository.dev.java.net</id>
+            <name>Java.net Repository for Maven2</name>
+            <url>http://download.java.net/maven/2/</url>
+        </repository>
+    </repositories>
+</project>
