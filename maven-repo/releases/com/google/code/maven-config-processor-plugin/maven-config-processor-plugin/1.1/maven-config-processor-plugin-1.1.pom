@@ -7,6 +7,7 @@
     <version>1.1</version>
     <name>Configuration Processor Plugin for Maven</name>
     <url>http://code.google.com/p/maven-config-processor-plugin</url>
+    <description>Generates configuration files modified according to a ruleset to prepare them for different environments</description>
     
     <dependencies>
         <dependency>
