@@ -23,7 +23,7 @@
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element name="name" type="xsd:string">
+				<xsd:element name="name" type="xsd:string" minOccurs="0">
 					<xsd:annotation>
 						<xsd:documentation>
 	Name of the property to add to the processed file.
@@ -50,6 +50,69 @@
 					<xsd:annotation>
 						<xsd:documentation>
 	Value of the property or XML snippet to be added.
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="modify">
+		<xsd:annotation>
+			<xsd:documentation>
+	Modify a value of the processed file.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="name" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>
+	Name of the property or XPath expression determining the node or XML element attribute
+	to modify.
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="value" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>
+	New value of the property or XML snippet to replace the existing XML element.
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="find" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>
+	Regular expression to use to find text fragments in property values and
+	comments to replace with the value of the "replace" element.
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="replace" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>
+	Value used to replace the text fragments found using the regular expression of the
+	"find" element.
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="remove">
+		<xsd:annotation>
+			<xsd:documentation>
+	Remove a property or XML element of the processed file.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="name" type="xsd:string">
+					<xsd:annotation>
+						<xsd:documentation>
+	Name of the property or XPath expression determining the node or XML element attribute
+	to remove.
 						</xsd:documentation>
 					</xsd:annotation>
 				</xsd:element>
