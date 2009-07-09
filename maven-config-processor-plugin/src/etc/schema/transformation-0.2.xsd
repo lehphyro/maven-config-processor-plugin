@@ -6,7 +6,6 @@
 
 	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
 
-	<!-- Top-level <processor> tag -->
 	<xsd:element name="processor">
 		<xsd:annotation>
 			<xsd:documentation>
@@ -15,7 +14,7 @@
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element name="add">
+				<xsd:element name="add" minOccurs="0" maxOccurs="unbounded">
 					<xsd:annotation>
 						<xsd:documentation>
 				Add a new value to the processed file.
@@ -57,7 +56,7 @@
 					</xsd:complexType>
 				</xsd:element>
 			
-				<xsd:element name="modify">
+				<xsd:element name="modify" minOccurs="0" maxOccurs="unbounded">
 					<xsd:annotation>
 						<xsd:documentation>
 				Modify a value of the processed file.
@@ -100,7 +99,7 @@
 					</xsd:complexType>
 				</xsd:element>
 			
-				<xsd:element name="remove">
+				<xsd:element name="remove" minOccurs="0" maxOccurs="unbounded">
 					<xsd:annotation>
 						<xsd:documentation>
 				Remove a property or XML element of the processed file.
