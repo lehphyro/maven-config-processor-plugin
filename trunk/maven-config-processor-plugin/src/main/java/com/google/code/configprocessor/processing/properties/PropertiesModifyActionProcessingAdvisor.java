@@ -24,11 +24,17 @@ import com.google.code.configprocessor.processing.properties.model.*;
 public class PropertiesModifyActionProcessingAdvisor extends AbstractPropertiesActionProcessingAdvisor {
 
 	private ModifyAction action;
+	private Pattern pattern;
+	private String replace;
 
 	public PropertiesModifyActionProcessingAdvisor(ModifyAction action, ExpressionResolver expressionResolver) {
 		super(expressionResolver);
 		this.action = action;
 		this.action.validate();
+		if (action.getFind() != null) {
+			pattern = action.getPattern();
+			replace = resolve(action.getReplace());
+		}
 	}
 
 	@Override
@@ -41,19 +47,19 @@ public class PropertiesModifyActionProcessingAdvisor extends AbstractPropertiesA
 				return new PropertiesFileItemAdvice(PropertiesFileItemAdviceType.MODIFY, aux);
 			}
 
-			if (action.getFind() != null && mapping.getPropertyValue() != null) {
-				Matcher matcher = action.getPattern().matcher(mapping.getPropertyValue());
-				String newValue = matcher.replaceAll(action.getReplace());
+			if (pattern != null && mapping.getPropertyValue() != null) {
+				Matcher matcher = pattern.matcher(mapping.getPropertyValue());
+				String newValue = matcher.replaceAll(replace);
 				PropertyMapping aux = createPropertyMapping(mapping.getPropertyName(), newValue);
 				return new PropertiesFileItemAdvice(PropertiesFileItemAdviceType.MODIFY, aux);
 			}
 		}
 		
-		if (item instanceof Comment && action.getFind() != null) {
+		if (pattern != null && item instanceof Comment) {
 			Comment comment = (Comment) item;
 			if (comment.getAsText() != null) {
-				Matcher matcher = action.getPattern().matcher(comment.getAsText());
-				String newValue = matcher.replaceAll(resolve(action.getReplace()));
+				Matcher matcher = pattern.matcher(comment.getAsText());
+				String newValue = matcher.replaceAll(replace);
 				Comment aux = new Comment(newValue);
 				return new PropertiesFileItemAdvice(PropertiesFileItemAdviceType.MODIFY, aux);
 			}
