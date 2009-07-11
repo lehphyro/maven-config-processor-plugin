@@ -15,6 +15,8 @@
  */
 package com.google.code.configprocessor.processing.xml;
 
+import java.util.regex.*;
+
 import javax.xml.namespace.*;
 import javax.xml.parsers.*;
 
@@ -28,6 +30,8 @@ import com.google.code.configprocessor.processing.*;
 public class XmlModifyActionProcessingAdvisor extends AbstractXmlActionProcessingAdvisor {
 
 	private String textFragment;
+	private Pattern pattern;
+	private String replace;
 
 	public XmlModifyActionProcessingAdvisor(ModifyAction action, ExpressionResolver expressionResolver, NamespaceContext namespaceContext) throws ParsingException {
 		super(expressionResolver, namespaceContext);
@@ -37,16 +41,25 @@ public class XmlModifyActionProcessingAdvisor extends AbstractXmlActionProcessin
 			compile(action.getName());
 			textFragment = resolve(action.getValue());
 		}
+		if (action.getFind() != null) {
+			pattern = action.getPattern();
+			replace = resolve(action.getReplace());
+		}
 	}
 
 	public void process(Document document) throws ParsingException {
 		try {
-			Node node = evaluateForSingleNode(document, true, true);
+			if (pattern == null) {
+				Node node = evaluateForSingleNode(document, true, true);
 
-			if (node instanceof Attr) {
-				modifyAttribute(document, (Attr) node);
+				if (node instanceof Attr) {
+					modifyAttribute(document, (Attr) node);
+				} else {
+					modifyNode(document, node);
+				}
 			} else {
-				modifyNode(document, node);
+				NodeList nodes = document.getChildNodes();
+				findReplace(nodes);
 			}
 		} catch (SAXException e) {
 			throw new ParsingException(e);
@@ -64,5 +77,30 @@ public class XmlModifyActionProcessingAdvisor extends AbstractXmlActionProcessin
 
 	protected void modifyAttribute(Document document, Attr oldAttr) {
 		oldAttr.setValue(textFragment);
+	}
+	
+	protected void findReplace(NodeList nodeList) {
+		for (int i = 0; i < nodeList.getLength(); i++) {
+			Node node = nodeList.item(i);
+			findReplaceOnNode(node);
+			NamedNodeMap map = node.getAttributes();
+			if (map != null) {
+				for (int j = 0; j < map.getLength(); j++) {
+					Node attributeNode = map.item(j);
+					findReplaceOnNode(attributeNode);
+					findReplace(attributeNode.getChildNodes());
+				}
+			}
+			findReplace(node.getChildNodes());
+		}
+	}
+	
+	protected void findReplaceOnNode(Node node) {
+		String value = node.getNodeValue();
+		if (value != null) {
+			Matcher matcher = pattern.matcher(value);
+			String newValue = matcher.replaceAll(replace);
+			node.setNodeValue(newValue);
+		}
 	}
 }
