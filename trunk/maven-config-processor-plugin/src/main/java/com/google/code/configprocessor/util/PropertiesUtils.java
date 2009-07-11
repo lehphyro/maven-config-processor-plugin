@@ -32,9 +32,9 @@ public abstract class PropertiesUtils {
 	 * @param logAdapter
 	 * 
 	 * @return Properties read or null if not specified or file is empty.
-	 * @throws ConfigProcessException If processing cannot be performed.
+	 * @throws ConfigProcessorException If processing cannot be performed.
 	 */
-	public static final Properties loadIfPossible(File input, LogAdapter logAdapter) throws ConfigProcessException {
+	public static final Properties loadIfPossible(File input, LogAdapter logAdapter) throws ConfigProcessorException {
 		Properties additional = null;
 
 		if (input == null) {
@@ -42,7 +42,7 @@ public abstract class PropertiesUtils {
 		}
 
 		if (!input.exists()) {
-			throw new ConfigProcessException("Additional properties file [" + input + "] does not exist");
+			throw new ConfigProcessorException("Additional properties file [" + input + "] does not exist");
 		}
 
 		additional = new Properties();
@@ -57,7 +57,7 @@ public abstract class PropertiesUtils {
 			
 			return additional;
 		} catch (Exception e) {
-			throw new ConfigProcessException("Error loading additional properties", e);
+			throw new ConfigProcessorException("Error loading additional properties", e);
 		} finally {
 			close(fis, logAdapter);
 		}

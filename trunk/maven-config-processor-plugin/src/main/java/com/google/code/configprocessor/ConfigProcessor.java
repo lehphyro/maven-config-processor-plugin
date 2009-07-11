@@ -21,6 +21,7 @@ import java.io.*;
 import java.util.*;
 
 import com.google.code.configprocessor.expression.*;
+import com.google.code.configprocessor.io.*;
 import com.google.code.configprocessor.log.*;
 import com.google.code.configprocessor.parsing.*;
 import com.google.code.configprocessor.processing.*;
@@ -38,10 +39,11 @@ public class ConfigProcessor {
 	private boolean useOutputDirectory;
 	private File outputDirectory;
 	private LogAdapter log;
+	private FileResolver fileResolver;
 	
 	private File actualOutputDirectory;
 
-	public ConfigProcessor(String encoding, int indentSize, int lineWidth, Map<String, String> namespaceContexts, File outputDirectory, boolean useOutputDirectory, LogAdapter log) {
+	public ConfigProcessor(String encoding, int indentSize, int lineWidth, Map<String, String> namespaceContexts, File outputDirectory, boolean useOutputDirectory, LogAdapter log, FileResolver fileResolver) {
 		this.encoding = encoding;
 		this.indentSize = indentSize;
 		this.lineWidth = lineWidth;
@@ -49,6 +51,7 @@ public class ConfigProcessor {
 		this.outputDirectory = outputDirectory;
 		this.useOutputDirectory = useOutputDirectory;
 		this.log = log;
+		this.fileResolver = fileResolver;
 	}
 	
 	public void init() {
@@ -67,21 +70,21 @@ public class ConfigProcessor {
 		getLog().debug("File encodig is [" + encoding + "]");
 	}
 
-	public void execute(ExpressionResolver resolver, Transformation transformation) throws ConfigProcessException {
-		File input = new File(transformation.getInput());
+	public void execute(ExpressionResolver resolver, Transformation transformation) throws ConfigProcessorException {
+		File input = fileResolver.resolve(transformation.getInput());
+		File config = fileResolver.resolve(transformation.getConfig());
 		File output = new File(actualOutputDirectory, transformation.getOutput());
-		File config = new File(transformation.getConfig());
 		String type = getInputType(transformation);
 
 		if (!input.exists()) {
-			throw new ConfigProcessException("Input file [" + input + "] does not exist");
+			throw new ConfigProcessorException("Input file [" + input + "] does not exist");
 		}
 		if (!config.exists()) {
-			throw new ConfigProcessException("Configuration file [" + config + "] does not exist");
+			throw new ConfigProcessorException("Configuration file [" + config + "] does not exist");
 		}
 		createOutputFile(output);
 
-		process(resolver, input, output, config, type, transformation.isReplacePlaceholders());
+		process(resolver, transformation.getInput(), input, output, transformation.getConfig(), config, type, transformation.isReplacePlaceholders());
 	}
 
 	/**
@@ -103,7 +106,7 @@ public class ConfigProcessor {
 				if (getLog() != null) {
 					getLog().warn(
 						"Could not auto-detect type of input [" + transformation.getInput() +
-							"], trying XML. It is recommended that you configure it in your pom.xml (tag: transformations/transformation/type) to avoid errors");
+							"], assuming it is XML. It is recommended that you configure it in your pom.xml (tag: transformations/transformation/type) to avoid errors");
 				}
 				type = Transformation.XML_TYPE;
 			}
@@ -119,15 +122,17 @@ public class ConfigProcessor {
 	 * 
 	 * @param resolver
 	 * 
+	 * @param inputName Symbolic name of the input file to read from.
 	 * @param input Input file to read from.
 	 * @param output Output file to write to.
+	 * @param configName Symbolic name of the file containing rules to process the input.
 	 * @param config File containing rules to process the input.
 	 * @param type Type of the input file. Properties, XML or null if it is to be auto-detected.
 	 * @param replacePlaceholders True if placeholders must be replaced on output files.
-	 * @throws ConfigProcessException If processing cannot be performed.
+	 * @throws ConfigProcessorException If processing cannot be performed.
 	 */
-	protected void process(ExpressionResolver resolver, File input, File output, File config, String type, boolean replacePlaceholders) throws ConfigProcessException {
-		getLog().info("Processing file [" + input + "], outputing to [" + output + "]");
+	protected void process(ExpressionResolver resolver, String inputName, File input, File output, String configName, File config, String type, boolean replacePlaceholders) throws ConfigProcessorException {
+		getLog().info("Processing file [" + inputName + "] using config [" + configName + "], outputing to [" + output + "]");
 
 		InputStream configStream = null;
 		InputStream inputStream = null;
@@ -151,9 +156,9 @@ public class ConfigProcessor {
 			ActionProcessor processor = getActionProcessor(resolver, input, type, replacePlaceholders);
 			processor.process(inputStreamReader, outputStreamWriter, action);
 		} catch (ParsingException e) {
-			throw new ConfigProcessException("Error processing file [" + input + "] using configuration [" + config + "]", e);
+			throw new ConfigProcessorException("Error processing file [" + inputName + "] using configuration [" + configName + "]", e);
 		} catch (IOException e) {
-			throw new ConfigProcessException("Error reading/writing files. Input is [" + input + "], configuration is [" + config + "]", e);
+			throw new ConfigProcessorException("Error reading/writing files. Input is [" + inputName + "], configuration is [" + configName + "]", e);
 		} finally {
 			close(configStreamReader, getLog());
 			close(inputStreamReader, getLog());
@@ -163,9 +168,9 @@ public class ConfigProcessor {
 			fileOut = new FileOutputStream(output);
 			outputStream.writeTo(fileOut);
 		} catch (FileNotFoundException e) {
-			getLog().error("Error opening file [" + input + "]", e);
+			getLog().error("Error opening file [" + output + "]", e);
 		} catch (IOException e) {
-			getLog().error("Error writing file [" + input + "]", e);
+			getLog().error("Error writing file [" + output + "]", e);
 		} finally {
 			close(outputStreamWriter, getLog());
 			close(fileOut, getLog());
@@ -181,15 +186,15 @@ public class ConfigProcessor {
 	 * @param type Type of the input file. Properties or XML.
 	 * @param replacePlaceholders True if placeholders must be replaced on output files.
 	 * @return ActionProcessor for the input file.
-	 * @throws ConfigProcessException If processing cannot be performed.
+	 * @throws ConfigProcessorException If processing cannot be performed.
 	 */
-	protected ActionProcessor getActionProcessor(ExpressionResolver resolver, File input, String type, boolean replacePlaceholders) throws ConfigProcessException {
+	protected ActionProcessor getActionProcessor(ExpressionResolver resolver, File input, String type, boolean replacePlaceholders) throws ConfigProcessorException {
 		if (Transformation.XML_TYPE.equals(type)) {
 			return new XmlActionProcessor(encoding, lineWidth, indentSize, resolver, namespaceContexts);
 		} else if (Transformation.PROPERTIES_TYPE.equals(type)) {
 			return new PropertiesActionProcessor(resolver);
 		} else {
-			throw new ConfigProcessException("Unknown file type [" + type + "]");
+			throw new ConfigProcessorException("Unknown file type [" + type + "]");
 		}
 	}
 
@@ -197,9 +202,9 @@ public class ConfigProcessor {
 	 * Creates output file and required directories.
 	 * 
 	 * @param output Output file to create.
-	 * @throws ConfigProcessException If processing cannot be performed.
+	 * @throws ConfigProcessorException If processing cannot be performed.
 	 */
-	protected void createOutputFile(File output) throws ConfigProcessException {
+	protected void createOutputFile(File output) throws ConfigProcessorException {
 		try {
 			File directory = output.getParentFile();
 			getLog().debug(output.toString());
@@ -207,7 +212,7 @@ public class ConfigProcessor {
 				forceMkdirs(output.getParentFile());
 			}
 		} catch (IOException e) {
-			throw new ConfigProcessException(e.getMessage(), e);
+			throw new ConfigProcessorException(e.getMessage(), e);
 		}
 	}
 

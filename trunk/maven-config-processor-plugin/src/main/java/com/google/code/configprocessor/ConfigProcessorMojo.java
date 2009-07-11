@@ -20,6 +20,9 @@ import static com.google.code.configprocessor.util.PropertiesUtils.*;
 import java.io.*;
 import java.util.*;
 
+import org.apache.maven.artifact.factory.*;
+import org.apache.maven.artifact.repository.*;
+import org.apache.maven.artifact.resolver.*;
 import org.apache.maven.execution.*;
 import org.apache.maven.plugin.*;
 import org.apache.maven.project.*;
@@ -27,6 +30,7 @@ import org.apache.maven.project.path.*;
 import org.codehaus.plexus.logging.*;
 import org.codehaus.plexus.logging.console.*;
 
+import com.google.code.configprocessor.io.*;
 import com.google.code.configprocessor.log.*;
 import com.google.code.configprocessor.maven.*;
 
@@ -134,12 +138,42 @@ public class ConfigProcessorMojo extends AbstractMojo {
 	private MojoExecution mojoExecution;
 
 	/**
+	 * The ArtifactFactory Object.
+	 * 
+	 * @component
+	 */
+	private ArtifactFactory artifactFactory;
+	
+	/**
+	 * The ArtifactResolver Object.
+	 * 
+	 * @component
+	 */
+	private ArtifactResolver artifactResolver;
+	
+	/**
+	 * The local repository object.
+	 * 
+	 * @parameter expression="${localRepository}"
+	 * @required
+	 */
+	private ArtifactRepository localRepository;
+
+	/**
+	 * The remote repositories list.
+	 * 
+	 * @parameter expression="${project.remoteArtifactRepositories}"
+	 */
+	private List<ArtifactRepository> remoteRepositories;
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public void execute() throws MojoExecutionException {
 		try {
 			LogAdapter logAdapter = new LogMaven(getLog());
-			ConfigProcessor processor = new ConfigProcessor(encoding, indentSize, lineWidth, namespaceContexts, outputDirectory, useOutputDirectory, logAdapter);
+			FileResolver fileResolver = new MavenFileResolver(artifactFactory, artifactResolver, localRepository, remoteRepositories, logAdapter);
+			ConfigProcessor processor = new ConfigProcessor(encoding, indentSize, lineWidth, namespaceContexts, outputDirectory, useOutputDirectory, logAdapter, fileResolver);
 			processor.init();
 			
 			Properties additionalProperties = loadIfPossible(specificProperties, logAdapter);
@@ -148,7 +182,7 @@ public class ConfigProcessorMojo extends AbstractMojo {
 				MavenExpressionResolver resolver = getExpressionResolver(transformation.isReplacePlaceholders(), additionalProperties);
 				processor.execute(resolver, transformation);
 			}
-		} catch (ConfigProcessException e) {
+		} catch (ConfigProcessorException e) {
 			throw new MojoExecutionException("Error during config processing", e);
 		}
 	}
