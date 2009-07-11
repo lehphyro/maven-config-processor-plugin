@@ -24,6 +24,7 @@ import org.apache.tools.ant.*;
 
 import com.google.code.configprocessor.*;
 import com.google.code.configprocessor.expression.*;
+import com.google.code.configprocessor.io.*;
 import com.google.code.configprocessor.log.*;
 
 /**
@@ -57,7 +58,7 @@ public class ConfigProcessorTask extends Task {
 			for (NamespaceContext nsContext : namespaceContexts) {
 				namespaceContextsMap.put(nsContext.getPrefix(), nsContext.getUrl());
 			}
-			ConfigProcessor processor = new ConfigProcessor(encoding, indentSize, lineWidth, namespaceContextsMap, outputDirectory, useOutputDirectory, log);
+			ConfigProcessor processor = new ConfigProcessor(encoding, indentSize, lineWidth, namespaceContextsMap, outputDirectory, useOutputDirectory, log, new DefaultFileResolver());
 			processor.init();
 			
 			Properties additionalProperties = loadIfPossible(specificProperties, log);
@@ -66,7 +67,7 @@ public class ConfigProcessorTask extends Task {
 					ExpressionResolver resolver = getExpressionResolver(transformation.isReplacePlaceholders(), additionalProperties);
 					processor.execute(resolver, transformation);
 			}
-		} catch (ConfigProcessException e) {
+		} catch (ConfigProcessorException e) {
 			e.printStackTrace();
 			throw new BuildException("Error during config processing", e);
 		}

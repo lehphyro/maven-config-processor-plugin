@@ -13,18 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.google.code.configprocessor;
+package com.google.code.configprocessor.maven;
 
-public class ConfigProcessException extends Exception {
-
-	private static final long serialVersionUID = 9223298623371500664L;
-
-	public ConfigProcessException(String message, Exception e) {
-		super(message, e);
-	}
-
-	public ConfigProcessException(String message) {
-		super(message);
-	}
+public class ArtifactURLLocatorStrategy {
 
 }
