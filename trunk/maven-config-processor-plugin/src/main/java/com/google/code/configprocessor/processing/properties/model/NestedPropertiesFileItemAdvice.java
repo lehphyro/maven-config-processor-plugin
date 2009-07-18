@@ -23,6 +23,8 @@ public class NestedPropertiesFileItemAdvice extends PropertiesFileItemAdvice {
 	private List<PropertiesFileItem> items;
 
 	private boolean removeAdviced;
+	private boolean appendAdviced;
+	private PropertiesFileItemAdviceType appendType;
 
 	public NestedPropertiesFileItemAdvice(PropertiesFileItem currentItem) {
 		super(null, null);
@@ -63,6 +65,14 @@ public class NestedPropertiesFileItemAdvice extends PropertiesFileItemAdvice {
 					items.add(index, advice.getItem());
 				}
 				break;
+			case APPEND_FILE_AFTER:
+			case APPEND_FILE_BEFORE:
+				appendAdviced = true;
+				appendType = advice.getType();
+				items.add(advice.getItem());
+				break;
+			default:
+				throw new IllegalArgumentException("Unknown advice type: " + advice.getType());
 		}
 	}
 
@@ -74,14 +84,24 @@ public class NestedPropertiesFileItemAdvice extends PropertiesFileItemAdvice {
 			}
 			return PropertiesFileItemAdviceType.DO_NOTHING;
 		}
+		if (appendAdviced) {
+			return appendType;
+		}
 		return PropertiesFileItemAdviceType.MODIFY;
 	}
 
 	@Override
 	public PropertiesFileItem getItem() {
-		CompositePropertiesFileItem composite = new CompositePropertiesFileItem();
-		composite.addAllPropertiesFileItems(items);
-
-		return composite;
+		PropertiesFileItem aux;
+		
+		if (appendAdviced) {
+			aux = items.get(0);
+		} else {
+			CompositePropertiesFileItem composite = new CompositePropertiesFileItem();
+			composite.addAllPropertiesFileItems(items);
+			aux = composite;
+		}
+		
+		return aux;
 	}
 }

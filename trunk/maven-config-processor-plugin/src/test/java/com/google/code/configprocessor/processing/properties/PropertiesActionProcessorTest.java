@@ -23,12 +23,14 @@ import java.io.*;
 import org.codehaus.plexus.component.configurator.expression.*;
 import org.junit.*;
 
+import com.google.code.configprocessor.io.*;
 import com.google.code.configprocessor.maven.*;
 import com.google.code.configprocessor.processing.*;
 import com.google.code.configprocessor.processing.properties.model.*;
 
 public class PropertiesActionProcessorTest {
 
+	public static final String ENCODING = "ISO-8859-1";
 	public static final String PROPERTIES_PATH = "/com/google/code/configprocessor/data/properties-target-config.properties";
 
 	private PropertiesActionProcessingAdvisor advisor;
@@ -65,7 +67,7 @@ public class PropertiesActionProcessorTest {
 	class TestPropertiesActionProcessor extends PropertiesActionProcessor {
 		
 		public TestPropertiesActionProcessor() {
-			super(new MavenExpressionResolver(new DefaultExpressionEvaluator()));
+			super(ENCODING, new ClasspathFileResolver(), new MavenExpressionResolver(new DefaultExpressionEvaluator()));
 		}
 		
 		@Override

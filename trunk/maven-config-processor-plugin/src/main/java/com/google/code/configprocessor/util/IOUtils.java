@@ -35,7 +35,9 @@ public abstract class IOUtils {
 			try {
 				closeable.close();
 			} catch (IOException e) {
-				logAdapter.error("Error closing: " + closeable, e);
+				if (logAdapter != null) {
+					logAdapter.error("Error closing: " + closeable, e);
+				}
 			}
 		}
 	}

@@ -22,19 +22,22 @@ import java.io.*;
 import org.codehaus.plexus.component.configurator.expression.*;
 import org.junit.*;
 
+import com.google.code.configprocessor.io.*;
 import com.google.code.configprocessor.maven.*;
 import com.google.code.configprocessor.processing.*;
 
 @Ignore
 public class AbstractPropertiesActionProcessingAdvisorTest {
 
+	private static final String ENCODING = "ISO-8859-1";
+	
 	protected InputStream input;
 	protected ByteArrayOutputStream output;
 	protected ActionProcessor processor;
 	
 	@Before
 	public void setup() {
-		processor = new PropertiesActionProcessor(new MavenExpressionResolver(new DefaultExpressionEvaluator()));
+		processor = new PropertiesActionProcessor(ENCODING, new ClasspathFileResolver(), new MavenExpressionResolver(new DefaultExpressionEvaluator()));
 		input = getClass().getResourceAsStream(PropertiesActionProcessorTest.PROPERTIES_PATH);
 		output = new ByteArrayOutputStream();
 	}

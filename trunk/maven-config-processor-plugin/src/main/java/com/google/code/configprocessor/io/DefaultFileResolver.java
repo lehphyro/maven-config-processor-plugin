@@ -17,12 +17,14 @@ package com.google.code.configprocessor.io;
 
 import java.io.*;
 
-import com.google.code.configprocessor.*;
-
 public class DefaultFileResolver implements FileResolver {
 
-	public File resolve(String name) throws ConfigProcessorException {
-		return new File(name);
+	public File resolve(String name) throws IOException {
+		File file = new File(name);
+		if (!file.exists()) {
+			throw new FileNotFoundException("File [" + name + "] does not exist");
+		}
+		return file;
 	}
 
 }

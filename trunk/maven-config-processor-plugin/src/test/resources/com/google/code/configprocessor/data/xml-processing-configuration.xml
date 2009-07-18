@@ -42,4 +42,8 @@
 		<flags>CASE_INSENSITIVE,COMMENTS</flags>
 	</modify>
 
+	<add>
+		<after>last-property</after>
+		<file>${filename-to-resolve}</file>
+	</add>
 </processor>

@@ -70,7 +70,7 @@ public class ConfigProcessor {
 		getLog().debug("File encodig is [" + encoding + "]");
 	}
 
-	public void execute(ExpressionResolver resolver, Transformation transformation) throws ConfigProcessorException {
+	public void execute(ExpressionResolver resolver, Transformation transformation) throws ConfigProcessorException, IOException {
 		File input = fileResolver.resolve(transformation.getInput());
 		File config = fileResolver.resolve(transformation.getConfig());
 		File output = new File(actualOutputDirectory, transformation.getOutput());
@@ -180,7 +180,7 @@ public class ConfigProcessor {
 	/**
 	 * Obtain the action processor for the input.
 	 * 
-	 * @param resolver
+	 * @param expressionResolver
 	 * 
 	 * @param input Input file to read from.
 	 * @param type Type of the input file. Properties or XML.
@@ -188,11 +188,11 @@ public class ConfigProcessor {
 	 * @return ActionProcessor for the input file.
 	 * @throws ConfigProcessorException If processing cannot be performed.
 	 */
-	protected ActionProcessor getActionProcessor(ExpressionResolver resolver, File input, String type, boolean replacePlaceholders) throws ConfigProcessorException {
+	protected ActionProcessor getActionProcessor(ExpressionResolver expressionResolver, File input, String type, boolean replacePlaceholders) throws ConfigProcessorException {
 		if (Transformation.XML_TYPE.equals(type)) {
-			return new XmlActionProcessor(encoding, lineWidth, indentSize, resolver, namespaceContexts);
+			return new XmlActionProcessor(encoding, lineWidth, indentSize, expressionResolver, namespaceContexts);
 		} else if (Transformation.PROPERTIES_TYPE.equals(type)) {
-			return new PropertiesActionProcessor(resolver);
+			return new PropertiesActionProcessor(encoding, fileResolver, expressionResolver);
 		} else {
 			throw new ConfigProcessorException("Unknown file type [" + type + "]");
 		}

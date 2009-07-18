@@ -45,7 +45,7 @@ public class ProcessingConfigurationParserTest {
 			}
 		}
 		
-		assertEquals(6, action.getActions().size());
+		assertEquals(7, action.getActions().size());
 		assertEquals(new AddAction(null, "<test-property>test-value</test-property>", "/root/property3", null), action.getActions().get(0));
 		assertEquals(new ModifyAction("/root/property1", "<modified-property1>modified-value</modified-property1>"), action.getActions().get(1));
 		assertEquals(new RemoveAction("/root/property2"), action.getActions().get(2));
@@ -57,6 +57,8 @@ public class ProcessingConfigurationParserTest {
 		modifyFindReplace.setReplace("my-email@server.com");
 		modifyFindReplace.setFlags("CASE_INSENSITIVE,COMMENTS");
 		assertEquals(modifyFindReplace, action.getActions().get(5));
+		
+		assertEquals(new AddAction("${filename-to-resolve}", "last-property", null), action.getActions().get(6));
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -90,6 +92,8 @@ public class ProcessingConfigurationParserTest {
 		modifyFindReplace.setReplace("my-email@server.com");
 		modifyFindReplace.setFlags("CASE_INSENSITIVE,COMMENTS");
 		config.addAction(modifyFindReplace);
+		
+		config.addAction(new AddAction("${filename-to-resolve}", "last-property", null));
 		
 		System.out.println(xstream.toXML(config));
 	}

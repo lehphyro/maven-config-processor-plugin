@@ -23,6 +23,8 @@ import com.google.code.configprocessor.processing.*;
 
 public class PropertiesAddActionProcessingAdvisorTest extends AbstractPropertiesActionProcessingAdvisorTest {
 
+	private static final String APPENDED_PROPERTIES_PATH = "/com/google/code/configprocessor/data/appended-properties-config.properties";
+	
 	@Test
 	public void processAddFirst() throws Exception {
 		Action action = new AddAction("teste-property", "test-value", null, "property1.value");
@@ -55,4 +57,27 @@ public class PropertiesAddActionProcessingAdvisorTest extends AbstractProperties
 		executeTest(action, expected);
 	}
 	
+	@Test
+	public void processAppendBefore() throws Exception {
+		Action action = new AddAction(APPENDED_PROPERTIES_PATH, null, "property1.value");
+		String expected = "appended=1" + LINE_SEPARATOR + "property1.value=value1" + LINE_SEPARATOR + "property2.value=" + LINE_SEPARATOR + "# Comment" + LINE_SEPARATOR + "	property3.value=value3 \\" + LINE_SEPARATOR + "value 3 continuation" + LINE_SEPARATOR + "# property4.value=value4 \\" + LINE_SEPARATOR + "#value 4 continuation" + LINE_SEPARATOR + "#property5.value=value5" + LINE_SEPARATOR + "property6.value=value6=value" + LINE_SEPARATOR;
+		
+		executeTest(action, expected);
+	}
+
+	@Test
+	public void processAppendAfter() throws Exception {
+		Action action = new AddAction(APPENDED_PROPERTIES_PATH, "property1.value", null);
+		String expected = "property1.value=value1" + LINE_SEPARATOR + "appended=1" + LINE_SEPARATOR + "property2.value=" + LINE_SEPARATOR + "# Comment" + LINE_SEPARATOR + "	property3.value=value3 \\" + LINE_SEPARATOR + "value 3 continuation" + LINE_SEPARATOR + "# property4.value=value4 \\" + LINE_SEPARATOR + "#value 4 continuation" + LINE_SEPARATOR + "#property5.value=value5" + LINE_SEPARATOR + "property6.value=value6=value" + LINE_SEPARATOR;
+		
+		executeTest(action, expected);
+	}
+
+	@Test
+	public void processAppendLast() throws Exception {
+		Action action = new AddAction(APPENDED_PROPERTIES_PATH, "property6.value", null);
+		String expected = "property1.value=value1" + LINE_SEPARATOR + "property2.value=" + LINE_SEPARATOR + "# Comment" + LINE_SEPARATOR + "	property3.value=value3 \\" + LINE_SEPARATOR + "value 3 continuation" + LINE_SEPARATOR + "# property4.value=value4 \\" + LINE_SEPARATOR + "#value 4 continuation" + LINE_SEPARATOR + "#property5.value=value5" + LINE_SEPARATOR + "property6.value=value6=value" + LINE_SEPARATOR + "appended=1" + LINE_SEPARATOR;
+		
+		executeTest(action, expected);
+	}
 }
