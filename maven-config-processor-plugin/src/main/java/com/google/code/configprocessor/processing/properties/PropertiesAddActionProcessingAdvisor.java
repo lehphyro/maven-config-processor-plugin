@@ -35,12 +35,21 @@ public class PropertiesAddActionProcessingAdvisor extends AbstractPropertiesActi
 
 			if (mapping.getPropertyName().trim().equals(action.getBefore()) || mapping.getPropertyName().trim().equals(action.getAfter())) {
 
-				PropertyMapping aux = createPropertyMapping(action.getName(), action.getValue());
 				PropertiesFileItemAdvice advice;
-				if (mapping.getPropertyName().trim().equals(action.getBefore())) {
-					advice = new PropertiesFileItemAdvice(PropertiesFileItemAdviceType.ADD_BEFORE, aux);
+				if (action.getFile() == null) {
+					PropertyMapping aux = createPropertyMapping(action.getName(), action.getValue());
+					if (mapping.getPropertyName().trim().equals(action.getBefore())) {
+						advice = new PropertiesFileItemAdvice(PropertiesFileItemAdviceType.ADD_BEFORE, aux);
+					} else {
+						advice = new PropertiesFileItemAdvice(PropertiesFileItemAdviceType.ADD_AFTER, aux);
+					}
 				} else {
-					advice = new PropertiesFileItemAdvice(PropertiesFileItemAdviceType.ADD_AFTER, aux);
+					FilePropertiesFileItem aux = new FilePropertiesFileItem(resolve(action.getFile()));
+					if (mapping.getPropertyName().trim().equals(action.getBefore())) {
+						advice = new PropertiesFileItemAdvice(PropertiesFileItemAdviceType.APPEND_FILE_BEFORE, aux);
+					} else {
+						advice = new PropertiesFileItemAdvice(PropertiesFileItemAdviceType.APPEND_FILE_AFTER, aux);
+					}
 				}
 
 				return advice;

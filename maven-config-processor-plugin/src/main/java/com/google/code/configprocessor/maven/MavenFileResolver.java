@@ -23,7 +23,6 @@ import org.apache.maven.artifact.repository.*;
 import org.apache.maven.artifact.resolver.*;
 import org.apache.maven.shared.io.location.*;
 
-import com.google.code.configprocessor.*;
 import com.google.code.configprocessor.io.*;
 import com.google.code.configprocessor.log.*;
 
@@ -43,10 +42,10 @@ public class MavenFileResolver implements FileResolver {
 		locator.setStrategies(strategies);
 	}
 
-	public File resolve(String name) throws ConfigProcessorException {
+	public File resolve(String name) throws IOException {
 		Location location = locator.resolve(name);
 		if (location == null) {
-			throw new ConfigProcessorException("File not found [" + name + "]\n" + locator.getMessageHolder().render());
+			throw new IOException("File not found [" + name + "]\n" + locator.getMessageHolder().render());
 		}
 		
 		try {
@@ -54,7 +53,7 @@ public class MavenFileResolver implements FileResolver {
 			logAdapter.debug("Resolved [" + name + "] to file [" + file + "]");
 			return file;
 		} catch (IOException e) {
-			throw new ConfigProcessorException("Failed to load file [" + name + "]\n" + locator.getMessageHolder().render());
+			throw new IOException("Failed to load file [" + name + "]\n" + locator.getMessageHolder().render());
 		}
 	}
 

@@ -182,7 +182,7 @@ public class ConfigProcessorMojo extends AbstractMojo {
 				MavenExpressionResolver resolver = getExpressionResolver(transformation.isReplacePlaceholders(), additionalProperties);
 				processor.execute(resolver, transformation);
 			}
-		} catch (ConfigProcessorException e) {
+		} catch (Exception e) {
 			throw new MojoExecutionException("Error during config processing", e);
 		}
 	}

@@ -21,6 +21,7 @@ public class AddAction extends AbstractAction {
 
 	private String after;
 	private String before;
+	private String file;
 
 	public AddAction() {
 		this(null, null);
@@ -28,6 +29,20 @@ public class AddAction extends AbstractAction {
 
 	public AddAction(String name, String value) {
 		this(name, value, null, null);
+	}
+
+	public AddAction(String file, String after, String before) {
+		super(null, null);
+		
+		this.file = file;
+		this.after = after;
+		this.before = before;
+		
+		if (getFile() == null) {
+			throw new IllegalArgumentException("File is required");
+		} else if ((getAfter() != null) && (getBefore() != null)) {
+			throw new IllegalArgumentException("Choose only one of before or after for file: " + file);
+		}
 	}
 
 	public AddAction(String name, String value, String after, String before) {
@@ -55,6 +70,10 @@ public class AddAction extends AbstractAction {
 	public String getBefore() {
 		return StringUtils.trimToNull(before);
 	}
+	
+	public String getFile() {
+		return StringUtils.trimToNull(file);
+	}
 
 	@Override
 	public int hashCode() {
@@ -62,6 +81,7 @@ public class AddAction extends AbstractAction {
 		int result = super.hashCode();
 		result = prime * result + ((getAfter() == null) ? 0 : getAfter().hashCode());
 		result = prime * result + ((getBefore() == null) ? 0 : getBefore().hashCode());
+		result = prime * result + ((getFile() == null) ? 0 : getFile().hashCode());
 		return result;
 	}
 
@@ -92,11 +112,19 @@ public class AddAction extends AbstractAction {
 		} else if (!getBefore().equals(other.getBefore())) {
 			return false;
 		}
+
+		if (getFile() == null) {
+			if (other.getFile() != null) {
+				return false;
+			}
+		} else if (!getFile().equals(other.getFile())) {
+			return false;
+		}
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return getActionName() + " [name=" + getName() + ";value=" + getValue() + ";after=" + getAfter() + ";before=" + getBefore() + "]";
+		return getActionName() + " [name=" + getName() + ";value=" + getValue() + ";after=" + getAfter() + ";before=" + getBefore() + ";file=" + getFile() + "]";
 	}
 }

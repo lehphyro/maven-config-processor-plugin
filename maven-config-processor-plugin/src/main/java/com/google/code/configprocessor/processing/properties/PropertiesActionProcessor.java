@@ -20,28 +20,38 @@ import java.util.*;
 
 import com.google.code.configprocessor.*;
 import com.google.code.configprocessor.expression.*;
+import com.google.code.configprocessor.io.*;
 import com.google.code.configprocessor.processing.*;
 import com.google.code.configprocessor.processing.properties.model.*;
+import com.google.code.configprocessor.util.*;
 
 public class PropertiesActionProcessor implements ActionProcessor {
 
 	public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 	private static final int READ_AHEAD_BUFFER_SIZE = 1024 * 10;
 
+	private String encoding;
 	private ExpressionResolver expressionResolver;
+	private FileResolver fileResolver;
 
-	public PropertiesActionProcessor(ExpressionResolver expressionResolver) {
+	public PropertiesActionProcessor(String encoding, FileResolver fileResolver, ExpressionResolver expressionResolver) {
+		this.encoding = encoding;
+		this.fileResolver = fileResolver;
 		this.expressionResolver = expressionResolver;
 	}
 
 	public void process(InputStreamReader input, OutputStreamWriter output, Action action) throws ParsingException, IOException {
-		PropertiesActionProcessingAdvisor advisor = getAdvisorFor(action);
 		BufferedReader reader = new BufferedReader(input);
 		BufferedWriter writer = new BufferedWriter(output);
+		process(reader, writer, action);
+	}
+	
+	protected void process(BufferedReader reader, BufferedWriter writer, Action action) throws IOException {
+		PropertiesActionProcessingAdvisor advisor = getAdvisorFor(action);
 
 		// Start
 		PropertiesFileItemAdvice advice = advisor.onStartProcessing();
-		processAdvice(advice, null, writer);
+		processAdvice(advice, null, writer, action);
 
 		// Process
 		PropertiesFileItem currentItem = null;
@@ -57,13 +67,13 @@ public class PropertiesActionProcessor implements ActionProcessor {
 				}
 
 				advice = advisor.process(currentItem);
-				processAdvice(advice, currentItem, writer);
+				processAdvice(advice, currentItem, writer, action);
 			}
 		}
 
 		// End
 		advice = advisor.onEndProcessing();
-		processAdvice(advice, null, writer);
+		processAdvice(advice, null, writer, action);
 
 		writer.flush();
 	}
@@ -113,7 +123,7 @@ public class PropertiesActionProcessor implements ActionProcessor {
 		return propertyMapping;
 	}
 
-	protected void processAdvice(PropertiesFileItemAdvice advice, PropertiesFileItem currentItem, BufferedWriter writer) throws IOException {
+	protected void processAdvice(PropertiesFileItemAdvice advice, PropertiesFileItem currentItem, BufferedWriter writer, Action action) throws IOException {
 		switch (advice.getType()) {
 			case DO_NOTHING:
 				append(currentItem, writer);
@@ -131,6 +141,16 @@ public class PropertiesActionProcessor implements ActionProcessor {
 				append(advice.getItem(), writer);
 				append(currentItem, writer);
 				break;
+			case APPEND_FILE_AFTER:
+				append(currentItem, writer);
+				appendFile(advice.getItem(), writer, action);
+				break;
+			case APPEND_FILE_BEFORE:
+				appendFile(advice.getItem(), writer, action);
+				append(currentItem, writer);
+				break;
+			default:
+				throw new IllegalArgumentException("Unknown advice type: " + advice.getType());
 		}
 	}
 
@@ -138,6 +158,17 @@ public class PropertiesActionProcessor implements ActionProcessor {
 		if (item != null) {
 			writer.append(item.getAsText());
 			writer.append(LINE_SEPARATOR);
+		}
+	}
+	
+	protected void appendFile(PropertiesFileItem item, BufferedWriter writer, Action action) throws IOException {
+		FilePropertiesFileItem aux = (FilePropertiesFileItem)item;
+		File file = fileResolver.resolve(aux.getFile());
+		InputStreamReader reader = new InputStreamReader(new FileInputStream(file), encoding);
+		try {
+			process(new BufferedReader(reader), writer, action);
+		} finally {
+			IOUtils.close(reader, null);
 		}
 	}
 

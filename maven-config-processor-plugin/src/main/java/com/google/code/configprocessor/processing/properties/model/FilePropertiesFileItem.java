@@ -15,6 +15,20 @@
  */
 package com.google.code.configprocessor.processing.properties.model;
 
-public enum PropertiesFileItemAdviceType {
-	DO_NOTHING, ADD_BEFORE, ADD_AFTER, MODIFY, REMOVE, APPEND_FILE_AFTER, APPEND_FILE_BEFORE, ;
+public class FilePropertiesFileItem implements PropertiesFileItem {
+
+	private String file;
+	
+	public FilePropertiesFileItem(String file) {
+		this.file = file;
+	}
+	
+	public String getFile() {
+		return file;
+	}
+	
+	public String getAsText() {
+		throw new UnsupportedOperationException();
+	}
+
 }

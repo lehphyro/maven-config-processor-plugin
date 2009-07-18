@@ -13,8 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.google.code.configprocessor.processing.properties.model;
+package com.google.code.configprocessor.io;
 
-public enum PropertiesFileItemAdviceType {
-	DO_NOTHING, ADD_BEFORE, ADD_AFTER, MODIFY, REMOVE, APPEND_FILE_AFTER, APPEND_FILE_BEFORE, ;
+import java.io.*;
+import java.net.*;
+
+public class ClasspathFileResolver implements FileResolver {
+
+	public File resolve(String name) throws IOException {
+		URL url = getClass().getResource(name);
+		if (url == null) {
+			throw new FileNotFoundException("Classpath resource [" + name + "] not found");
+		}
+		return new File(url.getPath());
+	}
+
 }

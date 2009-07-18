@@ -17,10 +17,8 @@ package com.google.code.configprocessor.io;
 
 import java.io.*;
 
-import com.google.code.configprocessor.*;
-
 public interface FileResolver {
 
-	File resolve(String name) throws ConfigProcessorException;
+	File resolve(String name) throws IOException;
 
 }

@@ -67,8 +67,7 @@ public class ConfigProcessorTask extends Task {
 					ExpressionResolver resolver = getExpressionResolver(transformation.isReplacePlaceholders(), additionalProperties);
 					processor.execute(resolver, transformation);
 			}
-		} catch (ConfigProcessorException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
 			throw new BuildException("Error during config processing", e);
 		}
 	}
