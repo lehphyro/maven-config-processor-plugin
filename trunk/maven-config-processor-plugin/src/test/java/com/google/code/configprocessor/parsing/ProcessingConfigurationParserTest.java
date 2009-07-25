@@ -45,7 +45,7 @@ public class ProcessingConfigurationParserTest {
 			}
 		}
 		
-		assertEquals(7, action.getActions().size());
+		assertEquals(8, action.getActions().size());
 		assertEquals(new AddAction(null, "<test-property>test-value</test-property>", "/root/property3", null), action.getActions().get(0));
 		assertEquals(new ModifyAction("/root/property1", "<modified-property1>modified-value</modified-property1>"), action.getActions().get(1));
 		assertEquals(new RemoveAction("/root/property2"), action.getActions().get(2));
@@ -59,6 +59,11 @@ public class ProcessingConfigurationParserTest {
 		assertEquals(modifyFindReplace, action.getActions().get(5));
 		
 		assertEquals(new AddAction("${filename-to-resolve}", "last-property", null), action.getActions().get(6));
+		
+		AddAction addInsideAction = new AddAction();
+		addInsideAction.setInside("/root/property4");
+		addInsideAction.setFile("src/etc/my-file.xml");
+		assertEquals(addInsideAction, action.getActions().get(7));
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -94,7 +99,12 @@ public class ProcessingConfigurationParserTest {
 		config.addAction(modifyFindReplace);
 		
 		config.addAction(new AddAction("${filename-to-resolve}", "last-property", null));
-		
+
+		AddAction addInsideAction = new AddAction();
+		addInsideAction.setInside("/root/property4");
+		addInsideAction.setFile("src/etc/my-file.xml");
+		config.addAction(addInsideAction);
+
 		System.out.println(xstream.toXML(config));
 	}
 }

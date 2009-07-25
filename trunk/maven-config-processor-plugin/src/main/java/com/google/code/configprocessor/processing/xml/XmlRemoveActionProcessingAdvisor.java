@@ -26,7 +26,7 @@ import com.google.code.configprocessor.processing.*;
 public class XmlRemoveActionProcessingAdvisor extends AbstractXmlActionProcessingAdvisor {
 
 	public XmlRemoveActionProcessingAdvisor(RemoveAction action, ExpressionResolver expressionResolver, NamespaceContext namespaceContext) throws ParsingException {
-		super(expressionResolver, namespaceContext);
+		super(action, expressionResolver, namespaceContext);
 
 		if (action.getName() == null) {
 			throw new ParsingException("Remove tag must specify the xpath expression in [name] property");

@@ -22,9 +22,20 @@ public class NestedAction implements Action {
 	private static final long serialVersionUID = -3485933297518351307L;
 
 	private List<Action> actions;
+	private boolean strict;
 
 	public NestedAction() {
 		actions = new ArrayList<Action>();
+	}
+	
+	public NestedAction(Action action, boolean strict) {
+		this();
+		if (action instanceof NestedAction) {
+			actions.addAll(((NestedAction)action).getActions());
+		} else {
+			actions.add(action);
+		}
+		this.strict = strict;
 	}
 	
 	public void validate() throws ActionValidationException {
@@ -33,6 +44,10 @@ public class NestedAction implements Action {
 		}
 	}
 
+	public boolean isStrict() {
+		return strict;
+	}
+	
 	public List<Action> getActions() {
 		return Collections.unmodifiableList(actions);
 	}
@@ -40,4 +55,9 @@ public class NestedAction implements Action {
 	public void addAction(Action action) {
 		actions.add(action);
 	}
+	
+	public void removeAction(Action action) {
+		actions.remove(action);
+	}
+	
 }

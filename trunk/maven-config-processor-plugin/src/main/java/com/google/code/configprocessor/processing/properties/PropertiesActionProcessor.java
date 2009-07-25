@@ -31,8 +31,8 @@ public class PropertiesActionProcessor implements ActionProcessor {
 	private static final int READ_AHEAD_BUFFER_SIZE = 1024 * 10;
 
 	private String encoding;
-	private ExpressionResolver expressionResolver;
 	private FileResolver fileResolver;
+	private ExpressionResolver expressionResolver;
 
 	public PropertiesActionProcessor(String encoding, FileResolver fileResolver, ExpressionResolver expressionResolver) {
 		this.encoding = encoding;
@@ -40,13 +40,13 @@ public class PropertiesActionProcessor implements ActionProcessor {
 		this.expressionResolver = expressionResolver;
 	}
 
-	public void process(InputStreamReader input, OutputStreamWriter output, Action action) throws ParsingException, IOException {
+	public void process(Reader input, Writer output, Action action) throws ParsingException, IOException {
 		BufferedReader reader = new BufferedReader(input);
 		BufferedWriter writer = new BufferedWriter(output);
 		process(reader, writer, action);
 	}
 	
-	protected void process(BufferedReader reader, BufferedWriter writer, Action action) throws IOException {
+	protected void process(BufferedReader reader, BufferedWriter writer, Action action) throws ParsingException, IOException {
 		PropertiesActionProcessingAdvisor advisor = getAdvisorFor(action);
 
 		// Start
@@ -123,7 +123,7 @@ public class PropertiesActionProcessor implements ActionProcessor {
 		return propertyMapping;
 	}
 
-	protected void processAdvice(PropertiesFileItemAdvice advice, PropertiesFileItem currentItem, BufferedWriter writer, Action action) throws IOException {
+	protected void processAdvice(PropertiesFileItemAdvice advice, PropertiesFileItem currentItem, BufferedWriter writer, Action action) throws ParsingException, IOException {
 		switch (advice.getType()) {
 			case DO_NOTHING:
 				append(currentItem, writer);
@@ -161,12 +161,12 @@ public class PropertiesActionProcessor implements ActionProcessor {
 		}
 	}
 	
-	protected void appendFile(PropertiesFileItem item, BufferedWriter writer, Action action) throws IOException {
+	protected void appendFile(PropertiesFileItem item, BufferedWriter writer, Action action) throws ParsingException, IOException {
 		FilePropertiesFileItem aux = (FilePropertiesFileItem)item;
 		File file = fileResolver.resolve(aux.getFile());
 		InputStreamReader reader = new InputStreamReader(new FileInputStream(file), encoding);
 		try {
-			process(new BufferedReader(reader), writer, action);
+			process(reader, writer, action);
 		} finally {
 			IOUtils.close(reader, null);
 		}

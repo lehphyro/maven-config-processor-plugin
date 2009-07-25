@@ -22,17 +22,24 @@ import org.w3c.dom.*;
 
 import com.google.code.configprocessor.*;
 import com.google.code.configprocessor.expression.*;
+import com.google.code.configprocessor.processing.*;
 
 public abstract class AbstractXmlActionProcessingAdvisor implements XmlActionProcessingAdvisor {
 
+	private Action action;
 	private ExpressionResolver expressionResolver;
 	private NamespaceContext namespaceContext;
 	private String textExpression;
 	private XPathExpression xpathExpression;
 
-	public AbstractXmlActionProcessingAdvisor(ExpressionResolver expressionResolver, NamespaceContext namespaceContext) {
+	public AbstractXmlActionProcessingAdvisor(Action action, ExpressionResolver expressionResolver, NamespaceContext namespaceContext) {
+		this.action = action;
 		this.expressionResolver = expressionResolver;
 		this.namespaceContext = namespaceContext;
+	}
+	
+	public Action getAction() {
+		return action;
 	}
 
 	protected void compile(String expression) throws ParsingException {

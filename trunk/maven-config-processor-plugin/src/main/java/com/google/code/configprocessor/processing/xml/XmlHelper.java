@@ -55,7 +55,7 @@ public class XmlHelper {
 		}
 	}
 
-	public static Document parse(InputStreamReader reader) throws SAXException, ParserConfigurationException {
+	public static Document parse(Reader reader) throws SAXException, ParserConfigurationException {
 		try {
 			return newDocumentBuilder().parse(new InputSource(reader));
 		} catch (IOException e) {
@@ -107,7 +107,7 @@ public class XmlHelper {
 		}
 	}
 
-	public static void write(OutputStreamWriter writer, Document document, String encoding, int lineWidth, int indentSize) {
+	public static void write(Writer writer, Document document, String encoding, int lineWidth, int indentSize) {
 		OutputFormat format = new OutputFormat(document, encoding, true);
 		format.setLineSeparator(XmlActionProcessor.LINE_SEPARATOR);
 		format.setLineWidth(lineWidth);

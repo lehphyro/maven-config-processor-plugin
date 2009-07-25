@@ -26,7 +26,9 @@ import org.xml.sax.*;
 
 import com.google.code.configprocessor.*;
 import com.google.code.configprocessor.expression.*;
+import com.google.code.configprocessor.io.*;
 import com.google.code.configprocessor.processing.*;
+import com.google.code.configprocessor.util.*;
 
 public class XmlActionProcessor implements ActionProcessor {
 
@@ -35,19 +37,21 @@ public class XmlActionProcessor implements ActionProcessor {
 	private String encoding;
 	private int lineWidth;
 	private int indentSize;
+	private FileResolver fileResolver;
 	private ExpressionResolver expressionResolver;
 	private NamespaceContext namespaceContext;
 
-	public XmlActionProcessor(String encoding, int lineWidth, int indentSize, ExpressionResolver expressionResolver, Map<String, String> contextMappings) {
+	public XmlActionProcessor(String encoding, int lineWidth, int indentSize, FileResolver fileResolver, ExpressionResolver expressionResolver, Map<String, String> contextMappings) {
 		this.encoding = encoding;
 		this.lineWidth = lineWidth;
 		this.indentSize = indentSize;
+		this.fileResolver = fileResolver;
 		this.expressionResolver = expressionResolver;
-		namespaceContext = new MapBasedNamespaceContext(contextMappings);
+		this.namespaceContext = new MapBasedNamespaceContext(contextMappings);
 	}
 
-	public void process(InputStreamReader input, OutputStreamWriter output, Action action) throws ParsingException, IOException {
-		XmlActionProcessingAdvisor advisor = getAdvisorFor(action);
+	public void process(Reader input, Writer output, Action action) throws ParsingException, IOException {
+		XmlActionProcessingAdvisor advisor = getAdvisorFor(action, action);
 		try {
 			Document document = XmlHelper.parse(input);
 			advisor.process(document);
@@ -59,9 +63,17 @@ public class XmlActionProcessor implements ActionProcessor {
 		}
 	}
 
-	protected XmlActionProcessingAdvisor getAdvisorFor(Action action) throws ParsingException {
+	protected XmlActionProcessingAdvisor getAdvisorFor(Action rootAction, Action action) throws ParsingException, IOException {
 		if (action instanceof AddAction) {
-			return new XmlAddActionProcessingAdvisor((AddAction) action, expressionResolver, namespaceContext);
+			// Processes the file applying all transformations before passing it to the advisor
+			String fileName = ((AddAction)action).getFile();
+			String fileContent = null;
+			if (fileName != null) {
+				NestedAction fileProcessingAction = new NestedAction(rootAction, false);
+				fileProcessingAction.removeAction(action); // Remove this action, because it has been processed
+				fileContent = getProcessedFile(fileName, fileProcessingAction);
+			}
+			return new XmlAddActionProcessingAdvisor((AddAction) action, fileContent, expressionResolver, namespaceContext);
 		} else if (action instanceof ModifyAction) {
 			return new XmlModifyActionProcessingAdvisor((ModifyAction) action, expressionResolver, namespaceContext);
 		} else if (action instanceof RemoveAction) {
@@ -70,10 +82,22 @@ public class XmlActionProcessor implements ActionProcessor {
 			List<XmlActionProcessingAdvisor> advisors = new ArrayList<XmlActionProcessingAdvisor>();
 			NestedAction nestedAction = (NestedAction) action;
 			for (Action nested : nestedAction.getActions()) {
-				advisors.add(getAdvisorFor(nested));
+				advisors.add(getAdvisorFor(rootAction, nested));
 			}
-			return new NestedXmlActionProcessingAdvisor(advisors);
+			return new NestedXmlActionProcessingAdvisor(advisors, nestedAction);
 		}
 		throw new IllegalArgumentException("Unknown action: " + action);
+	}
+	
+	protected String getProcessedFile(String name, Action action) throws ParsingException, IOException {
+		File file = fileResolver.resolve(name);
+		InputStreamReader reader = new InputStreamReader(new FileInputStream(file), encoding);
+		StringWriter writer = new StringWriter();
+		try {
+			process(reader, writer, action);
+			return writer.toString();
+		} finally {
+			IOUtils.close(reader, null);
+		}
 	}
 }

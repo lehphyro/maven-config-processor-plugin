@@ -21,4 +21,6 @@ public interface Action extends Serializable {
 
 	void validate() throws ActionValidationException;
 
+	boolean isStrict();
+
 }

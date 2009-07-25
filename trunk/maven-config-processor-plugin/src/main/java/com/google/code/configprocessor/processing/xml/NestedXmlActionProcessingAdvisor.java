@@ -20,18 +20,31 @@ import java.util.*;
 import org.w3c.dom.*;
 
 import com.google.code.configprocessor.*;
+import com.google.code.configprocessor.processing.*;
 
 public class NestedXmlActionProcessingAdvisor implements XmlActionProcessingAdvisor {
 
 	private List<XmlActionProcessingAdvisor> advisors;
+	private NestedAction action;
 
-	public NestedXmlActionProcessingAdvisor(List<XmlActionProcessingAdvisor> advisors) {
+	public NestedXmlActionProcessingAdvisor(List<XmlActionProcessingAdvisor> advisors, NestedAction action) {
 		this.advisors = advisors;
+		this.action = action;
 	}
 
 	public void process(Document document) throws ParsingException {
 		for (XmlActionProcessingAdvisor advisor : advisors) {
-			advisor.process(document);
+			try {
+				advisor.process(document);
+			} catch (ParsingException e) {
+				if (advisor.getAction().isStrict() || action.isStrict()) {
+					throw e;
+				}
+			}
 		}
+	}
+	
+	public Action getAction() {
+		return action;
 	}
 }
