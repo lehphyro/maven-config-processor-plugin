@@ -50,7 +50,7 @@ The following table shows detailed descriptions of the configuration options:
 ||specificProperties||file||false||empty||File to load additional properties from when replacing placeholders of output files. Useful to keep properties for different environments in files specific to each one. Note that Maven/Ant environment properties always take precedence when resolving placeholders.||
 ||transformations||list||true||none||List of files to process with one transformation per file||
 ||type||string||false||auto-detected||Type of the file being processed. Possible values are: xml, properties. The plugin will try to auto-detect the file type looking for known file name extensions such as .properties for properties files and .xml for XML files.||
-||replacePlaceholders||boolean||false||true||Specify if you want the plugin to replace text fragments in the form ${} on output files using maven/ant environment and specific properties.||
+||replacePlaceholders||boolean||false||true||Specify if you want the plugin to replace text fragments in the form ${} on transformation configuration files using maven/ant environment and specific properties.||
 ||input||file||true||none||Input file to process||
 ||output||file||true||none||Output file to generate when processing||
 ||config||file||true||none||Rules configuration file to use when processing the input file||
