@@ -34,7 +34,7 @@ public class XmlModifyActionProcessingAdvisor extends AbstractXmlActionProcessin
 	private String replace;
 
 	public XmlModifyActionProcessingAdvisor(ModifyAction action, ExpressionResolver expressionResolver, NamespaceContext namespaceContext) throws ParsingException {
-		super(expressionResolver, namespaceContext);
+		super(action, expressionResolver, namespaceContext);
 
 		if (action.getName() != null) {
 			compile(action.getName());

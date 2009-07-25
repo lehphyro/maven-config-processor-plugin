@@ -46,4 +46,9 @@
 		<after>last-property</after>
 		<file>${filename-to-resolve}</file>
 	</add>
+	
+	<add>
+		<inside>/root/property4</inside>
+		<file>src/etc/my-file.xml</file>
+	</add>
 </processor>

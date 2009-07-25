@@ -23,10 +23,12 @@ public abstract class AbstractAction implements Action {
 	
 	private String name;
 	private String value;
+	private boolean strict;
 
 	public AbstractAction(String name, String value) {
 		this.name = name;
 		this.value = value;
+		this.strict = true;
 	}
 
 	public String getName() {
@@ -43,6 +45,14 @@ public abstract class AbstractAction implements Action {
 
 	public void setValue(String value) {
 		this.value = value;
+	}
+	
+	public boolean isStrict() {
+		return strict;
+	}
+	
+	public void setStrict(boolean strict) {
+		this.strict = strict;
 	}
 
 	protected abstract String getActionName();

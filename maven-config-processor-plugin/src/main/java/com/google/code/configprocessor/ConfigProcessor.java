@@ -191,7 +191,7 @@ public class ConfigProcessor {
 	 */
 	protected ActionProcessor getActionProcessor(ExpressionResolver expressionResolver, File input, String type, boolean replacePlaceholders) throws ConfigProcessorException {
 		if (Transformation.XML_TYPE.equals(type)) {
-			return new XmlActionProcessor(encoding, lineWidth, indentSize, expressionResolver, namespaceContexts);
+			return new XmlActionProcessor(encoding, lineWidth, indentSize, fileResolver, expressionResolver, namespaceContexts);
 		} else if (Transformation.PROPERTIES_TYPE.equals(type)) {
 			return new PropertiesActionProcessor(encoding, fileResolver, expressionResolver);
 		} else {

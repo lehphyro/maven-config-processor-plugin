@@ -18,9 +18,12 @@ package com.google.code.configprocessor.processing.xml;
 import org.w3c.dom.*;
 
 import com.google.code.configprocessor.*;
+import com.google.code.configprocessor.processing.*;
 
 public interface XmlActionProcessingAdvisor {
 
 	void process(Document document) throws ParsingException;
+
+	Action getAction();
 
 }

@@ -50,20 +50,11 @@ public class AddAction extends AbstractAction {
 	}
 	
 	public void validate() throws ActionValidationException {
-		if (getName() == null) {
-			if (getFile() == null) {
-				throw new ActionValidationException("File is required when name is not provided", this);
-			}
-			if (getValue() != null) {
-				throw new ActionValidationException("Cannot define both file and value", this);
-			}
-		} else {
-			if (getFile() != null) {
-				throw new ActionValidationException("Cannot define both name and file", this);
-			}
-			if (getValue() == null) {
-				throw new ActionValidationException("Value is required when name is provided", this);
-			}
+		if (getFile() == null && getValue() == null) {
+			throw new ActionValidationException("File or value are required", this);
+		}
+		if (getFile() != null && getValue() != null) {
+			throw new ActionValidationException("Cannot defined both file and value", this);
 		}
 	}
 

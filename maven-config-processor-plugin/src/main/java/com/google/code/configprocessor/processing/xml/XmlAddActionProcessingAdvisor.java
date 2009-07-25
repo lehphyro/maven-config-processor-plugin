@@ -31,20 +31,29 @@ public class XmlAddActionProcessingAdvisor extends AbstractXmlActionProcessingAd
 
 	private AddAction action;
 	private String textFragment;
+	private boolean prefixAndSuffixTextFragment;
 
-	public XmlAddActionProcessingAdvisor(AddAction action, ExpressionResolver expressionResolver, NamespaceContext namespaceContext) throws ParsingException {
-		super(expressionResolver, namespaceContext);
+	public XmlAddActionProcessingAdvisor(AddAction action, String fileContent, ExpressionResolver expressionResolver, NamespaceContext namespaceContext) throws ParsingException {
+		super(action, expressionResolver, namespaceContext);
 
 		this.action = action;
-		textFragment = resolve(action.getValue());
+		if (fileContent == null) {
+			this.textFragment = resolve(action.getValue());
+			this.prefixAndSuffixTextFragment = true;
+		} else {
+			this.textFragment = fileContent;
+			this.prefixAndSuffixTextFragment = false;
+		}
 
 		if (action.getBefore() != null) {
 			compile(action.getBefore());
 		} else if (action.getAfter() != null) {
 			compile(action.getAfter());
+		} else if (action.getInside() != null) {
+			compile(action.getInside());
 		} else {
 			if (XmlHelper.representsNodeElement(textFragment)) {
-				throw new ParsingException("Add action must specify [before] or [after] attribute");
+				throw new ParsingException("Add action must specify [before], [after] or [inside] attribute");
 			}
 			if (action.getName() == null) {
 				throw new ParsingException("Add action must specify [name] when appending attributes");
@@ -64,25 +73,42 @@ public class XmlAddActionProcessingAdvisor extends AbstractXmlActionProcessingAd
 	}
 
 	protected void addNode(Document document, Node node) throws ParsingException {
-		Node parent = node.getParentNode();
+		Node parent;
 
 		try {
-			Document fragment = XmlHelper.parse(textFragment, true);
+			Document fragment = XmlHelper.parse(textFragment, prefixAndSuffixTextFragment);
 
 			Node referenceNode;
 			if (action.getBefore() != null) {
+				parent = node.getParentNode();
 				referenceNode = node;
-			} else {
+			} else if (action.getAfter() != null) {
+				parent = node.getParentNode();
 				referenceNode = node.getNextSibling();
 				if (referenceNode == null) {
 					referenceNode = node;
 				}
+			} else if (action.getInside() != null) {
+				parent = node;
+				referenceNode = node;
+			} else {
+				throw new ParsingException("Unknown add action");
 			}
 
-			NodeList nodeList = fragment.getFirstChild().getChildNodes();
+			NodeList nodeList;
+			if (prefixAndSuffixTextFragment) {
+				nodeList = fragment.getFirstChild().getChildNodes();
+			} else {
+				nodeList = fragment.getChildNodes();
+			}
+			
 			for (int i = 0; i < nodeList.getLength(); i++) {
 				Node importedNode = document.importNode(nodeList.item(i), true);
-				parent.insertBefore(importedNode, referenceNode);
+				if (action.getInside() == null) {
+					parent.insertBefore(importedNode, referenceNode);
+				} else {
+					parent.appendChild(importedNode);
+				}
 			}
 		} catch (SAXException e) {
 			throw new ParsingException(e);
