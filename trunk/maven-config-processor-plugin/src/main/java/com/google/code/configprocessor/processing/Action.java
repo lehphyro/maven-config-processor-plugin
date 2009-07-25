@@ -15,6 +15,10 @@
  */
 package com.google.code.configprocessor.processing;
 
-public interface Action {
+import java.io.*;
+
+public interface Action extends Serializable {
+
+	void validate() throws ActionValidationException;
 
 }

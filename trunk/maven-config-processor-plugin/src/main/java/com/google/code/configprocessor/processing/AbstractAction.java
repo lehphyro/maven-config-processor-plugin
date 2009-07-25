@@ -19,6 +19,8 @@ import org.apache.commons.lang.*;
 
 public abstract class AbstractAction implements Action {
 
+	private static final long serialVersionUID = 2344519551554135862L;
+	
 	private String name;
 	private String value;
 

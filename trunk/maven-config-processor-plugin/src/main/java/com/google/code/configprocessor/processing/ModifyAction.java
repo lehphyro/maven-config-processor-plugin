@@ -21,6 +21,8 @@ import org.apache.commons.lang.*;
 
 public class ModifyAction extends AbstractAction {
 
+	private static final long serialVersionUID = 3614101885803457281L;
+	
 	private static final String DEFAULT_PATTERN_FLAGS = "CASE_INSENSITIVE";
 	private static final char PATTERN_FLAG_SEPARATOR = ',';
 	
@@ -36,18 +38,18 @@ public class ModifyAction extends AbstractAction {
 		super(name, value);
 	}
 
-	public void validate() {
+	public void validate() throws ActionValidationException {
 		if (getName() == null) {
 			if (getValue() == null) {
 				if (getFind() == null || getReplace() == null) {
-					throw new IllegalArgumentException("Find/Replace are required when not modifying a specific property");
+					throw new ActionValidationException("Find/Replace are required when not modifying a specific property", this);
 				}
 			} else {
-				throw new IllegalArgumentException("Value must not be used when not modifying a specific property");
+				throw new ActionValidationException("Value must not be used when not modifying a specific property", this);
 			}
 		} else {
 			if (getFind() != null || getReplace() != null) {
-				throw new IllegalArgumentException("Find/Replace cannot be used when modifying a specific property");
+				throw new ActionValidationException("Find/Replace cannot be used when modifying a specific property", this);
 			}
 		}
 	}

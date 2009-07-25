@@ -30,7 +30,6 @@ public class PropertiesModifyActionProcessingAdvisor extends AbstractPropertiesA
 	public PropertiesModifyActionProcessingAdvisor(ModifyAction action, ExpressionResolver expressionResolver) {
 		super(expressionResolver);
 		this.action = action;
-		this.action.validate();
 		if (action.getFind() != null) {
 			pattern = action.getPattern();
 			replace = resolve(action.getReplace());

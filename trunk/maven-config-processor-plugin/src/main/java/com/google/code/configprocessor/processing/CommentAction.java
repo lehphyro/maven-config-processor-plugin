@@ -17,12 +17,20 @@ package com.google.code.configprocessor.processing;
 
 public class CommentAction extends AbstractAction {
 
+	private static final long serialVersionUID = -5853486220784597842L;
+
 	public CommentAction() {
 		this(null);
 	}
 
 	public CommentAction(String name) {
 		super(name, null);
+	}
+	
+	public void validate() throws ActionValidationException {
+		if (getName() == null) {
+			throw new ActionValidationException("Name is required", this);
+		}
 	}
 
 	@Override

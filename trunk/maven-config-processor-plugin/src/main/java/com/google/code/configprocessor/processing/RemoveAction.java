@@ -17,12 +17,20 @@ package com.google.code.configprocessor.processing;
 
 public class RemoveAction extends AbstractAction {
 
+	private static final long serialVersionUID = 6999363851417248906L;
+
 	public RemoveAction() {
 		this(null);
 	}
 
 	public RemoveAction(String name) {
 		super(name, name);
+	}
+	
+	public void validate() throws ActionValidationException {
+		if (getName() == null) {
+			throw new ActionValidationException("Name is required", this);
+		}
 	}
 
 	@Override
