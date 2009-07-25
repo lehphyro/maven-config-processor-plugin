@@ -36,7 +36,6 @@ public class XmlModifyActionProcessingAdvisor extends AbstractXmlActionProcessin
 	public XmlModifyActionProcessingAdvisor(ModifyAction action, ExpressionResolver expressionResolver, NamespaceContext namespaceContext) throws ParsingException {
 		super(expressionResolver, namespaceContext);
 
-		action.validate();
 		if (action.getName() != null) {
 			compile(action.getName());
 			textFragment = resolve(action.getValue());

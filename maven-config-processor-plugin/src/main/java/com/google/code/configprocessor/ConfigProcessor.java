@@ -152,6 +152,7 @@ public class ConfigProcessor {
 
 			ProcessingConfigurationParser parser = new ProcessingConfigurationParser();
 			Action action = parser.parse(configStreamReader);
+			action.validate();
 
 			ActionProcessor processor = getActionProcessor(resolver, input, type, replacePlaceholders);
 			processor.process(inputStreamReader, outputStreamWriter, action);

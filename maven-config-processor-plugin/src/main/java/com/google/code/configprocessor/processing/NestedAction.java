@@ -19,10 +19,18 @@ import java.util.*;
 
 public class NestedAction implements Action {
 
+	private static final long serialVersionUID = -3485933297518351307L;
+
 	private List<Action> actions;
 
 	public NestedAction() {
 		actions = new ArrayList<Action>();
+	}
+	
+	public void validate() throws ActionValidationException {
+		for (Action action : actions) {
+			action.validate();
+		}
 	}
 
 	public List<Action> getActions() {

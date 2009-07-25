@@ -19,8 +19,11 @@ import org.apache.commons.lang.*;
 
 public class AddAction extends AbstractAction {
 
+	private static final long serialVersionUID = -5444028483023476286L;
+	
 	private String after;
 	private String before;
+	private String inside;
 	private String file;
 
 	public AddAction() {
@@ -37,12 +40,6 @@ public class AddAction extends AbstractAction {
 		this.file = file;
 		this.after = after;
 		this.before = before;
-		
-		if (getFile() == null) {
-			throw new IllegalArgumentException("File is required");
-		} else if ((getAfter() != null) && (getBefore() != null)) {
-			throw new IllegalArgumentException("Choose only one of before or after for file: " + file);
-		}
 	}
 
 	public AddAction(String name, String value, String after, String before) {
@@ -50,11 +47,23 @@ public class AddAction extends AbstractAction {
 
 		this.after = after;
 		this.before = before;
-
-		if ((getName() == null) && (getAfter() == null) && (getBefore() == null)) {
-			throw new IllegalArgumentException("Either before or after is required if no name is provided for property: " + name);
-		} else if ((getAfter() != null) && (getBefore() != null)) {
-			throw new IllegalArgumentException("Choose only one of either before or after to set for property: " + name);
+	}
+	
+	public void validate() throws ActionValidationException {
+		if (getName() == null) {
+			if (getFile() == null) {
+				throw new ActionValidationException("File is required when name is not provided", this);
+			}
+			if (getValue() != null) {
+				throw new ActionValidationException("Cannot define both file and value", this);
+			}
+		} else {
+			if (getFile() != null) {
+				throw new ActionValidationException("Cannot define both name and file", this);
+			}
+			if (getValue() == null) {
+				throw new ActionValidationException("Value is required when name is provided", this);
+			}
 		}
 	}
 
@@ -66,21 +75,42 @@ public class AddAction extends AbstractAction {
 	public String getAfter() {
 		return StringUtils.trimToNull(after);
 	}
+	
+	public void setAfter(String after) {
+		this.after = after;
+	}
 
 	public String getBefore() {
 		return StringUtils.trimToNull(before);
+	}
+	
+	public void setBefore(String before) {
+		this.before = before;
+	}
+	
+	public String getInside() {
+		return StringUtils.trimToNull(inside);
+	}
+	
+	public void setInside(String inside) {
+		this.inside = inside;
 	}
 	
 	public String getFile() {
 		return StringUtils.trimToNull(file);
 	}
 
+	public void setFile(String file) {
+		this.file = file;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + ((getAfter() == null) ? 0 : getAfter().hashCode());
 		result = prime * result + ((getBefore() == null) ? 0 : getBefore().hashCode());
+		result = prime * result + ((getInside() == null) ? 0 : getInside().hashCode());
 		result = prime * result + ((getFile() == null) ? 0 : getFile().hashCode());
 		return result;
 	}
@@ -113,6 +143,14 @@ public class AddAction extends AbstractAction {
 			return false;
 		}
 
+		if (getInside() == null) {
+			if (other.getInside() != null) {
+				return false;
+			}
+		} else if (!getInside().equals(other.getInside())) {
+			return false;
+		}
+
 		if (getFile() == null) {
 			if (other.getFile() != null) {
 				return false;
@@ -125,6 +163,6 @@ public class AddAction extends AbstractAction {
 
 	@Override
 	public String toString() {
-		return getActionName() + " [name=" + getName() + ";value=" + getValue() + ";after=" + getAfter() + ";before=" + getBefore() + ";file=" + getFile() + "]";
+		return getActionName() + " [name=" + getName() + ";value=" + getValue() + ";after=" + getAfter() + ";before=" + getBefore() + ";inside=" + getInside() + ";file=" + getFile() + "]";
 	}
 }

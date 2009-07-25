@@ -17,6 +17,8 @@ package com.google.code.configprocessor.processing;
 
 public class UncommentAction extends AbstractAction {
 
+	private static final long serialVersionUID = 904243800279273158L;
+
 	public UncommentAction() {
 		this(null);
 	}
@@ -25,6 +27,12 @@ public class UncommentAction extends AbstractAction {
 		super(name, null);
 	}
 
+	public void validate() throws ActionValidationException {
+		if (getName() == null) {
+			throw new ActionValidationException("Name is required", this);
+		}
+	}
+	
 	@Override
 	protected String getActionName() {
 		return "Uncomment";
