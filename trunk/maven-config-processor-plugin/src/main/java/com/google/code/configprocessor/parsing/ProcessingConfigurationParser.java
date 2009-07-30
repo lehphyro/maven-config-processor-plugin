@@ -49,6 +49,7 @@ public class ProcessingConfigurationParser {
 		xstream.alias("comment", CommentAction.class);
 		xstream.alias("uncomment", UncommentAction.class);
 		xstream.addImplicitCollection(NestedAction.class, "actions");
+		xstream.registerConverter(new AddActionConverter());
 
 		return xstream;
 	}

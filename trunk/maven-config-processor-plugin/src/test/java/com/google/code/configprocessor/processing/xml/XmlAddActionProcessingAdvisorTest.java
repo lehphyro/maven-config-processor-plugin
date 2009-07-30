@@ -67,6 +67,7 @@ public class XmlAddActionProcessingAdvisorTest extends AbstractXmlActionProcessi
 	public void addFileInside() throws Exception {
 		AddAction action = new AddAction();
 		action.setInside("/root/property2");
+		action.setIgnoreRoot(false);
 		XmlAddActionProcessingAdvisor advisor = new XmlAddActionProcessingAdvisor(action, "<test-property>test-value</test-property>", expressionResolver, namespaceContext);
 		String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + LINE_SEPARATOR + "<root>" + LINE_SEPARATOR + " <property1>value1</property1>" + LINE_SEPARATOR + " <property2>" + LINE_SEPARATOR + "  <test-property>test-value</test-property>" + LINE_SEPARATOR + " </property2>" + LINE_SEPARATOR + " <property3 attribute=\"value3\">value3</property3>" + LINE_SEPARATOR + " <property4 attribute=\"value4\">value4</property4>" + LINE_SEPARATOR + " <property5>" + LINE_SEPARATOR + "  <nested1 a=\"1\"/>" + LINE_SEPARATOR + " </property5>" + LINE_SEPARATOR + "</root>" + LINE_SEPARATOR;
 		executeTest(advisor, expected);
@@ -76,8 +77,29 @@ public class XmlAddActionProcessingAdvisorTest extends AbstractXmlActionProcessi
 	public void addFileInsideNested() throws Exception {
 		AddAction action = new AddAction();
 		action.setInside("/root/property5/nested1");
+		action.setIgnoreRoot(false);
 		XmlAddActionProcessingAdvisor advisor = new XmlAddActionProcessingAdvisor(action, "<test-property>test-value</test-property>", expressionResolver, namespaceContext);
 		String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + LINE_SEPARATOR + "<root>" + LINE_SEPARATOR + " <property1>value1</property1>" + LINE_SEPARATOR + " <property2/>" + LINE_SEPARATOR + " <property3 attribute=\"value3\">value3</property3>" + LINE_SEPARATOR + " <property4 attribute=\"value4\">value4</property4>" + LINE_SEPARATOR + " <property5>" + LINE_SEPARATOR + "  <nested1 a=\"1\">" + LINE_SEPARATOR + "   <test-property>test-value</test-property>" + LINE_SEPARATOR + "  </nested1>" + LINE_SEPARATOR + " </property5>" + LINE_SEPARATOR + "</root>" + LINE_SEPARATOR;
+		executeTest(advisor, expected);
+	}
+
+	@Test
+	public void addFileIgnoreRoot() throws Exception {
+		AddAction action = new AddAction();
+		action.setAfter("/root/property5/nested1");
+		action.setIgnoreRoot(true);
+		String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + LINE_SEPARATOR + "<root>" + LINE_SEPARATOR + " <property1>value1</property1>" + LINE_SEPARATOR + " <property2/>" + LINE_SEPARATOR + " <property3 attribute=\"value3\">value3</property3>" + LINE_SEPARATOR + " <property4 attribute=\"value4\">value4</property4>" + LINE_SEPARATOR + " <property5>" + LINE_SEPARATOR + "  <nested1 a=\"1\"/>" + LINE_SEPARATOR + "  <test-property>test-value</test-property>" + LINE_SEPARATOR + " </property5>" + LINE_SEPARATOR + "</root>" + LINE_SEPARATOR;
+		XmlAddActionProcessingAdvisor advisor = new XmlAddActionProcessingAdvisor(action, "<root><test-property>test-value</test-property></root>", expressionResolver, namespaceContext);
+		executeTest(advisor, expected);
+	}
+
+	@Test
+	public void addFileDontIgnoreRoot() throws Exception {
+		AddAction action = new AddAction();
+		action.setAfter("/root/property5/nested1");
+		action.setIgnoreRoot(false);
+		String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + LINE_SEPARATOR + "<root>" + LINE_SEPARATOR + " <property1>value1</property1>" + LINE_SEPARATOR + " <property2/>" + LINE_SEPARATOR + " <property3 attribute=\"value3\">value3</property3>" + LINE_SEPARATOR + " <property4 attribute=\"value4\">value4</property4>" + LINE_SEPARATOR + " <property5>" + LINE_SEPARATOR + "  <nested1 a=\"1\"/>" + LINE_SEPARATOR + "  <root>" + LINE_SEPARATOR + "   <test-property>test-value</test-property>" + LINE_SEPARATOR + "  </root>" + LINE_SEPARATOR + " </property5>" + LINE_SEPARATOR + "</root>" + LINE_SEPARATOR;
+		XmlAddActionProcessingAdvisor advisor = new XmlAddActionProcessingAdvisor(action, "<root><test-property>test-value</test-property></root>", expressionResolver, namespaceContext);
 		executeTest(advisor, expected);
 	}
 }
