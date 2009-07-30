@@ -63,6 +63,7 @@ public class ProcessingConfigurationParserTest {
 		AddAction addInsideAction = new AddAction();
 		addInsideAction.setInside("/root/property4");
 		addInsideAction.setFile("src/etc/my-file.xml");
+		addInsideAction.setIgnoreRoot(false);
 		assertEquals(addInsideAction, action.getActions().get(7));
 	}
 

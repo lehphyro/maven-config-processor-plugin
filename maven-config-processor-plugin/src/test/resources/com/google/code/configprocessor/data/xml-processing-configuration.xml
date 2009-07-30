@@ -49,6 +49,6 @@
 	
 	<add>
 		<inside>/root/property4</inside>
-		<file>src/etc/my-file.xml</file>
+		<file ignore-root="false">src/etc/my-file.xml</file>
 	</add>
 </processor>

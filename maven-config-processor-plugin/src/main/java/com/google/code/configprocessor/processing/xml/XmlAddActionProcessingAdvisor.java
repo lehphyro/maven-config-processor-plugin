@@ -96,7 +96,7 @@ public class XmlAddActionProcessingAdvisor extends AbstractXmlActionProcessingAd
 			}
 
 			NodeList nodeList;
-			if (prefixAndSuffixTextFragment) {
+			if (action.isIgnoreRoot()) {
 				nodeList = fragment.getFirstChild().getChildNodes();
 			} else {
 				nodeList = fragment.getChildNodes();
