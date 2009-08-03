@@ -88,7 +88,7 @@ public class ConfigProcessorMojo extends AbstractMojo {
 	/**
 	 * File to load aditional specific properties for plugin execution.
 	 * 
-	 * @parameter
+	 * @parameter expression="${config-processor.properties}"
 	 * @since 1.0
 	 */
 	private File specificProperties;
@@ -97,7 +97,6 @@ public class ConfigProcessorMojo extends AbstractMojo {
 	 * File transformations to be performed.
 	 * 
 	 * @parameter
-	 * @required
 	 * @since 1.0
 	 */
 	private List<Transformation> transformations;
@@ -109,6 +108,14 @@ public class ConfigProcessorMojo extends AbstractMojo {
 	 * @since 1.2
 	 */
 	private Map<String, String> namespaceContexts;
+	
+	/**
+	 * Disables the plugin execution.
+	 * 
+	 * @parameter expression="${config-processor.skip}" default-value="false"
+	 * @since 1.7
+	 */
+	private boolean skip;
 
 	/**
 	 * The Maven Project Object.
@@ -166,24 +173,32 @@ public class ConfigProcessorMojo extends AbstractMojo {
 	 */
 	private List<ArtifactRepository> remoteRepositories;
 
+	public ConfigProcessorMojo() {
+		transformations = new ArrayList<Transformation>();
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public void execute() throws MojoExecutionException {
-		try {
-			LogAdapter logAdapter = new LogMaven(getLog());
-			FileResolver fileResolver = new MavenFileResolver(artifactFactory, artifactResolver, localRepository, remoteRepositories, logAdapter);
-			ConfigProcessor processor = new ConfigProcessor(encoding, indentSize, lineWidth, namespaceContexts, outputDirectory, useOutputDirectory, logAdapter, fileResolver);
-			processor.init();
-			
-			Properties additionalProperties = loadIfPossible(specificProperties, logAdapter);
-			
-			for (Transformation transformation : transformations) {
-				MavenExpressionResolver resolver = getExpressionResolver(transformation.isReplacePlaceholders(), additionalProperties);
-				processor.execute(resolver, transformation);
+		LogAdapter logAdapter = new LogMaven(getLog());
+		if (skip) {
+			logAdapter.info("Skipping config processing");
+		} else {
+			try {
+				FileResolver fileResolver = new MavenFileResolver(artifactFactory, artifactResolver, localRepository, remoteRepositories, logAdapter);
+				ConfigProcessor processor = new ConfigProcessor(encoding, indentSize, lineWidth, namespaceContexts, outputDirectory, useOutputDirectory, logAdapter, fileResolver);
+				processor.init();
+				
+				Properties additionalProperties = loadIfPossible(specificProperties, logAdapter);
+				
+				for (Transformation transformation : transformations) {
+					MavenExpressionResolver resolver = getExpressionResolver(transformation.isReplacePlaceholders(), additionalProperties);
+					processor.execute(resolver, transformation);
+				}
+			} catch (Exception e) {
+				throw new MojoExecutionException("Error during config processing", e);
 			}
-		} catch (Exception e) {
-			throw new MojoExecutionException("Error during config processing", e);
 		}
 	}
 	
