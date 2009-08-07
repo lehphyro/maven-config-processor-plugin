@@ -42,7 +42,7 @@ public class NestedPropertiesActionProcessingAdvisor extends AbstractPropertiesA
 
 	@Override
 	public PropertiesFileItemAdvice process(PropertiesFileItem item) {
-		NestedPropertiesFileItemAdvice advice = new NestedPropertiesFileItemAdvice(null);
+		NestedPropertiesFileItemAdvice advice = new NestedPropertiesFileItemAdvice(item);
 
 		for (PropertiesActionProcessingAdvisor advisor : advisors) {
 			PropertiesFileItemAdvice aux = advisor.process(item);

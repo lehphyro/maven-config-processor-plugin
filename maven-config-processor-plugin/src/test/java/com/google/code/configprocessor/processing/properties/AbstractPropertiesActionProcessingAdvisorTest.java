@@ -35,7 +35,6 @@ public class AbstractPropertiesActionProcessingAdvisorTest {
 	protected ByteArrayOutputStream output;
 	protected ActionProcessor processor;
 	
-	@Before
 	public void setup() {
 		processor = new PropertiesActionProcessor(ENCODING, new ClasspathFileResolver(), new MavenExpressionResolver(new DefaultExpressionEvaluator()));
 		input = getClass().getResourceAsStream(PropertiesActionProcessorTest.PROPERTIES_PATH);
@@ -43,10 +42,17 @@ public class AbstractPropertiesActionProcessingAdvisorTest {
 	}
 
 	protected void executeTest(Action action, String expected) throws Exception {
+		setup();
 		processor.process(new InputStreamReader(input), new OutputStreamWriter(output), action);
 		assertEquals(expected, getOutput());
+		
+		setup();
+		NestedAction nestedAction = new NestedAction();
+		nestedAction.addAction(action);
+		processor.process(new InputStreamReader(input), new OutputStreamWriter(output), nestedAction);
+		assertEquals(expected, getOutput());
 	}
-
+	
 	protected String getOutput() {
 		return new String(output.toByteArray());
 	}
