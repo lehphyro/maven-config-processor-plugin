@@ -23,7 +23,7 @@ public class NestedPropertiesFileItemAdvice extends PropertiesFileItemAdvice {
 	private List<PropertiesFileItem> items;
 
 	private boolean removeAdviced;
-	private boolean appendAdviced;
+	private boolean appendFileAdviced;
 	private PropertiesFileItemAdviceType appendType;
 
 	public NestedPropertiesFileItemAdvice(PropertiesFileItem currentItem) {
@@ -55,7 +55,12 @@ public class NestedPropertiesFileItemAdvice extends PropertiesFileItemAdvice {
 				}
 				break;
 			case ADD_AFTER:
-				items.add(advice.getItem());
+				index = items.indexOf(currentItem);
+				if (index < 0) {
+					items.add(advice.getItem());
+				} else {
+					items.add(index + 1, advice.getItem());
+				}
 				break;
 			case ADD_BEFORE:
 				index = items.indexOf(currentItem);
@@ -67,7 +72,7 @@ public class NestedPropertiesFileItemAdvice extends PropertiesFileItemAdvice {
 				break;
 			case APPEND_FILE_AFTER:
 			case APPEND_FILE_BEFORE:
-				appendAdviced = true;
+				appendFileAdviced = true;
 				appendType = advice.getType();
 				items.add(advice.getItem());
 				break;
@@ -84,7 +89,7 @@ public class NestedPropertiesFileItemAdvice extends PropertiesFileItemAdvice {
 			}
 			return PropertiesFileItemAdviceType.DO_NOTHING;
 		}
-		if (appendAdviced) {
+		if (appendFileAdviced) {
 			return appendType;
 		}
 		return PropertiesFileItemAdviceType.MODIFY;
@@ -94,8 +99,14 @@ public class NestedPropertiesFileItemAdvice extends PropertiesFileItemAdvice {
 	public PropertiesFileItem getItem() {
 		PropertiesFileItem aux;
 		
-		if (appendAdviced) {
-			aux = items.get(0);
+		if (appendFileAdviced) {
+			// Find the FileItem
+			for (PropertiesFileItem item : items) {
+				if (item instanceof FilePropertiesFileItem) {
+					return item;
+				}
+			}
+			throw new IllegalStateException("File to append not found, possibly a bug");
 		} else {
 			CompositePropertiesFileItem composite = new CompositePropertiesFileItem();
 			composite.addAllPropertiesFileItems(items);
