@@ -49,8 +49,10 @@ public class PropertiesModifyActionProcessingAdvisor extends AbstractPropertiesA
 			if (pattern != null && mapping.getPropertyValue() != null) {
 				Matcher matcher = pattern.matcher(mapping.getPropertyValue());
 				String newValue = matcher.replaceAll(replace);
-				PropertyMapping aux = createPropertyMapping(mapping.getPropertyName(), newValue);
-				return new PropertiesFileItemAdvice(PropertiesFileItemAdviceType.MODIFY, aux);
+				if (!newValue.equals(mapping.getPropertyValue())) {
+					PropertyMapping aux = createPropertyMapping(mapping.getPropertyName(), newValue);
+					return new PropertiesFileItemAdvice(PropertiesFileItemAdviceType.MODIFY, aux);
+				}
 			}
 		}
 		
@@ -59,8 +61,10 @@ public class PropertiesModifyActionProcessingAdvisor extends AbstractPropertiesA
 			if (comment.getAsText() != null) {
 				Matcher matcher = pattern.matcher(comment.getAsText());
 				String newValue = matcher.replaceAll(replace);
-				Comment aux = new Comment(newValue);
-				return new PropertiesFileItemAdvice(PropertiesFileItemAdviceType.MODIFY, aux);
+				if (!newValue.equals(comment.getAsText())) {
+					Comment aux = new Comment(newValue);
+					return new PropertiesFileItemAdvice(PropertiesFileItemAdviceType.MODIFY, aux);
+				}
 			}
 		}
 
