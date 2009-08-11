@@ -186,7 +186,7 @@ public class ConfigProcessorMojo extends AbstractMojo {
 			logAdapter.info("Skipping config processing");
 		} else {
 			try {
-				FileResolver fileResolver = new MavenFileResolver(artifactFactory, artifactResolver, localRepository, remoteRepositories, logAdapter);
+				FileResolver fileResolver = new MavenFileResolver(mavenProject, artifactFactory, artifactResolver, localRepository, remoteRepositories, logAdapter);
 				ConfigProcessor processor = new ConfigProcessor(encoding, indentSize, lineWidth, namespaceContexts, outputDirectory, useOutputDirectory, logAdapter, fileResolver);
 				processor.init();
 				
