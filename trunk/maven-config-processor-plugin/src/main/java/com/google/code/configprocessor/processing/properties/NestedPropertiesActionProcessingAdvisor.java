@@ -44,9 +44,13 @@ public class NestedPropertiesActionProcessingAdvisor extends AbstractPropertiesA
 	public PropertiesFileItemAdvice process(PropertiesFileItem item) {
 		NestedPropertiesFileItemAdvice advice = new NestedPropertiesFileItemAdvice(item);
 
+		PropertiesFileItem currentItem = item;
 		for (PropertiesActionProcessingAdvisor advisor : advisors) {
-			PropertiesFileItemAdvice aux = advisor.process(item);
+			PropertiesFileItemAdvice aux = advisor.process(currentItem);
 			advice.addAdvice(aux);
+			if (aux.getType() == PropertiesFileItemAdviceType.MODIFY) {
+				currentItem = aux.getItem();
+			}
 		}
 
 		return advice;

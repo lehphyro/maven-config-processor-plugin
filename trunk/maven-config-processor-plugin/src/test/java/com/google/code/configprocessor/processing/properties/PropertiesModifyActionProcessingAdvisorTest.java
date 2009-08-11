@@ -16,6 +16,9 @@
 package com.google.code.configprocessor.processing.properties;
 
 import static com.google.code.configprocessor.processing.properties.PropertiesActionProcessor.*;
+import static org.junit.Assert.*;
+
+import java.io.*;
 
 import org.junit.*;
 
@@ -55,5 +58,47 @@ public class PropertiesModifyActionProcessingAdvisorTest extends AbstractPropert
 		
 		String expected = "property1.value=value1" + LINE_SEPARATOR + "property2.value=" + LINE_SEPARATOR + "# Comment" + LINE_SEPARATOR + "	property3.value=value3 \\" + LINE_SEPARATOR + "value 3 continuation" + LINE_SEPARATOR + "# property4.value=value4 \\" + LINE_SEPARATOR + "#value 4 continuation" + LINE_SEPARATOR + "#property5.value=value5" + LINE_SEPARATOR + "property6.value=value6=value" + LINE_SEPARATOR + "property7.value=my-email@server.com" + LINE_SEPARATOR + "# This email will be modified too: my-email@server.com" + LINE_SEPARATOR;
 		executeTest(action, expected);
+	}
+	
+	@Test
+	public void processModifyMultipleFindReplaceOnlyFirstModifies() throws Exception {
+		ModifyAction action1 = new ModifyAction();
+		action1.setFind("[\\w\\-]+@\\w+\\.\\w+");
+		action1.setReplace("my-email@server.com");
+		
+		ModifyAction action2 = new ModifyAction();
+		action2.setFind("Notering");
+		action2.setReplace("Minnesanteckning");
+		
+		NestedAction nestedAction = new NestedAction();
+		nestedAction.addAction(action1);
+		nestedAction.addAction(action2);
+		
+		String expected = "property1.value=value1" + LINE_SEPARATOR + "property2.value=" + LINE_SEPARATOR + "# Comment" + LINE_SEPARATOR + "	property3.value=value3 \\" + LINE_SEPARATOR + "value 3 continuation" + LINE_SEPARATOR + "# property4.value=value4 \\" + LINE_SEPARATOR + "#value 4 continuation" + LINE_SEPARATOR + "#property5.value=value5" + LINE_SEPARATOR + "property6.value=value6=value" + LINE_SEPARATOR + "property7.value=my-email@server.com" + LINE_SEPARATOR + "# This email will be modified too: my-email@server.com" + LINE_SEPARATOR;
+
+		setup();
+		processor.process(new InputStreamReader(input), new OutputStreamWriter(output), nestedAction);
+		assertEquals(expected, getOutput());
+	}
+
+	@Test
+	public void processModifyMultipleFindReplaceBothModifies() throws Exception {
+		ModifyAction action1 = new ModifyAction();
+		action1.setFind("[\\w\\-]+@\\w+\\.\\w+");
+		action1.setReplace("my-email@server.com");
+		
+		ModifyAction action2 = new ModifyAction();
+		action2.setFind("too");
+		action2.setReplace("also");
+		
+		NestedAction nestedAction = new NestedAction();
+		nestedAction.addAction(action1);
+		nestedAction.addAction(action2);
+		
+		String expected = "property1.value=value1" + LINE_SEPARATOR + "property2.value=" + LINE_SEPARATOR + "# Comment" + LINE_SEPARATOR + "	property3.value=value3 \\" + LINE_SEPARATOR + "value 3 continuation" + LINE_SEPARATOR + "# property4.value=value4 \\" + LINE_SEPARATOR + "#value 4 continuation" + LINE_SEPARATOR + "#property5.value=value5" + LINE_SEPARATOR + "property6.value=value6=value" + LINE_SEPARATOR + "property7.value=my-email@server.com" + LINE_SEPARATOR + "# This email will be modified also: my-email@server.com" + LINE_SEPARATOR;
+
+		setup();
+		processor.process(new InputStreamReader(input), new OutputStreamWriter(output), nestedAction);
+		assertEquals(expected, getOutput());
 	}
 }

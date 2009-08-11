@@ -53,6 +53,7 @@ public class NestedPropertiesFileItemAdvice extends PropertiesFileItemAdvice {
 				} else {
 					items.set(index, advice.getItem());
 				}
+				currentItem = advice.getItem();
 				break;
 			case ADD_AFTER:
 				index = items.indexOf(currentItem);
