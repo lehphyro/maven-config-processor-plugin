@@ -21,6 +21,7 @@ import java.util.*;
 import org.apache.maven.artifact.factory.*;
 import org.apache.maven.artifact.repository.*;
 import org.apache.maven.artifact.resolver.*;
+import org.apache.maven.project.*;
 import org.apache.maven.shared.io.location.*;
 
 import com.google.code.configprocessor.io.*;
@@ -31,11 +32,11 @@ public class MavenFileResolver implements FileResolver {
 	private Locator locator;
 	private LogAdapter logAdapter;
 	
-	public MavenFileResolver(ArtifactFactory artifactFactory, ArtifactResolver artifactResolver, ArtifactRepository localRepository, List<ArtifactRepository> remoteRepositories, LogAdapter logAdapter) {
+	public MavenFileResolver(MavenProject mavenProject, ArtifactFactory artifactFactory, ArtifactResolver artifactResolver, ArtifactRepository localRepository, List<ArtifactRepository> remoteRepositories, LogAdapter logAdapter) {
 		this.logAdapter = logAdapter;
 		locator = new Locator();
 		List<LocatorStrategy> strategies = new ArrayList<LocatorStrategy>();
-		strategies.add(new FileLocatorStrategy());
+		strategies.add(new RelativeFileLocatorStrategy(mavenProject));
 		strategies.add(new ClasspathResourceLocatorStrategy());
 		strategies.add(new ArtifactLocatorStrategy(artifactFactory, artifactResolver, localRepository, remoteRepositories));
 		strategies.add(new URLLocatorStrategy());
