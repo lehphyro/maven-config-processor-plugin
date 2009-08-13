@@ -21,6 +21,7 @@ public class PropertyMapping implements PropertiesFileItem {
 
 	public static final String SEPARATOR_1 = "=";
 	public static final String SEPARATOR_2 = ":";
+	public static final String SEPARATOR_ESCAPE = "\\";
 
 	public static final String PROPERTY_VALUE_LINE_SEPARATOR = "\\";
 
@@ -37,7 +38,25 @@ public class PropertyMapping implements PropertiesFileItem {
 	}
 
 	public void parse(String text, boolean trim) {
-		String[] splitted = StringUtils.split(text, SEPARATOR_1 + SEPARATOR_2, 2);
+		String[] splitted = StringUtils.splitPreserveAllTokens(text, SEPARATOR_1 + SEPARATOR_2, 2);
+		
+		if (splitted.length > 1) {
+			String name = splitted[0];
+			String value = splitted[1];
+			for (int i = 0; StringUtils.endsWith(name, SEPARATOR_ESCAPE); i++) {
+				String[] aux = StringUtils.splitPreserveAllTokens(value, SEPARATOR_1 + SEPARATOR_2, 2);
+				name = StringUtils.removeEnd(name, SEPARATOR_ESCAPE) + text.charAt(name.length() + i);
+				if (aux.length > 1) {
+					name += aux[0];
+					value = aux[1];
+				} else {
+					value = aux[0];
+				}
+			}
+
+			splitted[0] = name;
+			splitted[1] = value;
+		}
 
 		if (trim) {
 			propertyName = splitted[0].trim();
