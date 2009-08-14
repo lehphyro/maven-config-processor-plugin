@@ -65,6 +65,25 @@ Properties Processing
  This fragment will instruct the config processor to clear the value of the property
  <property.test.example.first>.
 
+* Modifying property values using Regular Expressions
+
+ As of version 1.8, it is possible to modify properties values and comments using regular
+ expressions as follows:
+
++-----+
+<processor>
+  ...
+  <modify>
+    <find>[\\w\\-]+@\\w+\\.\\w+</find>
+    <replace>my-email@domain.com</replace>
+  </modify>
+  ...
+</processor>
++-----+
+
+ This will look for e-mails in property values and comments and modify them to
+ <my-email@domain.com>.
+
 * Commenting/Uncommenting
 
  As of version 1.5, it is possible to specify properties to comment/uncomment. Single and
@@ -96,3 +115,29 @@ Properties Processing
 
  Of course, the property must be commented before it is uncommented. Uncommenting a
  non-commented property is a no-op.
+
+* Appending files
+
+ As of version 1.8, it is possible to append entire files inside files being processed.
+ The files being appended are processed in the same context, meaning their placeholders can
+ be filtered and they properties can be manipulated.
+ 
+ Here is an example:
+
++-----+
+<processor>
+  ...
+  <add>
+    <name>property.test.example.second</name>
+    <file>src/assembly/other.properties</file>
+    <after>property.test.example.first</after>
+  </add>
+  ...
+</processor>
++-----+
+
+ This fragment will instruct the config processor plugin to append the file other.properties
+ after the property <property.test.example.first>.
+
+ The file tag can reference files in the file system, other maven artifacts, classpath resources
+ or URLs.

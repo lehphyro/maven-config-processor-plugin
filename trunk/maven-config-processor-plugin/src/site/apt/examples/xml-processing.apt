@@ -15,7 +15,7 @@ XML Processing
  
 * Adding a new XML element
 
- When adding a new node, you must specify the node after or before which
+ When adding a new node, you must specify the node after, before or inside which
  you want to add the node and the XML fragment to add as shown below.
 
 +-----+
@@ -59,6 +59,26 @@ XML Processing
 
  This fragment will instruct the config processor to add the <scope> attribute to the bean with
  id="testBean".
+
+ As of version 1.8, it is possible to add another XML file instead of specifying value as the
+ following:
+
++-----+
+<processor>
+  ...
+  <add>
+    <inside>/beans</inside>
+    <file>src/assembly/my-config-bean.xml</file>
+  </add>
+  ...
+</processor>
++-----+
+
+ The plugin will append the entire <my-config-bean.xml> file inside the /beans node. The root node
+ of the file being added will be ignore by default, if you need it to be added too, you can add the
+ attribute <ignore-root> to the file element in the configuration file.
+ The file tag can reference files in the file system, other maven artifacts, classpath resources
+ or URLs.
 
 * Removing an XML element
 
@@ -117,3 +137,22 @@ XML Processing
   ...
 </processor>
 +-----+
+
+* Modifying XML elements using Regular Expressions
+
+ As of version 1.8, it is possible to modify XML element values and comments using regular
+ expressions as follows:
+
++-----+
+<processor>
+  ...
+  <modify>
+    <find>[\\w\\-]+@\\w+\\.\\w+</find>
+    <replace>my-email@domain.com</replace>
+  </modify>
+  ...
+</processor>
++-----+
+
+ This will look for e-mails in element values and comments and modify them to
+ <my-email@domain.com>.
