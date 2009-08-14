@@ -54,10 +54,12 @@ public class ConfigProcessor {
 		this.fileResolver = fileResolver;
 	}
 	
-	public void init() {
+	public void init() throws IOException {
 		if (useOutputDirectory) {
 			if (!outputDirectory.exists()) {
-				outputDirectory.mkdirs();
+				if (!outputDirectory.mkdirs()) {
+					throw new IOException("Could not create output directory: " + outputDirectory);
+				}
 			}
 			actualOutputDirectory = outputDirectory;
 		}

@@ -33,8 +33,7 @@ public class AddActionConverter implements Converter {
 	public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
 		AddAction action = new AddAction();
 		
-		int i = 0;
-		for (; reader.hasMoreChildren(); i++) {
+		while (reader.hasMoreChildren()) {
 			reader.moveDown();
 			setValue(reader, action);
 			reader.moveUp();
