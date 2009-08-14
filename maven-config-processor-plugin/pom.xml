@@ -4,7 +4,7 @@
     <groupId>com.google.code.maven-config-processor-plugin</groupId>
     <artifactId>maven-config-processor-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <version>1.9-SNAPSHOT</version>
+    <version>1.8-SNAPSHOT</version>
     
     <name>Maven Config Processor Plugin</name>
     <description>Generates configuration files modified according to a ruleset to prepare them for different environments</description>
