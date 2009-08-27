@@ -3,7 +3,7 @@
 
 = Introduction =
 
-As of version 1.6 (thanks to Sebastian Pappert), it is possible to use the Config Processor in [http://ant.apache.org/ Ant] build files. See how below.
+As of version 1.6, it is possible to use the Config Processor in [http://ant.apache.org/ Ant] build files. See how below.
 
 = Download =
 
