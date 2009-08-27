@@ -73,6 +73,12 @@ Here is an example of a configuration file to process properties files.
     <comment>
         <name>property4.value</name>
     </comment>
+
+    <!-- Appending a file -->
+    <add>
+        <file>jar:file:///C:/projects/java/test.jar!/META-INF/test.properties</file>
+        <after>property1.value</after>
+    <add>
 </processor>
 }}}
 
@@ -83,6 +89,8 @@ In addition the plugin will modify the value of the property _property1.value_ t
 The property _property3.value_ will not appear in the generated file since it is configured to be removed.
 
 The property _property4.value_ will be commented out in the generated file.
+
+The file _test.properties_ that is inside _test.jar_ will be appended after the property _property1.value_.
 
 = XML File Processing =
 
@@ -110,6 +118,11 @@ The following is an example of configuration file to process [http://www.springf
             ]]>
         </value>
     </add>
+
+    <add>
+        <file>my-other-config.xml</file>
+        <inside>/beans/bean[@id='environmentBean']</inside>
+    <add>
 
     <remove>
         <name>/beans/bean[@id='mock']</name>
@@ -141,6 +154,8 @@ All the _name_ elements must have [http://www.w3schools.com/XPath/default.asp XP
 As you can see, we can add completely new XML nodes specifying after or before which node we want to add.
 
 It is possible to add node attributes as well, but you should use the _name_ attribute instead of after/before attributes because node attribute ordering is not supported.
+
+As of version 1.8, it is possible to append other XML files and add nodes _inside_ other nodes instead of after or before. Here we are appending the file _my-other-config.xml_ inside the bean with id="environmentBean".
 
 You can remove entire nodes or just some attributes using XPath expressions to select the attributes such as _/beans/bean{{{[@id='service']}}}/@scope_, this expression will remove the _scope_ of the bean with id="service".
 
