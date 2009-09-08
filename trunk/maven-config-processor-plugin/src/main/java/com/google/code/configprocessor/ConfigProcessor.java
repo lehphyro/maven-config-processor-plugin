@@ -84,15 +84,14 @@ public class ConfigProcessor {
 		}
 		createOutputFile(output);
 
-		process(resolver, transformation.getInput(), input, output, transformation.getConfig(), config, type, transformation.isReplacePlaceholders());
+		process(resolver, transformation.getInput(), input, output, transformation.getConfig(), config, type);
 	}
 
 	/**
 	 * Detects input file type.
 	 * 
-	 * @param input File to read from.
-	 * @param specifiedType Type specified by user, will be used if set, can be null.
-	 * @return Input file type.
+	 * @param transformation
+         * @return Input file type.
 	 */
 	protected String getInputType(Transformation transformation) {
 		String type;
@@ -121,17 +120,16 @@ public class ConfigProcessor {
 	 * Processes a file.
 	 * 
 	 * @param resolver
-	 * 
+	 *
 	 * @param inputName Symbolic name of the input file to read from.
 	 * @param input Input file to read from.
 	 * @param output Output file to write to.
 	 * @param configName Symbolic name of the file containing rules to process the input.
 	 * @param config File containing rules to process the input.
 	 * @param type Type of the input file. Properties, XML or null if it is to be auto-detected.
-	 * @param replacePlaceholders True if placeholders must be replaced on output files.
 	 * @throws ConfigProcessorException If processing cannot be performed.
 	 */
-	protected void process(ExpressionResolver resolver, String inputName, File input, File output, String configName, File config, String type, boolean replacePlaceholders) throws ConfigProcessorException {
+	protected void process(ExpressionResolver resolver, String inputName, File input, File output, String configName, File config, String type) throws ConfigProcessorException {
 		getLog().info("Processing file [" + inputName + "] using config [" + configName + "], outputing to [" + output + "]");
 
 		InputStream configStream = null;
@@ -154,7 +152,7 @@ public class ConfigProcessor {
 			Action action = parser.parse(configStreamReader);
 			action.validate();
 
-			ActionProcessor processor = getActionProcessor(resolver, input, type, replacePlaceholders);
+			ActionProcessor processor = getActionProcessor(resolver, type);
 			processor.process(inputStreamReader, outputStreamWriter, action);
 		} catch (ParsingException e) {
 			throw new ConfigProcessorException("Error processing file [" + inputName + "] using configuration [" + configName + "]", e);
@@ -182,14 +180,12 @@ public class ConfigProcessor {
 	 * Obtain the action processor for the input.
 	 * 
 	 * @param expressionResolver
-	 * 
-	 * @param input Input file to read from.
+	 *
 	 * @param type Type of the input file. Properties or XML.
-	 * @param replacePlaceholders True if placeholders must be replaced on output files.
 	 * @return ActionProcessor for the input file.
 	 * @throws ConfigProcessorException If processing cannot be performed.
 	 */
-	protected ActionProcessor getActionProcessor(ExpressionResolver expressionResolver, File input, String type, boolean replacePlaceholders) throws ConfigProcessorException {
+	protected ActionProcessor getActionProcessor(ExpressionResolver expressionResolver, String type) throws ConfigProcessorException {
 		if (Transformation.XML_TYPE.equals(type)) {
 			return new XmlActionProcessor(encoding, lineWidth, indentSize, fileResolver, expressionResolver, namespaceContexts);
 		} else if (Transformation.PROPERTIES_TYPE.equals(type)) {
