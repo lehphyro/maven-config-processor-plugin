@@ -134,7 +134,6 @@ public class XmlHelper {
 			domFactory.setFeature(feature.getName(), feature.getValue());
 		}
 		
-		//domFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
 		return domFactory.newDocumentBuilder();
 	}
 }
