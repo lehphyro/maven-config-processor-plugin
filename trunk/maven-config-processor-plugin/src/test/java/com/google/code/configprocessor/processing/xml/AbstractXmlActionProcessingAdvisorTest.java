@@ -17,12 +17,15 @@ package com.google.code.configprocessor.processing.xml;
 
 import static org.junit.Assert.*;
 
+import java.util.*;
+
 import javax.xml.namespace.*;
 
 import org.codehaus.plexus.component.configurator.expression.*;
 import org.junit.*;
 import org.w3c.dom.*;
 
+import com.google.code.configprocessor.*;
 import com.google.code.configprocessor.maven.*;
 
 @Ignore
@@ -39,7 +42,8 @@ public class AbstractXmlActionProcessingAdvisorTest {
 	
 	@Before
 	public void setup() throws Exception {
-		document = XmlHelper.parse(getClass().getResourceAsStream("/com/google/code/configprocessor/data/xml-target-config.xml"));
+		List<ParserFeature> features = Collections.emptyList();
+		document = XmlHelper.parse(getClass().getResourceAsStream("/com/google/code/configprocessor/data/xml-target-config.xml"), features);
 	}
 	
 	protected void executeTest(XmlActionProcessingAdvisor advisor, String expected) throws Exception {

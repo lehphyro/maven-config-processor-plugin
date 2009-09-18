@@ -28,20 +28,29 @@ import com.google.code.configprocessor.io.*;
 import com.google.code.configprocessor.log.*;
 
 /**
- * Ant task Generates modified configuration files according to configuration. Includes, excludes, modify, comment and uncomment properties.
+ * Ant task Generates modified configuration files according to configuration.
+ * Includes, excludes, modify, comment and uncomment properties.
  */
 public class ConfigProcessorTask extends Task {
 
-	private List<Transformation> transforms = new ArrayList<Transformation>();
+	private List<Transformation> transforms;
 	private String encoding;
 	private int indentSize;
 	private int lineWidth;
-	private List<NamespaceContext> namespaceContexts = new ArrayList<NamespaceContext>();
+	private List<NamespaceContext> namespaceContexts;
 	private File outputDirectory;
 	private boolean useOutputDirectory;
 	private File specificProperties;
-	private LogAdapter log = new LogAnt(this);
+	private LogAdapter log;
+	private List<ParserFeature> parserFeatures;
 
+	public ConfigProcessorTask() {
+		transforms = new ArrayList<Transformation>();
+		namespaceContexts = new ArrayList<NamespaceContext>();
+		log = new LogAnt(this);
+		parserFeatures = new ArrayList<ParserFeature>();
+	}
+	
 	@Override
 	public void init() throws BuildException {
 		super.init();
@@ -58,7 +67,7 @@ public class ConfigProcessorTask extends Task {
 			for (NamespaceContext nsContext : namespaceContexts) {
 				namespaceContextsMap.put(nsContext.getPrefix(), nsContext.getUrl());
 			}
-			ConfigProcessor processor = new ConfigProcessor(encoding, indentSize, lineWidth, namespaceContextsMap, outputDirectory, useOutputDirectory, log, new DefaultFileResolver());
+			ConfigProcessor processor = new ConfigProcessor(encoding, indentSize, lineWidth, namespaceContextsMap, outputDirectory, useOutputDirectory, log, new DefaultFileResolver(), parserFeatures);
 			processor.init();
 			
 			Properties additionalProperties = loadIfPossible(specificProperties, log);
@@ -68,6 +77,7 @@ public class ConfigProcessorTask extends Task {
 					processor.execute(resolver, transformation);
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new BuildException("Error during config processing", e);
 		}
 	}
@@ -82,6 +92,12 @@ public class ConfigProcessorTask extends Task {
 		NamespaceContext namespaceContext = new NamespaceContext();
 		namespaceContexts.add(namespaceContext);
 		return namespaceContext;
+	}
+	
+	public ParserFeature createParserFeature() {
+		ParserFeature parserFeature = new ParserFeature();
+		parserFeatures.add(parserFeature);
+		return parserFeature;
 	}
 
 	protected ExpressionResolver getExpressionResolver(boolean replacePlaceholders, Properties additionalProperties) {

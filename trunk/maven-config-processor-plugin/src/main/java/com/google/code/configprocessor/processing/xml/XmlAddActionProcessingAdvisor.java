@@ -33,8 +33,12 @@ public class XmlAddActionProcessingAdvisor extends AbstractXmlActionProcessingAd
 	private String textFragment;
 	private boolean prefixAndSuffixTextFragment;
 
-	public XmlAddActionProcessingAdvisor(AddAction action, String fileContent, ExpressionResolver expressionResolver, NamespaceContext namespaceContext) throws ParsingException {
-		super(action, expressionResolver, namespaceContext);
+	public XmlAddActionProcessingAdvisor(AddAction action,
+	                                     String fileContent,
+	                                     ExpressionResolver expressionResolver,
+	                                     NamespaceContext namespaceContext,
+	                                     List<ParserFeature> parserFeatures) throws ParsingException {
+		super(action, expressionResolver, namespaceContext, parserFeatures);
 
 		this.action = action;
 		if (fileContent == null) {
@@ -76,7 +80,7 @@ public class XmlAddActionProcessingAdvisor extends AbstractXmlActionProcessingAd
 		Node parent;
 
 		try {
-			Document fragment = XmlHelper.parse(textFragment, prefixAndSuffixTextFragment);
+			Document fragment = XmlHelper.parse(textFragment, prefixAndSuffixTextFragment, getParserFeatures());
 
 			Node referenceNode;
 			if (action.getBefore() != null) {
@@ -119,7 +123,7 @@ public class XmlAddActionProcessingAdvisor extends AbstractXmlActionProcessingAd
 
 	protected void addAttribute(Document document, Node node) throws ParsingException {
 		try {
-			List<Attr> attributes = XmlHelper.parseAttributes(textFragment);
+			List<Attr> attributes = XmlHelper.parseAttributes(textFragment, getParserFeatures());
 
 			NamedNodeMap nodeMap = node.getAttributes();
 			for (Attr attr : attributes) {
