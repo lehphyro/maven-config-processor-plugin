@@ -24,6 +24,8 @@ import org.apache.xml.serialize.*;
 import org.w3c.dom.*;
 import org.xml.sax.*;
 
+import com.google.code.configprocessor.*;
+
 public class XmlHelper {
 
 	public static final String NODE_START = "<";
@@ -33,7 +35,7 @@ public class XmlHelper {
 
 	public static final String ROOT_TAG = "root";
 
-	public static Document parse(String text, boolean prefixAndSuffix) throws SAXException, ParserConfigurationException {
+	public static Document parse(String text, boolean prefixAndSuffix, List<ParserFeature> features) throws SAXException, ParserConfigurationException {
 		String textToParse;
 
 		if (prefixAndSuffix) {
@@ -48,30 +50,30 @@ public class XmlHelper {
 		}
 
 		try {
-			return newDocumentBuilder().parse(new InputSource(new StringReader(textToParse)));
+			return newDocumentBuilder(features).parse(new InputSource(new StringReader(textToParse)));
 		} catch (IOException e) {
 			// Should never happen
 			throw new RuntimeException(e);
 		}
 	}
 
-	public static Document parse(Reader reader) throws SAXException, ParserConfigurationException {
+	public static Document parse(Reader reader, List<ParserFeature> features) throws SAXException, ParserConfigurationException {
 		try {
-			return newDocumentBuilder().parse(new InputSource(reader));
+			return newDocumentBuilder(features).parse(new InputSource(reader));
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	public static Document parse(InputStream is) throws SAXException, ParserConfigurationException {
+	public static Document parse(InputStream is, List<ParserFeature> features) throws SAXException, ParserConfigurationException {
 		try {
-			return newDocumentBuilder().parse(is);
+			return newDocumentBuilder(features).parse(is);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	public static List<Attr> parseAttributes(String text) throws SAXException, ParserConfigurationException {
+	public static List<Attr> parseAttributes(String text, List<ParserFeature> features) throws SAXException, ParserConfigurationException {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append(NODE_START).append(ROOT_TAG).append(" ");
@@ -80,7 +82,7 @@ public class XmlHelper {
 		sb.append(CLOSING_NODE_START).append(ROOT_TAG).append(CLOSING_NODE_END);
 
 		try {
-			Document document = newDocumentBuilder().parse(new InputSource(new StringReader(sb.toString())));
+			Document document = newDocumentBuilder(features).parse(new InputSource(new StringReader(sb.toString())));
 			NamedNodeMap nodeMap = document.getFirstChild().getAttributes();
 			List<Attr> attributes = new ArrayList<Attr>();
 
@@ -124,9 +126,15 @@ public class XmlHelper {
 		return fragment.startsWith(NODE_START);
 	}
 
-	private static DocumentBuilder newDocumentBuilder() throws ParserConfigurationException {
+	private static DocumentBuilder newDocumentBuilder(List<ParserFeature> features) throws ParserConfigurationException {
 		DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
 		domFactory.setNamespaceAware(true);
+		
+		for (ParserFeature feature : features) {
+			domFactory.setFeature(feature.getName(), feature.getValue());
+		}
+		
+		//domFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
 		return domFactory.newDocumentBuilder();
 	}
 }

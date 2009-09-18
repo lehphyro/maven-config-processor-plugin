@@ -40,10 +40,19 @@ public class ConfigProcessor {
 	private File outputDirectory;
 	private LogAdapter log;
 	private FileResolver fileResolver;
+	private List<ParserFeature> parserFeatures;
 	
 	private File actualOutputDirectory;
 
-	public ConfigProcessor(String encoding, int indentSize, int lineWidth, Map<String, String> namespaceContexts, File outputDirectory, boolean useOutputDirectory, LogAdapter log, FileResolver fileResolver) {
+	public ConfigProcessor(String encoding,
+	                       int indentSize,
+	                       int lineWidth,
+	                       Map<String, String> namespaceContexts,
+	                       File outputDirectory,
+	                       boolean useOutputDirectory,
+	                       LogAdapter log,
+	                       FileResolver fileResolver,
+	                       List<ParserFeature> parserFeatures) {
 		this.encoding = encoding;
 		this.indentSize = indentSize;
 		this.lineWidth = lineWidth;
@@ -52,6 +61,7 @@ public class ConfigProcessor {
 		this.useOutputDirectory = useOutputDirectory;
 		this.log = log;
 		this.fileResolver = fileResolver;
+		this.parserFeatures = parserFeatures;
 	}
 	
 	public void init() throws IOException {
@@ -187,7 +197,7 @@ public class ConfigProcessor {
 	 */
 	protected ActionProcessor getActionProcessor(ExpressionResolver expressionResolver, String type) throws ConfigProcessorException {
 		if (Transformation.XML_TYPE.equals(type)) {
-			return new XmlActionProcessor(encoding, lineWidth, indentSize, fileResolver, expressionResolver, namespaceContexts);
+			return new XmlActionProcessor(encoding, lineWidth, indentSize, fileResolver, expressionResolver, namespaceContexts, parserFeatures);
 		} else if (Transformation.PROPERTIES_TYPE.equals(type)) {
 			return new PropertiesActionProcessor(encoding, fileResolver, expressionResolver);
 		} else {

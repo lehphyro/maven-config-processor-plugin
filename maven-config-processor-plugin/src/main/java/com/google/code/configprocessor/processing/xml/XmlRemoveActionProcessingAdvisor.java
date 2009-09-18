@@ -15,6 +15,8 @@
  */
 package com.google.code.configprocessor.processing.xml;
 
+import java.util.*;
+
 import javax.xml.namespace.*;
 
 import org.w3c.dom.*;
@@ -25,8 +27,8 @@ import com.google.code.configprocessor.processing.*;
 
 public class XmlRemoveActionProcessingAdvisor extends AbstractXmlActionProcessingAdvisor {
 
-	public XmlRemoveActionProcessingAdvisor(RemoveAction action, ExpressionResolver expressionResolver, NamespaceContext namespaceContext) throws ParsingException {
-		super(action, expressionResolver, namespaceContext);
+	public XmlRemoveActionProcessingAdvisor(RemoveAction action, ExpressionResolver expressionResolver, NamespaceContext namespaceContext, List<ParserFeature> parserFeatures) throws ParsingException {
+		super(action, expressionResolver, namespaceContext, parserFeatures);
 
 		if (action.getName() == null) {
 			throw new ParsingException("Remove tag must specify the xpath expression in [name] property");

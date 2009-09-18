@@ -116,6 +116,14 @@ public class ConfigProcessorMojo extends AbstractMojo {
 	 * @since 1.7
 	 */
 	private boolean skip;
+	
+	/**
+	 * Features to be set when parsing files.
+	 * 
+	 * @parameter
+	 * @since 1.9
+	 */
+	private List<ParserFeature> parserFeatures;
 
 	/**
 	 * The Maven Project Object.
@@ -175,6 +183,7 @@ public class ConfigProcessorMojo extends AbstractMojo {
 
 	public ConfigProcessorMojo() {
 		transformations = new ArrayList<Transformation>();
+		parserFeatures = new ArrayList<ParserFeature>();
 	}
 
 	/**
@@ -187,7 +196,7 @@ public class ConfigProcessorMojo extends AbstractMojo {
 		} else {
 			try {
 				FileResolver fileResolver = new MavenFileResolver(mavenProject, artifactFactory, artifactResolver, localRepository, remoteRepositories, logAdapter);
-				ConfigProcessor processor = new ConfigProcessor(encoding, indentSize, lineWidth, namespaceContexts, outputDirectory, useOutputDirectory, logAdapter, fileResolver);
+				ConfigProcessor processor = new ConfigProcessor(encoding, indentSize, lineWidth, namespaceContexts, outputDirectory, useOutputDirectory, logAdapter, fileResolver, parserFeatures);
 				processor.init();
 				
 				Properties additionalProperties = loadIfPossible(specificProperties, logAdapter);

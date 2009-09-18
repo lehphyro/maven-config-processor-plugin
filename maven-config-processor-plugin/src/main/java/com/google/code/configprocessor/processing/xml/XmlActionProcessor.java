@@ -40,20 +40,28 @@ public class XmlActionProcessor implements ActionProcessor {
 	private FileResolver fileResolver;
 	private ExpressionResolver expressionResolver;
 	private NamespaceContext namespaceContext;
+	private List<ParserFeature> parserFeatures;
 
-	public XmlActionProcessor(String encoding, int lineWidth, int indentSize, FileResolver fileResolver, ExpressionResolver expressionResolver, Map<String, String> contextMappings) {
+	public XmlActionProcessor(String encoding,
+	                          int lineWidth,
+	                          int indentSize,
+	                          FileResolver fileResolver,
+	                          ExpressionResolver expressionResolver,
+	                          Map<String, String> contextMappings,
+	                          List<ParserFeature> parserFeatures) {
 		this.encoding = encoding;
 		this.lineWidth = lineWidth;
 		this.indentSize = indentSize;
 		this.fileResolver = fileResolver;
 		this.expressionResolver = expressionResolver;
 		this.namespaceContext = new MapBasedNamespaceContext(contextMappings);
+		this.parserFeatures = parserFeatures;
 	}
 
 	public void process(Reader input, Writer output, Action action) throws ParsingException, IOException {
 		XmlActionProcessingAdvisor advisor = getAdvisorFor(action, action);
 		try {
-			Document document = XmlHelper.parse(input);
+			Document document = XmlHelper.parse(input, parserFeatures);
 			advisor.process(document);
 			XmlHelper.write(output, document, encoding, lineWidth, indentSize);
 		} catch (SAXException e) {
@@ -73,11 +81,11 @@ public class XmlActionProcessor implements ActionProcessor {
 				fileProcessingAction.removeAction(action); // Remove this action, because it has been processed
 				fileContent = getProcessedFile(fileName, fileProcessingAction);
 			}
-			return new XmlAddActionProcessingAdvisor((AddAction) action, fileContent, expressionResolver, namespaceContext);
+			return new XmlAddActionProcessingAdvisor((AddAction) action, fileContent, expressionResolver, namespaceContext, parserFeatures);
 		} else if (action instanceof ModifyAction) {
-			return new XmlModifyActionProcessingAdvisor((ModifyAction) action, expressionResolver, namespaceContext);
+			return new XmlModifyActionProcessingAdvisor((ModifyAction) action, expressionResolver, namespaceContext, parserFeatures);
 		} else if (action instanceof RemoveAction) {
-			return new XmlRemoveActionProcessingAdvisor((RemoveAction) action, expressionResolver, namespaceContext);
+			return new XmlRemoveActionProcessingAdvisor((RemoveAction) action, expressionResolver, namespaceContext, parserFeatures);
 		} else if (action instanceof NestedAction) {
 			List<XmlActionProcessingAdvisor> advisors = new ArrayList<XmlActionProcessingAdvisor>();
 			NestedAction nestedAction = (NestedAction) action;

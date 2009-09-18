@@ -15,6 +15,7 @@
  */
 package com.google.code.configprocessor.processing.xml;
 
+import java.util.*;
 import java.util.regex.*;
 
 import javax.xml.namespace.*;
@@ -33,8 +34,8 @@ public class XmlModifyActionProcessingAdvisor extends AbstractXmlActionProcessin
 	private Pattern pattern;
 	private String replace;
 
-	public XmlModifyActionProcessingAdvisor(ModifyAction action, ExpressionResolver expressionResolver, NamespaceContext namespaceContext) throws ParsingException {
-		super(action, expressionResolver, namespaceContext);
+	public XmlModifyActionProcessingAdvisor(ModifyAction action, ExpressionResolver expressionResolver, NamespaceContext namespaceContext, List<ParserFeature> parserFeatures) throws ParsingException {
+		super(action, expressionResolver, namespaceContext, parserFeatures);
 
 		if (action.getName() != null) {
 			compile(action.getName());
@@ -68,7 +69,7 @@ public class XmlModifyActionProcessingAdvisor extends AbstractXmlActionProcessin
 	}
 
 	protected void modifyNode(Document document, Node oldNode) throws SAXException, ParserConfigurationException {
-		Document fragment = XmlHelper.parse(textFragment, false);
+		Document fragment = XmlHelper.parse(textFragment, false, getParserFeatures());
 		Node parent = oldNode.getParentNode();
 		Node importedNode = document.importNode(fragment.getDocumentElement(), true);
 		parent.replaceChild(importedNode, oldNode);

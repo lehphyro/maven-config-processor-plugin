@@ -15,6 +15,8 @@
  */
 package com.google.code.configprocessor.processing.xml;
 
+import java.util.*;
+
 import javax.xml.namespace.*;
 import javax.xml.xpath.*;
 
@@ -29,13 +31,16 @@ public abstract class AbstractXmlActionProcessingAdvisor implements XmlActionPro
 	private Action action;
 	private ExpressionResolver expressionResolver;
 	private NamespaceContext namespaceContext;
+	private List<ParserFeature> parserFeatures;
+	
 	private String textExpression;
 	private XPathExpression xpathExpression;
 
-	public AbstractXmlActionProcessingAdvisor(Action action, ExpressionResolver expressionResolver, NamespaceContext namespaceContext) {
+	public AbstractXmlActionProcessingAdvisor(Action action, ExpressionResolver expressionResolver, NamespaceContext namespaceContext, List<ParserFeature> parserFeatures) {
 		this.action = action;
 		this.expressionResolver = expressionResolver;
 		this.namespaceContext = namespaceContext;
+		this.parserFeatures = parserFeatures;
 	}
 	
 	public Action getAction() {
@@ -91,5 +96,9 @@ public abstract class AbstractXmlActionProcessingAdvisor implements XmlActionPro
 
 	protected XPathExpression getXPathExpression() {
 		return xpathExpression;
+	}
+	
+	protected List<ParserFeature> getParserFeatures() {
+		return parserFeatures;
 	}
 }
