@@ -86,16 +86,17 @@ public class PropertiesActionProcessor implements ActionProcessor {
 		boolean shouldContinue = true;
 		StringBuilder sb = new StringBuilder(line);
 
-		while (shouldContinue && (line != null) && line.endsWith(PropertyMapping.PROPERTY_VALUE_LINE_SEPARATOR)) {
+		String aux = line;
+		while (shouldContinue && (aux != null) && aux.endsWith(PropertyMapping.PROPERTY_VALUE_LINE_SEPARATOR)) {
 			reader.mark(READ_AHEAD_BUFFER_SIZE);
-			line = reader.readLine();
+			aux = reader.readLine();
 
-			if (line == null) {
+			if (aux == null) {
 				shouldContinue = false;
 			} else {
-				if (isComment(line)) {
+				if (isComment(aux)) {
 					sb.append(LINE_SEPARATOR);
-					sb.append(line);
+					sb.append(aux);
 				} else {
 					shouldContinue = false;
 					reader.reset();
@@ -108,13 +109,14 @@ public class PropertiesActionProcessor implements ActionProcessor {
 
 	protected PropertyMapping readPropertyMapping(BufferedReader reader, String line) throws IOException {
 		StringBuilder sb = new StringBuilder(line);
-		while (line.endsWith(PropertyMapping.PROPERTY_VALUE_LINE_SEPARATOR)) {
-			line = reader.readLine();
-			if (line == null) {
+		String aux = line;
+		while (aux.endsWith(PropertyMapping.PROPERTY_VALUE_LINE_SEPARATOR)) {
+			aux = reader.readLine();
+			if (aux == null) {
 				break;
 			}
 			sb.append(LINE_SEPARATOR);
-			sb.append(line);
+			sb.append(aux);
 		}
 
 		PropertyMapping propertyMapping = new PropertyMapping();
