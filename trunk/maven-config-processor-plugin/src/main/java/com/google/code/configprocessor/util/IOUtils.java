@@ -19,7 +19,10 @@ import java.io.*;
 
 import com.google.code.configprocessor.log.*;
 
-public abstract class IOUtils {
+public class IOUtils {
+
+	private IOUtils() {
+	}
 
 	public static final void forceMkdirs(File file) throws IOException {
 		if (file.exists() && file.isFile()) {

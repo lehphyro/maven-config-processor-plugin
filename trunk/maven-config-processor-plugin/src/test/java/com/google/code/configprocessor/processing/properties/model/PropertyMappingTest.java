@@ -24,60 +24,61 @@ public class PropertyMappingTest {
 	@Test
 	public void parseWithEqualsSeparator() {
 		String text = "prop=value";
-		executeTest(text, "prop", "value");
+		executeParsingTest(text, "prop", "value");
 	}
 	
 	@Test
 	public void parseWithColonSeparator() {
 		String text = "prop:value";
-		executeTest(text, "prop", "value");
+		executeParsingTest(text, "prop", "value");
 	}
 
 	@Test
 	public void parseWithDoubleEquals() {
 		String text = "prop==value";
-		executeTest(text, "prop", "=value");
+		executeParsingTest(text, "prop", "=value");
 	}
 	
 	@Test
 	public void parseWithTripleColon() {
 		String text = "prop:::value";
-		executeTest(text, "prop", "::value");
+		executeParsingTest(text, "prop", "::value");
 	}
 
 	@Test
 	public void parseWithDoubleEqualsTrimming() {
 		String text = "prop = ==value";
-		executeTest(text, "prop", " ==value", true);
+		executeParsingTest(text, "prop", " ==value", true);
 	}
 	
 	@Test
 	public void parseWithEscapedKey() {
 		String text = "prop\\=prop:::value";
-		executeTest(text, "prop=prop", "::value");
+		executeParsingTest(text, "prop=prop", "::value");
 		
 		text = "prop\\=prop\\:===:value";
-		executeTest(text, "prop=prop:", "==:value");
+		executeParsingTest(text, "prop=prop:", "==:value");
 		
 		text = "\\:\\=:value";
-		executeTest(text, ":=", "value");
+		executeParsingTest(text, ":=", "value");
 	}
 	
 	@Test
 	public void parseWithLineBreak() {
 		String text = "fruits                           =apple, banana, pear, \\\ncantaloupe, watermelon, \\\nkiwi, mango";
-		executeTest(text, "fruits", "apple, banana, pear, \\\ncantaloupe, watermelon, \\\nkiwi, mango", true);
+		executeParsingTest(text, "fruits", "apple, banana, pear, \\\ncantaloupe, watermelon, \\\nkiwi, mango", true);
+	}
+	
+	protected void executeParsingTest(String text, String key, String value) {
+		executeParsingTest(text, key, value, false);
 	}
 
-	protected void executeTest(String text, String key, String value) {
-		executeTest(text, key, value, false);
-	}
-
-	protected void executeTest(String text, String key, String value, boolean trim) {
+	protected void executeParsingTest(String text, String key, String value, boolean trim) {
 		PropertyMapping propertyMapping = new PropertyMapping();
 		propertyMapping.parse(text, trim);
 
 		assertEquals(key, propertyMapping.getPropertyName());
 		assertEquals(value, propertyMapping.getPropertyValue());
 	}
+	
 }

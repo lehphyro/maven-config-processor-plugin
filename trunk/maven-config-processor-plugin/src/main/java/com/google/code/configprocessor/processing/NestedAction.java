@@ -39,8 +39,10 @@ public class NestedAction implements Action {
 	}
 	
 	public void validate() throws ActionValidationException {
-		for (Action action : actions) {
-			action.validate();
+		if (actions != null) {
+			for (Action action : actions) {
+				action.validate();
+			}
 		}
 	}
 
@@ -49,6 +51,9 @@ public class NestedAction implements Action {
 	}
 	
 	public List<Action> getActions() {
+		if (actions == null) {
+			return Collections.emptyList();
+		}
 		return Collections.unmodifiableList(actions);
 	}
 

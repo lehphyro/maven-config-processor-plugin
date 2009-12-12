@@ -23,7 +23,10 @@ import java.util.*;
 import com.google.code.configprocessor.*;
 import com.google.code.configprocessor.log.*;
 
-public abstract class PropertiesUtils {
+public class PropertiesUtils {
+
+	private PropertiesUtils() {
+	}
 
 	/**
 	 * Read additional properties file if specified.
@@ -62,4 +65,31 @@ public abstract class PropertiesUtils {
 			close(fis, logAdapter);
 		}
 	}
+	
+	public static String escapePropertyValue(String value) {
+		if (value == null) {
+			return null;
+		}
+		char[] chars = value.toCharArray();
+		StringBuilder sb = new StringBuilder(chars.length);
+
+		for (int i = 0; i < chars.length; i++) {
+			if (chars[i] == '\\') {
+				sb.append("\\\\");
+			} else if (chars[i] == '\r') {
+				sb.append('\\').append(chars[i]);
+				if (i < chars.length - 1 && chars[i + 1] == '\n') {
+					sb.append(chars[i + 1]);
+					i++;
+				}
+			} else if (chars[i] == '\n') {
+				sb.append('\\').append(chars[i]);
+			} else {
+				sb.append(chars[i]);
+			}
+		}
+
+		return sb.toString();
+	}
+
 }
