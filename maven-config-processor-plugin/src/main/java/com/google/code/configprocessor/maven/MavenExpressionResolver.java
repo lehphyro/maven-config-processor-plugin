@@ -15,9 +15,11 @@
  */
 package com.google.code.configprocessor.maven;
 
+import org.apache.commons.lang.*;
 import org.codehaus.plexus.component.configurator.expression.*;
 
 import com.google.code.configprocessor.expression.*;
+import com.google.code.configprocessor.util.*;
 
 /**
  * Resolver of placeholders.
@@ -52,7 +54,7 @@ public class MavenExpressionResolver implements ExpressionResolver {
 	 * @param value Value to resolve.
 	 * @return Resolved value with values replaced as necessary.
 	 */
-	public String resolve(String value) {
+	public String resolve(String value, boolean isPropertiesValue) {
 		String resolvedValue;
 
 		if (replacePlaceholders) {
@@ -62,6 +64,10 @@ public class MavenExpressionResolver implements ExpressionResolver {
 					throw new IllegalArgumentException("Expression [" + value + "] did not resolve to String");
 				}
 				resolvedValue = (String) aux;
+				
+				if (isPropertiesValue && !StringUtils.equals(value, resolvedValue)) {
+					resolvedValue = PropertiesUtils.escapePropertyValue(resolvedValue);
+				}
 			} catch (ExpressionEvaluationException e) {
 				throw new RuntimeException("Error resolving expression [" + value + "]", e);
 			}

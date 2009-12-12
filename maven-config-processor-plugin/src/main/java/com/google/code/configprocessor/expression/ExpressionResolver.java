@@ -17,6 +17,6 @@ package com.google.code.configprocessor.expression;
 
 public interface ExpressionResolver {
 
-	String resolve(String value);
+	String resolve(String value, boolean isPropertiesValue);
 	
 }

@@ -44,7 +44,7 @@ public class AntExpressionResolver implements ExpressionResolver {
 		this.replacePlaceholders = replacePlaceholders;
 	}
 	
-	public String resolve(String value) {
+	public String resolve(String value, boolean isPropertiesValue) {
 		String resolvedValue;
 		
 		if (replacePlaceholders) {

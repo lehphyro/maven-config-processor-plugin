@@ -52,6 +52,6 @@ public abstract class AbstractPropertiesActionProcessingAdvisor implements Prope
 	}
 
 	protected String resolve(String value) {
-		return expressionResolver.resolve(value);
+		return expressionResolver.resolve(value, true);
 	}
 }

@@ -91,7 +91,7 @@ public abstract class AbstractXmlActionProcessingAdvisor implements XmlActionPro
 	}
 
 	protected String resolve(String value) {
-		return expressionResolver.resolve(value);
+		return expressionResolver.resolve(value, false);
 	}
 
 	protected XPathExpression getXPathExpression() {
