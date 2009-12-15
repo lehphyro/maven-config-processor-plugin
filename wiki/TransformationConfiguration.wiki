@@ -155,7 +155,17 @@ As you can see, we can add completely new XML nodes specifying after or before w
 
 It is possible to add node attributes as well, but you should use the _name_ attribute instead of after/before attributes because node attribute ordering is not supported.
 
-As of version 1.8, it is possible to append other XML files and add nodes _inside_ other nodes instead of after or before. Here we are appending the file _my-other-config.xml_ inside the bean with id="environmentBean".
+As of version 1.8, it is possible to append other XML files and add nodes _inside_ other nodes instead of after or before. Here we are appending the file _my-other-config.xml_ inside the bean with id="environmentBean". You can set "ignore-root" to false to insert the root element with its children like the following:
+
+{{{
+<add>
+    <file ignore-root="false">my-other-config.xml</file>
+    <inside>/beans/bean[@id='environmentBean']</inside>
+    <strict>false</strict>
+</add>
+}}}
+
+Strict=false allows you to ignore parser errors so you can append invalid XML fragments if you need to.
 
 You can remove entire nodes or just some attributes using XPath expressions to select the attributes such as _/beans/bean{{{[@id='service']}}}/@scope_, this expression will remove the _scope_ of the bean with id="service".
 
