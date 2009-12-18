@@ -32,17 +32,17 @@ public class AddActionConverter implements Converter {
 	
 	public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
 		AddAction action = new AddAction();
-		
+
 		while (reader.hasMoreChildren()) {
 			reader.moveDown();
-			setValue(reader, action);
+			setValue(reader, context, action);
 			reader.moveUp();
 		}
 		
 		return action;
 	}
 	
-	protected void setValue(HierarchicalStreamReader reader, AddAction action) {
+	protected void setValue(HierarchicalStreamReader reader, UnmarshallingContext context, AddAction action) {
 		String name = reader.getNodeName();
 		
 		if ("name".equals(name)) {
@@ -62,6 +62,9 @@ public class AddActionConverter implements Converter {
 				action.setIgnoreRoot(Boolean.valueOf(reader.getAttribute("ignore-root")));
 			}
 			action.setFile(reader.getValue());
+		} else if ("actions".equals(name)) {
+			NestedAction nestedAction = (NestedAction)context.convertAnother(action, NestedAction.class);
+			action.setNestedAction(nestedAction);
 		}
 	}
 

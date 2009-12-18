@@ -81,7 +81,7 @@ public abstract class AbstractXmlActionProcessingAdvisor implements XmlActionPro
 			Node node = (Node) getXPathExpression().evaluate(document, XPathConstants.NODE);
 
 			if (node == null) {
-				throw new ParsingException("XPath expression did not find nodes: " + textExpression);
+				throw new ParsingException("XPath expression did not find node(s): " + textExpression);
 			}
 
 			return node;

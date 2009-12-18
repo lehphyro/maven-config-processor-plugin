@@ -73,13 +73,12 @@ public class XmlActionProcessor implements ActionProcessor {
 
 	protected XmlActionProcessingAdvisor getAdvisorFor(Action rootAction, Action action) throws ParsingException, IOException {
 		if (action instanceof AddAction) {
-			// Processes the file applying all transformations before passing it to the advisor
-			String fileName = ((AddAction)action).getFile();
+			// Processes the file applying all sub-transformations before passing it over to the advisor
+			AddAction addAction = (AddAction)action;
+			String fileName = addAction.getFile();
 			String fileContent = null;
 			if (fileName != null) {
-				NestedAction fileProcessingAction = new NestedAction(rootAction, false);
-				fileProcessingAction.removeAction(action); // Remove this action, because it has been processed
-				fileContent = getProcessedFile(fileName, fileProcessingAction);
+				fileContent = getProcessedFile(fileName, addAction.getNestedAction());
 			}
 			return new XmlAddActionProcessingAdvisor((AddAction) action, fileContent, expressionResolver, namespaceContext, parserFeatures);
 		} else if (action instanceof ModifyAction) {
