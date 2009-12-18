@@ -51,4 +51,18 @@
 		<inside>/root/property4</inside>
 		<file ignore-root="false">src/etc/my-file.xml</file>
 	</add>
+	
+	<add>
+		<inside>/root</inside>
+		<file>src/assembly/file.xml</file>
+		<actions>
+			<modify>
+				<name>/tag/@att</name>
+				<value>new-value</value>
+			</modify>
+			<remove>
+				<name>/tag/nothing</name>
+			</remove>
+		</actions>
+	</add>
 </processor>

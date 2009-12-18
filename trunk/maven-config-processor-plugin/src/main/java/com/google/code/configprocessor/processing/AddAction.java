@@ -28,6 +28,7 @@ public class AddAction extends AbstractAction {
 	private String inside;
 	private String file;
 	private boolean ignoreRoot;
+	private NestedAction nestedAction;
 
 	public AddAction() {
 		this(null, null);
@@ -108,6 +109,14 @@ public class AddAction extends AbstractAction {
 		this.ignoreRoot = ignoreRoot;
 	}
 	
+	public NestedAction getNestedAction() {
+		return nestedAction;
+	}
+	
+	public void setNestedAction(NestedAction nestedAction) {
+		this.nestedAction = nestedAction;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -117,6 +126,7 @@ public class AddAction extends AbstractAction {
 		result = prime * result + ((file == null) ? 0 : file.hashCode());
 		result = prime * result + (ignoreRoot ? 1231 : 1237);
 		result = prime * result + ((inside == null) ? 0 : inside.hashCode());
+		result = prime * result + ((nestedAction == null) ? 0 : nestedAction.hashCode());
 		return result;
 	}
 
@@ -161,6 +171,13 @@ public class AddAction extends AbstractAction {
 				return false;
 			}
 		} else if (!inside.equals(other.inside)) {
+			return false;
+		}
+		if (nestedAction == null) {
+			if (other.nestedAction != null) {
+				return false;
+			}
+		} else if (!nestedAction.equals(other.nestedAction)) {
 			return false;
 		}
 		return true;

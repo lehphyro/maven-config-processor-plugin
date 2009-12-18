@@ -45,7 +45,7 @@ public class ProcessingConfigurationParserTest {
 			}
 		}
 		
-		assertEquals(8, action.getActions().size());
+		assertEquals(9, action.getActions().size());
 		assertEquals(new AddAction(null, "<test-property>test-value</test-property>", "/root/property3", null), action.getActions().get(0));
 		assertEquals(new ModifyAction("/root/property1", "<modified-property1>modified-value</modified-property1>"), action.getActions().get(1));
 		assertEquals(new RemoveAction("/root/property2"), action.getActions().get(2));
@@ -65,6 +65,15 @@ public class ProcessingConfigurationParserTest {
 		addInsideAction.setFile("src/etc/my-file.xml");
 		addInsideAction.setIgnoreRoot(false);
 		assertEquals(addInsideAction, action.getActions().get(7));
+		
+		AddAction actionWithNestedActions = new AddAction();
+		actionWithNestedActions.setInside("/root");
+		actionWithNestedActions.setFile("src/assembly/file.xml");
+		NestedAction nestedAction = new NestedAction();
+		nestedAction.addAction(new ModifyAction("/tag/@att", "new-value"));
+		nestedAction.addAction(new RemoveAction("/tag/nothing"));
+		actionWithNestedActions.setNestedAction(nestedAction);
+		assertEquals(actionWithNestedActions, action.getActions().get(8));
 	}
 
 	@Test(expected = NullPointerException.class)
