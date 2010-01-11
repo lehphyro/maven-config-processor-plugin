@@ -43,6 +43,11 @@ public class XmlAddActionProcessingAdvisor extends AbstractXmlActionProcessingAd
 		this.action = action;
 		if (fileContent == null) {
 			this.textFragment = resolve(action.getValue());
+			// The call to modify node later on will throw a NullPointerException if textFragment resolves to null. 
+			// It's easier for a user to track down the problem with a explanatory exception message.
+			if (textFragment == null) {
+				throw new ParsingException(String.format( "Action value %s resolved to null on lookup.", action.getValue())); 
+			}
 			this.prefixAndSuffixTextFragment = true;
 		} else {
 			this.textFragment = fileContent;
