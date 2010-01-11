@@ -370,6 +370,15 @@
             <timezone>+1</timezone>
         </developer>
     </developers>
+    
+    <contributors>
+    	<contributor>
+    		<name>etienne.caron</name>
+    		<roles>
+    			<role>Developer</role>
+    		</roles>
+    	</contributor>
+    </contributors>
 
     <repositories>
         <repository>
