@@ -40,6 +40,11 @@ public class XmlModifyActionProcessingAdvisor extends AbstractXmlActionProcessin
 		if (action.getName() != null) {
 			compile(action.getName());
 			textFragment = resolve(action.getValue());
+			// The call to modify node later on will throw a NullPointerException if textFragment resolves to null. 
+			// It's easier for a user to track down the problem with a explanatory exception message.
+			if (textFragment == null && action.getValue() != null) {
+				throw new ParsingException(String.format("Action value %s resolved to null on lookup.", action.getValue())); 
+			}
 		}
 		if (action.getFind() != null) {
 			pattern = action.getPattern();

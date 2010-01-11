@@ -42,13 +42,8 @@ public class XmlActionProcessor implements ActionProcessor {
 	private NamespaceContext namespaceContext;
 	private List<ParserFeature> parserFeatures;
 
-	public XmlActionProcessor(String encoding,
-	                          int lineWidth,
-	                          int indentSize,
-	                          FileResolver fileResolver,
-	                          ExpressionResolver expressionResolver,
-	                          Map<String, String> contextMappings,
-	                          List<ParserFeature> parserFeatures) {
+	public XmlActionProcessor(String encoding, int lineWidth, int indentSize, FileResolver fileResolver, ExpressionResolver expressionResolver, Map<String, String> contextMappings,
+			List<ParserFeature> parserFeatures) {
 		this.encoding = encoding;
 		this.lineWidth = lineWidth;
 		this.indentSize = indentSize;
@@ -59,10 +54,16 @@ public class XmlActionProcessor implements ActionProcessor {
 	}
 
 	public void process(Reader input, Writer output, Action action) throws ParsingException, IOException {
-		XmlActionProcessingAdvisor advisor = getAdvisorFor(action, action);
 		try {
 			Document document = XmlHelper.parse(input, parserFeatures);
-			advisor.process(document);
+			// While processing add-include actions that don't contain nested
+			// actions,
+			// we ended up calling getAdvisorFor with nulls, resulting in an
+			// exception.
+			if (action != null) {
+				XmlActionProcessingAdvisor advisor = getAdvisorFor(action, action);
+				advisor.process(document);
+			}
 			XmlHelper.write(output, document, encoding, lineWidth, indentSize);
 		} catch (SAXException e) {
 			throw new ParsingException(e);
@@ -73,12 +74,21 @@ public class XmlActionProcessor implements ActionProcessor {
 
 	protected XmlActionProcessingAdvisor getAdvisorFor(Action rootAction, Action action) throws ParsingException, IOException {
 		if (action instanceof AddAction) {
-			// Processes the file applying all sub-transformations before passing it over to the advisor
-			AddAction addAction = (AddAction)action;
+			// Processes the file applying all sub-transformations before
+			// passing it over to the advisor
+			AddAction addAction = (AddAction) action;
 			String fileName = addAction.getFile();
 			String fileContent = null;
 			if (fileName != null) {
 				fileContent = getProcessedFile(fileName, addAction.getNestedAction());
+
+				// Not having managed to get fileContent here is going to lead
+				// to a null pointer exception in
+				// XmlAddActionProcessingAdvisor's constructor.
+				// Putting in a more explicit exception message.
+				if (fileContent == null) {
+					throw new ParsingException(String.format("Processing file \"%s\" yielded null content.", addAction.getFile()));
+				}
 			}
 			return new XmlAddActionProcessingAdvisor((AddAction) action, fileContent, expressionResolver, namespaceContext, parserFeatures);
 		} else if (action instanceof ModifyAction) {
@@ -95,7 +105,7 @@ public class XmlActionProcessor implements ActionProcessor {
 		}
 		throw new IllegalArgumentException("Unknown action: " + action);
 	}
-	
+
 	protected String getProcessedFile(String name, Action action) throws ParsingException, IOException {
 		File file = fileResolver.resolve(name);
 		InputStreamReader reader = new InputStreamReader(new FileInputStream(file), encoding);

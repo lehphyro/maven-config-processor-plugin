@@ -65,15 +65,29 @@ public class ProcessingConfigurationParserTest {
 		addInsideAction.setFile("src/etc/my-file.xml");
 		addInsideAction.setIgnoreRoot(false);
 		assertEquals(addInsideAction, action.getActions().get(7));
-		
+
 		AddAction actionWithNestedActions = new AddAction();
 		actionWithNestedActions.setInside("/root");
 		actionWithNestedActions.setFile("src/assembly/file.xml");
 		NestedAction nestedAction = new NestedAction();
+		// Added a subNestedAction facet to the tests, while trying to pin down a bug with recursively nested actions.
+		AddAction subNestedAction = buildSubNestedAction();
+		nestedAction.addAction(subNestedAction);
 		nestedAction.addAction(new ModifyAction("/tag/@att", "new-value"));
 		nestedAction.addAction(new RemoveAction("/tag/nothing"));
 		actionWithNestedActions.setNestedAction(nestedAction);
 		assertEquals(actionWithNestedActions, action.getActions().get(8));
+	}
+
+	private AddAction buildSubNestedAction() {
+		AddAction nestedActionWithNestedActions = new AddAction();
+		nestedActionWithNestedActions.setInside( "/sub-root" );
+		nestedActionWithNestedActions.setFile( "src/assemble/sub-file.xml" );
+		NestedAction nestedNestedAction = new NestedAction();
+		nestedNestedAction.addAction(new ModifyAction("/sub-tag/@att", "new-value"));
+		nestedNestedAction.addAction(new RemoveAction("/sub-tag/nothing"));
+		nestedActionWithNestedActions.setNestedAction( nestedNestedAction );
+		return nestedActionWithNestedActions;
 	}
 
 	@Test(expected = NullPointerException.class)
