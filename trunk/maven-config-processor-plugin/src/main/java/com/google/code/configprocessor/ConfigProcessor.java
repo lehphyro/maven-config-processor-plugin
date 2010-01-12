@@ -27,6 +27,7 @@ import com.google.code.configprocessor.parsing.*;
 import com.google.code.configprocessor.processing.*;
 import com.google.code.configprocessor.processing.properties.*;
 import com.google.code.configprocessor.processing.xml.*;
+import org.apache.commons.lang.StringUtils;
 
 public class ConfigProcessor {
 
@@ -83,7 +84,13 @@ public class ConfigProcessor {
 	public void execute(ExpressionResolver resolver, Transformation transformation) throws ConfigProcessorException, IOException {
 		File input = fileResolver.resolve(transformation.getInput());
 		File config = fileResolver.resolve(transformation.getConfig());
-		File output = new File(actualOutputDirectory, transformation.getOutput());
+                File output;
+                //use input file as output file if output is not set
+                if (StringUtils.isBlank(transformation.getOutput())) {
+                  output = input;
+                } else {
+                  output = new File(actualOutputDirectory, transformation.getOutput());
+                }
 		String type = getInputType(transformation);
 
 		if (!input.exists()) {
