@@ -122,7 +122,13 @@ The following is an example of configuration file to process [http://www.springf
     <add>
         <file>my-other-config.xml</file>
         <inside>/beans/bean[@id='environmentBean']</inside>
-    <add>
+        <actions>
+            <modifiy>
+                <name>/beans/bean[@class='x.y.z']/@parent</name>
+                <value>thatBean</value>
+            </modify>
+        </actions>
+    </add>
 
     <remove>
         <name>/beans/bean[@id='mock']</name>
@@ -166,6 +172,8 @@ As of version 1.8, it is possible to append other XML files and add nodes _insid
 }}}
 
 Strict=false allows you to ignore parser errors so you can append invalid XML fragments if you need to.
+
+As of version 1.9, it is possible to specify actions to be processed only on the file being included, the tag /add/actions shows an example. _Warning_: previous version of the plugin (< 1.9) apply all top-level actions to files being included. This behaviour generated some performance and configuration problems, so you will need to move your top-level actions intended to process only the files being included to sub-actions.
 
 You can remove entire nodes or just some attributes using XPath expressions to select the attributes such as _/beans/bean{{{[@id='service']}}}/@scope_, this expression will remove the _scope_ of the bean with id="service".
 
