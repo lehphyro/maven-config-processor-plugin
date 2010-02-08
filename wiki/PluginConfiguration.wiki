@@ -54,6 +54,6 @@ The following table shows detailed descriptions of the configuration options:
 ||type||string||false||auto-detected||Type of the file being processed. Possible values are: xml, properties. The plugin will try to auto-detect the file type looking for known file name extensions such as .properties for properties files and .xml for XML files.||
 ||replacePlaceholders||boolean||false||true||Specify if you want the plugin to replace text fragments in the form ${} on transformation configuration files using maven/ant environment and specific properties.||
 ||input||file||true||none||Input file to process. It can be a file relative to the project, a URL supported by maven like HTTP or jar or a file in the classpath of the plugin made available declaring its jar as a dependency of the plugin.||
-||output||file||true||none||Output file to generate when processing||
+||output||file||false||none||Output file to generate when processing. If not set, the input file will be overwritten with the changes.||
 ||config||file||true||none||Rules configuration file to use when processing the input file. It can be a file relative to the project, a URL supported by maven like HTTP or jar or a file in the classpath of the plugin made available declaring its jar as a dependency of the plugin.||
 ||namespaceContexts||map||false||empty||Mapping in the form: identifier => URL of XML namespace. Used when querying namespaced XML files such as spring bean configuration files using XPath||
