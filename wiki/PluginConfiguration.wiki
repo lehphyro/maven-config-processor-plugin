@@ -29,6 +29,12 @@ Below is a plugin configuration with all the available options set:
         <namespaceContexts>
             <s>http://www.springframework.org/schema/beans</s>
         </namespaceContexts>
+        <parserFeatures>
+            <parserFeature>
+                <name>http://apache.org/xml/features/nonvalidating/load-external-dtd</name>
+                <value>false</value>
+            </parserFeature>
+        </parserFeatures>
     </configuration>
     <executions>
         <execution>
@@ -57,3 +63,4 @@ The following table shows detailed descriptions of the configuration options:
 ||output||file||false||none||Output file to generate when processing. If not set, the input file will be overwritten with the changes.||
 ||config||file||true||none||Rules configuration file to use when processing the input file. It can be a file relative to the project, a URL supported by maven like HTTP or jar or a file in the classpath of the plugin made available declaring its jar as a dependency of the plugin.||
 ||namespaceContexts||map||false||empty||Mapping in the form: identifier => URL of XML namespace. Used when querying namespaced XML files such as spring bean configuration files using XPath||
+||parserFeatures||list||false||empty||List of XML parser features to activate/deactivate. The example configures the parser to ignore external DTDs completely.||
