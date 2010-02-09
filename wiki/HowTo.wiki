@@ -18,7 +18,7 @@ In general, you will want to configure the plugin to run only when a specific pr
                     <plugin>
                         <groupId>com.google.code.maven-config-processor-plugin</groupId>
                         <artifactId>maven-config-processor-plugin</artifactId>
-                        <version>1.6</version>
+                        <version>1.9</version>
                         <configuration>
                             <specificProperties>src/main/assembly/qa.properties</specificProperties>
                             <transformations>
@@ -26,7 +26,7 @@ In general, you will want to configure the plugin to run only when a specific pr
                                 <transformation>
                                     <input>src/main/resources/my-config.properties</input>
                                     <output>processed-files/my-config.properties</output>
-                                    <config>src/main/assembly/qa/my-config-processing.xml</config>
+                                    <config>src/assembly/qa/my-config-processing.xml</config>
                                 </transformation>
                                 ...
                             </transformations>
