@@ -26,11 +26,28 @@ public class AddActionTest {
 	}
 	
 	@Test(expected = ActionValidationException.class)
-	public void cannotDefinedBothFileAndValue() throws Exception {
+	public void cannotDefineBothFileAndValue() throws Exception {
 		AddAction action = new AddAction();
 		action.setFile("file");
 		action.setValue("value");
 		action.validate();
 	}
 
+	@Test(expected = ActionValidationException.class)
+	public void cannotAddToBothFirstAndLastPositions() throws Exception {
+		AddAction action = new AddAction();
+		action.setValue("value");
+		action.setFirst(true);
+		action.setLast(true);
+		action.validate();
+	}
+
+	@Test(expected = ActionValidationException.class)
+	public void cannotDefineAbsoluteAndRelativePositions() throws Exception {
+		AddAction action = new AddAction();
+		action.setValue("value");
+		action.setFirst(true);
+		action.setBefore("a");
+		action.validate();
+	}
 }

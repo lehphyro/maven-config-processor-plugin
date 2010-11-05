@@ -45,7 +45,7 @@ public class ProcessingConfigurationParserTest {
 			}
 		}
 		
-		assertEquals(9, action.getActions().size());
+		assertEquals(10, action.getActions().size());
 		assertEquals(new AddAction(null, "<test-property>test-value</test-property>", "/root/property3", null), action.getActions().get(0));
 		assertEquals(new ModifyAction("/root/property1", "<modified-property1>modified-value</modified-property1>"), action.getActions().get(1));
 		assertEquals(new RemoveAction("/root/property2"), action.getActions().get(2));
@@ -77,6 +77,10 @@ public class ProcessingConfigurationParserTest {
 		nestedAction.addAction(new RemoveAction("/tag/nothing"));
 		actionWithNestedActions.setNestedAction(nestedAction);
 		assertEquals(actionWithNestedActions, action.getActions().get(8));
+
+		AddAction firstAction = new AddAction("first-property", "value-first-property");
+		firstAction.setFirst(true);
+		assertEquals(firstAction, action.getActions().get(9));
 	}
 
 	private AddAction buildSubNestedAction() {
