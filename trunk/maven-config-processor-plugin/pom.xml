@@ -1,11 +1,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    
+
     <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>5</version>
+    </parent>
+
     <groupId>com.google.code.maven-config-processor-plugin</groupId>
     <artifactId>maven-config-processor-plugin</artifactId>
-    <packaging>maven-plugin</packaging>
     <version>2.0-SNAPSHOT</version>
-    
+    <packaging>maven-plugin</packaging>
+
     <name>Maven Config Processor Plugin</name>
     <description>Generates configuration files modified according to a ruleset to prepare them for different environments</description>
     <url>http://code.google.com/p/maven-config-processor-plugin</url>
@@ -15,7 +22,7 @@
         <name>Lehphyro</name>
         <url>http://code.google.com/p/maven-config-processor-plugin</url>
     </organization>
-    
+
     <prerequisites>
         <maven>2.0</maven>
     </prerequisites>
@@ -24,7 +31,7 @@
         <system>googlecode</system>
         <url>http://code.google.com/p/maven-config-processor-plugin/issues/list</url>
     </issueManagement>
-    
+
     <mailingLists>
         <mailingList>
             <name>Plugin users</name>
@@ -49,7 +56,7 @@
         <developerConnection>scm:svn:https://maven-config-processor-plugin.googlecode.com/svn/trunk</developerConnection>
         <url>http://code.google.com/p/maven-config-processor-plugin/source/browse</url>
     </scm>
-    
+
     <dependencies>
     	<dependency>
 			<groupId>org.apache.ant</groupId>
@@ -204,16 +211,6 @@
                     </descriptors>
                 </configuration>
             </plugin>
-            
-            <!-- Release -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-release-plugin</artifactId>
-                <configuration>
-                    <goals>site source:jar javadoc:jar repository:bundle-create assembly:assembly deploy</goals>
-                    <releaseProfiles>gpg</releaseProfiles>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 
@@ -310,42 +307,6 @@
             </plugin>
         </plugins>
     </reporting>
-
-    <distributionManagement>
-        <repository>
-            <id>googlecode-releases</id>
-            <name>Maven Repository for Config Processor Plugin (releases)</name>
-            <url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-        <snapshotRepository>
-            <id>googlecode-snapshots</id>
-            <name>Maven Repository for Config Processor Plugin (snapshots)</name>
-            <url>http://oss.sonatype.org/content/repositories/googlecode-snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
-    
-    <profiles>
-    	<profile>
-    		<id>gpg</id>
-    		<build>
-    			<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-gpg-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>sign-artifacts</id>
-								<phase>verify</phase>
-								<goals>
-									<goal>sign</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-    			</plugins>
-    		</build>
-    	</profile>
-    </profiles>
 
     <developers>
         <developer>
