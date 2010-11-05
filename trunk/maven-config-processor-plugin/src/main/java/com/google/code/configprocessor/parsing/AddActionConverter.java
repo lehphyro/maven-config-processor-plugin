@@ -51,6 +51,10 @@ public class AddActionConverter implements Converter {
 			action.setValue(reader.getValue());
 		} else if ("strict".equals(name)) {
 			action.setStrict(Boolean.valueOf(reader.getValue()));
+		} else if ("first".equals(name)) {
+			action.setFirst(true);
+		} else if ("last".equals(name)) {
+			action.setLast(true);
 		} else if ("after".equals(name)) {
 			action.setAfter(reader.getValue());
 		} else if ("before".equals(name)) {

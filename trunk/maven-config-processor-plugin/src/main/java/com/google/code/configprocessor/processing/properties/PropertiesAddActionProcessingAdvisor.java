@@ -29,6 +29,14 @@ public class PropertiesAddActionProcessingAdvisor extends AbstractPropertiesActi
 	}
 
 	@Override
+	public PropertiesFileItemAdvice onStartProcessing() {
+		if (action.isFirst()) {
+			return new PropertiesFileItemAdvice(PropertiesFileItemAdviceType.ADD_BEFORE, createPropertyMapping(action.getName(), action.getValue()));
+		}
+		return super.onStartProcessing();
+	}
+
+	@Override
 	public PropertiesFileItemAdvice process(PropertiesFileItem item) {
 		if (item instanceof PropertyMapping) {
 			PropertyMapping mapping = (PropertyMapping) item;
@@ -59,4 +67,11 @@ public class PropertiesAddActionProcessingAdvisor extends AbstractPropertiesActi
 		return super.process(item);
 	}
 
+	@Override
+	public PropertiesFileItemAdvice onEndProcessing() {
+		if (action.isLast()) {
+			return new PropertiesFileItemAdvice(PropertiesFileItemAdviceType.ADD_AFTER, createPropertyMapping(action.getName(), action.getValue()));
+		}
+		return super.onEndProcessing();
+	}
 }

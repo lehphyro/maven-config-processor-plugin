@@ -78,4 +78,10 @@
 			</remove>
 		</actions>
 	</add>
+
+    <add>
+        <name>first-property</name>
+        <value>value-first-property</value>
+        <first />
+    </add>
 </processor>

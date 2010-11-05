@@ -22,7 +22,9 @@ public class AddAction extends AbstractAction {
 	private static final long serialVersionUID = -5444028483023476286L;
 	
 	private static final boolean DEFAULT_IGNORE_ROOT = true;
-	
+
+	private boolean first;
+	private boolean last;
 	private String after;
 	private String before;
 	private String inside;
@@ -60,13 +62,35 @@ public class AddAction extends AbstractAction {
 			throw new ActionValidationException("File or value are required", this);
 		}
 		if (getFile() != null && getValue() != null) {
-			throw new ActionValidationException("Cannot defined both file and value", this);
+			throw new ActionValidationException("Cannot define both file and value", this);
+		}
+		if (isFirst() && isLast()) {
+			throw new ActionValidationException("Cannot add in both positions first and last", this);
+		}
+		if ((isFirst() || isLast()) && (getBefore() != null || getAfter() != null)) {
+			throw new ActionValidationException("Cannot define first or last and before or after", this);
 		}
 	}
 
 	@Override
 	protected String getActionName() {
 		return "Add";
+	}
+
+	public boolean isFirst() {
+		return first;
+	}
+
+	public void setFirst(boolean first) {
+		this.first = first;
+	}
+
+	public boolean isLast() {
+		return last;
+	}
+
+	public void setLast(boolean last) {
+		this.last = last;
 	}
 
 	public String getAfter() {
@@ -127,6 +151,8 @@ public class AddAction extends AbstractAction {
 		result = prime * result + (ignoreRoot ? 1231 : 1237);
 		result = prime * result + ((inside == null) ? 0 : inside.hashCode());
 		result = prime * result + ((nestedAction == null) ? 0 : nestedAction.hashCode());
+		result = prime * result + (first ? 1231 : 1237);
+		result = prime * result + (last ? 1231 : 1237);
 		return result;
 	}
 
@@ -142,6 +168,12 @@ public class AddAction extends AbstractAction {
 			return false;
 		}
 		AddAction other = (AddAction) obj;
+		if (isFirst() != other.isFirst()) {
+			return false;
+		}
+		if (isLast() != other.isLast()) {
+			return false;
+		}
 		if (after == null) {
 			if (other.after != null) {
 				return false;
@@ -185,6 +217,6 @@ public class AddAction extends AbstractAction {
 
 	@Override
 	public String toString() {
-		return getActionName() + " [name=" + getName() + ";value=" + getValue() + ";after=" + getAfter() + ";before=" + getBefore() + ";inside=" + getInside() + ";file=" + getFile() + ";ignoreRoot=" + isIgnoreRoot() + "]";
+		return getActionName() + " [name=" + getName() + ";value=" + getValue() + ";after=" + getAfter() + ";before=" + getBefore() + ";inside=" + getInside() + ";file=" + getFile() + ";ignoreRoot=" + isIgnoreRoot() + ";first=" + isFirst() + ";last=" + isLast() + "]";
 	}
 }

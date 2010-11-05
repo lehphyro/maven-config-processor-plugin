@@ -26,7 +26,7 @@ public class PropertiesAddActionProcessingAdvisorTest extends AbstractProperties
 	private static final String APPENDED_PROPERTIES_PATH = "/com/google/code/configprocessor/data/appended-properties-config.properties";
 	
 	@Test
-	public void processAddFirst() throws Exception {
+	public void processAddBeforeFirst() throws Exception {
 		Action action = new AddAction("test-property", "test-value", null, "property1.value");
 		String expected = "test-property=test-value" + LINE_SEPARATOR + "property1.value=value1" + LINE_SEPARATOR + "property2.value=" + LINE_SEPARATOR + "# Comment" + LINE_SEPARATOR + "	property3.value=value3 \\" + LINE_SEPARATOR + "value 3 continuation" + LINE_SEPARATOR + "# property4.value=value4 \\" + LINE_SEPARATOR + "#value 4 continuation" + LINE_SEPARATOR + "#property5.value=value5" + LINE_SEPARATOR + "property6.value=value6=value" + LINE_SEPARATOR;
 		
@@ -50,7 +50,7 @@ public class PropertiesAddActionProcessingAdvisorTest extends AbstractProperties
 	}
 
 	@Test
-	public void processAddLast() throws Exception {
+	public void processAddAfterLast() throws Exception {
 		Action action = new AddAction("test-property", "test-value", "property3.value", null);
 		String expected = "property1.value=value1" + LINE_SEPARATOR + "property2.value=" + LINE_SEPARATOR + "# Comment" + LINE_SEPARATOR + "	property3.value=value3 \\" + LINE_SEPARATOR + "value 3 continuation" + LINE_SEPARATOR + "test-property=test-value" + LINE_SEPARATOR + "# property4.value=value4 \\" + LINE_SEPARATOR + "#value 4 continuation" + LINE_SEPARATOR + "#property5.value=value5" + LINE_SEPARATOR + "property6.value=value6=value" + LINE_SEPARATOR;
 
@@ -78,6 +78,24 @@ public class PropertiesAddActionProcessingAdvisorTest extends AbstractProperties
 		Action action = new AddAction(APPENDED_PROPERTIES_PATH, "property6.value", null);
 		String expected = "property1.value=value1" + LINE_SEPARATOR + "property2.value=" + LINE_SEPARATOR + "# Comment" + LINE_SEPARATOR + "	property3.value=value3 \\" + LINE_SEPARATOR + "value 3 continuation" + LINE_SEPARATOR + "# property4.value=value4 \\" + LINE_SEPARATOR + "#value 4 continuation" + LINE_SEPARATOR + "#property5.value=value5" + LINE_SEPARATOR + "property6.value=value6=value" + LINE_SEPARATOR + "appended=1" + LINE_SEPARATOR;
 		
+		executeTest(action, expected);
+	}
+
+	@Test
+	public void processAddFirst() throws Exception {
+		AddAction action = new AddAction("test-property", "test-value");
+		action.setFirst(true);
+		String expected = "test-property=test-value" + LINE_SEPARATOR + "property1.value=value1" + LINE_SEPARATOR + "property2.value=" + LINE_SEPARATOR + "# Comment" + LINE_SEPARATOR + "	property3.value=value3 \\" + LINE_SEPARATOR + "value 3 continuation" + LINE_SEPARATOR + "# property4.value=value4 \\" + LINE_SEPARATOR + "#value 4 continuation" + LINE_SEPARATOR + "#property5.value=value5" + LINE_SEPARATOR + "property6.value=value6=value" + LINE_SEPARATOR;
+
+		executeTest(action, expected);
+	}
+
+	@Test
+	public void processAddLast() throws Exception {
+		AddAction action = new AddAction("test-property", "test-value");
+		action.setLast(true);
+		String expected = "property1.value=value1" + LINE_SEPARATOR + "property2.value=" + LINE_SEPARATOR + "# Comment" + LINE_SEPARATOR + "	property3.value=value3 \\" + LINE_SEPARATOR + "value 3 continuation" + LINE_SEPARATOR + "# property4.value=value4 \\" + LINE_SEPARATOR + "#value 4 continuation" + LINE_SEPARATOR + "#property5.value=value5" + LINE_SEPARATOR + "property6.value=value6=value" + LINE_SEPARATOR + "test-property=test-value" + LINE_SEPARATOR;
+
 		executeTest(action, expected);
 	}
 }
