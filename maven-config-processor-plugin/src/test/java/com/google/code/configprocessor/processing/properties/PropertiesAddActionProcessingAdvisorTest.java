@@ -58,7 +58,7 @@ public class PropertiesAddActionProcessingAdvisorTest extends AbstractProperties
 	}
 	
 	@Test
-	public void processAppendFileBefore() throws Exception {
+	public void processAppendFileBeforeFirst() throws Exception {
 		Action action = new AddAction(APPENDED_PROPERTIES_PATH, null, "property1.value");
 		String expected = "appended=1" + LINE_SEPARATOR + "property1.value=value1" + LINE_SEPARATOR + "property2.value=" + LINE_SEPARATOR + "# Comment" + LINE_SEPARATOR + "	property3.value=value3 \\" + LINE_SEPARATOR + "value 3 continuation" + LINE_SEPARATOR + "# property4.value=value4 \\" + LINE_SEPARATOR + "#value 4 continuation" + LINE_SEPARATOR + "#property5.value=value5" + LINE_SEPARATOR + "property6.value=value6=value" + LINE_SEPARATOR;
 		
@@ -74,7 +74,7 @@ public class PropertiesAddActionProcessingAdvisorTest extends AbstractProperties
 	}
 
 	@Test
-	public void processAppendFileLast() throws Exception {
+	public void processAppendFileAfterLast() throws Exception {
 		Action action = new AddAction(APPENDED_PROPERTIES_PATH, "property6.value", null);
 		String expected = "property1.value=value1" + LINE_SEPARATOR + "property2.value=" + LINE_SEPARATOR + "# Comment" + LINE_SEPARATOR + "	property3.value=value3 \\" + LINE_SEPARATOR + "value 3 continuation" + LINE_SEPARATOR + "# property4.value=value4 \\" + LINE_SEPARATOR + "#value 4 continuation" + LINE_SEPARATOR + "#property5.value=value5" + LINE_SEPARATOR + "property6.value=value6=value" + LINE_SEPARATOR + "appended=1" + LINE_SEPARATOR;
 		
@@ -98,4 +98,25 @@ public class PropertiesAddActionProcessingAdvisorTest extends AbstractProperties
 
 		executeTest(action, expected);
 	}
+
+	@Test
+	public void processAppendFileFirst() throws Exception {
+		AddAction action = new AddAction();
+		action.setFile(APPENDED_PROPERTIES_PATH);
+		action.setFirst(true);
+		String expected = "appended=1" + LINE_SEPARATOR + "property1.value=value1" + LINE_SEPARATOR + "property2.value=" + LINE_SEPARATOR + "# Comment" + LINE_SEPARATOR + "	property3.value=value3 \\" + LINE_SEPARATOR + "value 3 continuation" + LINE_SEPARATOR + "# property4.value=value4 \\" + LINE_SEPARATOR + "#value 4 continuation" + LINE_SEPARATOR + "#property5.value=value5" + LINE_SEPARATOR + "property6.value=value6=value" + LINE_SEPARATOR;
+		
+		executeTest(action, expected);
+	}
+
+	@Test
+	public void processAppendFileLast() throws Exception {
+		AddAction action = new AddAction();
+		action.setFile(APPENDED_PROPERTIES_PATH);
+		action.setLast(true);
+		String expected = "property1.value=value1" + LINE_SEPARATOR + "property2.value=" + LINE_SEPARATOR + "# Comment" + LINE_SEPARATOR + "	property3.value=value3 \\" + LINE_SEPARATOR + "value 3 continuation" + LINE_SEPARATOR + "# property4.value=value4 \\" + LINE_SEPARATOR + "#value 4 continuation" + LINE_SEPARATOR + "#property5.value=value5" + LINE_SEPARATOR + "property6.value=value6=value" + LINE_SEPARATOR + "appended=1" + LINE_SEPARATOR;
+		
+		executeTest(action, expected);
+	}
+
 }

@@ -34,10 +34,13 @@ public class PropertiesActionProcessor implements ActionProcessor {
 	private FileResolver fileResolver;
 	private ExpressionResolver expressionResolver;
 
+	private Set<File> appendedFiles;
+
 	public PropertiesActionProcessor(String encoding, FileResolver fileResolver, ExpressionResolver expressionResolver) {
 		this.encoding = encoding;
 		this.fileResolver = fileResolver;
 		this.expressionResolver = expressionResolver;
+		this.appendedFiles = new HashSet<File>();
 	}
 
 	public void process(Reader input, Writer output, Action action) throws ParsingException, IOException {
@@ -166,11 +169,13 @@ public class PropertiesActionProcessor implements ActionProcessor {
 	protected void appendFile(PropertiesFileItem item, BufferedWriter writer, Action action) throws ParsingException, IOException {
 		FilePropertiesFileItem aux = (FilePropertiesFileItem)item;
 		File file = fileResolver.resolve(aux.getFile());
-		InputStreamReader reader = new InputStreamReader(new FileInputStream(file), encoding);
-		try {
-			process(reader, writer, action);
-		} finally {
-			IOUtils.close(reader, null);
+		if (appendedFiles.add(file)) { // Prevent adding the same file twice
+			InputStreamReader reader = new InputStreamReader(new FileInputStream(file), encoding);
+			try {
+				process(reader, writer, action);
+			} finally {
+				IOUtils.close(reader, null);
+			}
 		}
 	}
 

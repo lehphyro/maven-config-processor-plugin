@@ -31,7 +31,11 @@ public class PropertiesAddActionProcessingAdvisor extends AbstractPropertiesActi
 	@Override
 	public PropertiesFileItemAdvice onStartProcessing() {
 		if (action.isFirst()) {
-			return new PropertiesFileItemAdvice(PropertiesFileItemAdviceType.ADD_BEFORE, createPropertyMapping(action.getName(), action.getValue()));
+			if (action.getFile() == null) {
+				return new PropertiesFileItemAdvice(PropertiesFileItemAdviceType.ADD_BEFORE, createPropertyMapping(action.getName(), action.getValue()));
+			} else {
+				return new PropertiesFileItemAdvice(PropertiesFileItemAdviceType.APPEND_FILE_BEFORE, new FilePropertiesFileItem(resolve(action.getFile())));
+			}
 		}
 		return super.onStartProcessing();
 	}
@@ -70,7 +74,11 @@ public class PropertiesAddActionProcessingAdvisor extends AbstractPropertiesActi
 	@Override
 	public PropertiesFileItemAdvice onEndProcessing() {
 		if (action.isLast()) {
-			return new PropertiesFileItemAdvice(PropertiesFileItemAdviceType.ADD_AFTER, createPropertyMapping(action.getName(), action.getValue()));
+			if (action.getFile() == null) {
+				return new PropertiesFileItemAdvice(PropertiesFileItemAdviceType.ADD_AFTER, createPropertyMapping(action.getName(), action.getValue()));
+			} else {
+				return new PropertiesFileItemAdvice(PropertiesFileItemAdviceType.APPEND_FILE_AFTER, new FilePropertiesFileItem(resolve(action.getFile())));
+			}
 		}
 		return super.onEndProcessing();
 	}
