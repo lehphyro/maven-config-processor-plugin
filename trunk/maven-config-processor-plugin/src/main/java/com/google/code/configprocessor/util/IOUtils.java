@@ -24,6 +24,14 @@ public class IOUtils {
 	private IOUtils() {
 	}
 
+	public static void copy(Reader input, Writer output) throws IOException {
+		char[] buffer = new char[4096];
+		int n = 0;
+		while (-1 != (n = input.read(buffer))) {
+			output.write(buffer, 0, n);
+		}
+	}
+
 	public static final void forceMkdirs(File file) throws IOException {
 		if (file.exists() && file.isFile()) {
 			throw new IOException("File " + file + " exists and is not a directory. Unable to create directory.");
