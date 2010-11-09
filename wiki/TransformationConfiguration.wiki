@@ -92,7 +92,7 @@ The property _property3.value_ will not appear in the generated file since it is
 
 The property _property4.value_ will be commented out in the generated file.
 
-The file _test.properties_ that is inside _test.jar_ will be appended to the resulting file. You can add it before everything with _<first />_ instead of _<last />_. Or add just a new property instead of a whole file.
+The file _test.properties_ that is inside _test.jar_ will be appended to the resulting file. You can add it before everything with {{{<first />}}} instead of {{{<last />}}}. Or add just a new property instead of a whole file.
 
 = XML File Processing =
 
