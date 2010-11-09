@@ -202,16 +202,16 @@ First, the target XML:
 </beans>
 }}}
 
-Note that the _beans_ element is under the namespace "!http://www.springframework.org/schema/beans". Thus, XPath queries in the form:
+Note that the _beans_ element is under the namespace http://www.springframework.org/schema/beans. Thus, XPath queries in the form:
 
 {{{ /beans/bean[@id='testBean'] }}}
 
-will not select the _testBean_ we want. The XPath should be:
+will not select _testBean_. The XPath should be:
 
 {{{ //s:bean[@id='testBean'] }}}
 
-See the "s:" preceding "bean"? It is a prefix that we can map to the same "http://www.springframework.org/schema/beans" namespace used in the spring file.
-But, we have to tell the parser which namespace "s" is in. We do this in the plugin declaration in the *pom.xml* as follows:
+See the "s:" preceding "bean"? It is a prefix that we can map to the same http://www.springframework.org/schema/beans namespace used in the spring file.
+But, we have to tell the parser which namespace "s" is in. We do this in the plugin declaration in the *pom.xml* file as follows:
 
 {{{
 <plugin>
@@ -238,4 +238,4 @@ But, we have to tell the parser which namespace "s" is in. We do this in the plu
 </plugin>
 }}}
 
-Now the XPath will work as expected.
+Now the XPath expression will work as expected.
