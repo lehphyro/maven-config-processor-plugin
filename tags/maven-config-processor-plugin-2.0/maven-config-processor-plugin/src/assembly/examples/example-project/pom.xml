@@ -1,0 +1,47 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.google.code.maven-config-processor-plugin</groupId>
+    <artifactId>example-project</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.google.code.maven-config-processor-plugin</groupId>
+                <artifactId>maven-config-processor-plugin</artifactId>
+                <version>${project.version}</version>
+                <configuration>
+                    <specificProperties>my-specific.properties</specificProperties>
+
+                    <namespaceContexts>
+                        <s>http://www.springframework.org/schema/beans</s>
+                    </namespaceContexts>
+
+                    <transformations>
+                        <transformation>
+                            <input>config/my-prop-config.properties</input>
+                            <output>processed/my-prop-config.properties</output>
+                            <config>my-prop-config-processing.xml</config>
+                        </transformation>
+
+                        <transformation>
+                            <input>config/my-xml-config.xml</input>
+                            <output>processed/my-xml-config.xml</output>
+                            <config>my-xml-config-processing.xml</config>
+                        </transformation>
+                    </transformations>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>process</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
