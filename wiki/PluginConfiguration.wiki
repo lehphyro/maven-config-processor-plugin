@@ -9,6 +9,7 @@ Below is a plugin configuration with all the available options set:
 <plugin>
     <groupId>com.google.code.maven-config-processor-plugin</groupId>
     <artifactId>maven-config-processor-plugin</artifactId>
+    <version>2.0</version>
     <configuration>
         <outputDirectory>processed-files</outputDirectory>
         <useOutputDirectory>true</useOutputDirectory>
@@ -50,17 +51,17 @@ The following table shows detailed descriptions of the configuration options:
 
 ||Name||Type||Required||Default||Description||
 ||outputDirectory||file||false||${project.build.directory}||Output directory of processed files, all output will be relative to this directory unless _useOutputDirectory_ is set to false||
-||useOutputDirectory||boolean||false||true||Specify if you want to output all files in directories relative to _outputDirectory_. Ignore _outputDirectory_ completely if false.||
+||useOutputDirectory||boolean||false||true||Specify if you want to output all files in directories relative to _outputDirectory_. Ignore _outputDirectory_ completely if false||
 ||encoding||string||false||UTF-8||Encoding to use when generating files resulting of the processing||
 ||lineWidth||integer||false||80||Line width to use when formatting XML output files||
 ||indentSize||integer||false||4||Number of whitespaces to use when formatting XML output files||
-||specificProperties||file||false||empty||File to load additional properties from when replacing placeholders of output files. Useful to keep properties for different environments in files specific to each one. Note that Maven/Ant environment properties always take precedence when resolving placeholders.||
-||skip||boolean||false||false||Disables the plugin execution.||
+||specificProperties||file||false||empty||File to load additional properties from when replacing placeholders of output files. Useful to keep properties for different environments in files specific to each one. Notice that Maven/Ant environment properties always take precedence when resolving placeholders||
+||skip||boolean||false||false||Disables plugin execution||
 ||transformations||list||true||none||List of files to process with one transformation per file||
-||type||string||false||auto-detected||Type of the file being processed. Possible values are: xml, properties. The plugin will try to auto-detect the file type looking for known file name extensions such as .properties for properties files and .xml for XML files.||
-||replacePlaceholders||boolean||false||true||Specify if you want the plugin to replace text fragments in the form ${} on transformation configuration files using maven/ant environment and specific properties.||
-||input||file||true||none||Input file to process. It can be a file relative to the project, a URL supported by maven like HTTP or jar or a file in the classpath of the plugin made available declaring its jar as a dependency of the plugin.||
-||output||file||false||none||Output file to generate when processing. If not set, the input file will be overwritten with the changes.||
-||config||file||true||none||Rules configuration file to use when processing the input file. It can be a file relative to the project, a URL supported by maven like HTTP or jar or a file in the classpath of the plugin made available declaring its jar as a dependency of the plugin.||
+||type||string||false||auto-detected||Type of the file being processed. Possible values are: xml, properties. The plugin will try to auto-detect the file type looking for known file name extensions such as .properties for properties files and .xml for XML files||
+||replacePlaceholders||boolean||false||true||Specify if you want the plugin to replace text fragments in the form ${} on transformation configuration files using maven/ant environment and specific properties||
+||input||file||true||none||Input file to process. It can be a file relative to the project, a URL supported by maven like HTTP or jar or a file in the classpath of the plugin made available declaring its jar as a dependency of the plugin||
+||output||file||false||none||Output file to generate when processing. If not set, input file will be overwritten||
+||config||file||true||none||Rules configuration file to use when processing the input file. It can be a file relative to the project, a URL supported by maven like HTTP or jar or a file in the classpath of the plugin made available declaring its jar as a dependency of the plugin||
 ||namespaceContexts||map||false||empty||Mapping in the form: identifier => URL of XML namespace. Used when querying namespaced XML files such as spring bean configuration files using XPath||
-||parserFeatures||list||false||empty||List of XML parser features to activate/deactivate. The example configures the parser to ignore external DTDs completely.||
+||parserFeatures||list||false||empty||List of XML parser features to activate/deactivate. The example configures the parser to ignore external DTDs completely||
