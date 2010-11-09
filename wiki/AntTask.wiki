@@ -11,7 +11,7 @@ First you need to download and extract the config-processor distribution in the 
 
 = Task declaration =
 
-The provided Ant Task needs some JARs in its classpath to work properly. You can declare them like this:
+The provided Ant Task needs some jar files in its classpath. You can declare them like this:
 
 {{{
 <taskdef name="config-processor" classname="com.google.code.configprocessor.ant.ConfigProcessorTask">
@@ -25,7 +25,7 @@ The provided Ant Task needs some JARs in its classpath to work properly. You can
 </taskdef>
 }}}
 
-These JARs are included in the distribution file.
+These jar files are included in the distribution zip file.
 
 = Task usage =
 
@@ -44,6 +44,4 @@ With the Config Processor task declaration in place, we can use it like the foll
 </target>
 }}}
 
-It is possible to declare more than one transformation in a single task.
-
-The Ant task parameters have the same names and meanings as the Maven plugin.
+Ant task parameters have the same names and meanings as in the Maven plugin.
