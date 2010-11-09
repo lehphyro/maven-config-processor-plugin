@@ -19,6 +19,8 @@ The transformation configuration file is an _XML_ file that defines those operat
         <name></name>
         <value></value>
         <before></before> <!-- OR --> <after></after>
+        <!-- Only for properties file processing -->
+        <first /> <!-- OR --> <last />
     </add>
 
     <modify>
@@ -77,7 +79,7 @@ Here is an example of a configuration file to process properties files.
     <!-- Appending a file -->
     <add>
         <file>jar:file:///C:/projects/java/test.jar!/META-INF/test.properties</file>
-        <after>property1.value</after>
+        <last />
     <add>
 </processor>
 }}}
@@ -90,7 +92,7 @@ The property _property3.value_ will not appear in the generated file since it is
 
 The property _property4.value_ will be commented out in the generated file.
 
-The file _test.properties_ that is inside _test.jar_ will be appended after the property _property1.value_.
+The file _test.properties_ that is inside _test.jar_ will be appended to the resulting file. You can add it before everything with _<first />_ instead of _<last />_. Or add just a new property instead of a whole file.
 
 = XML File Processing =
 
