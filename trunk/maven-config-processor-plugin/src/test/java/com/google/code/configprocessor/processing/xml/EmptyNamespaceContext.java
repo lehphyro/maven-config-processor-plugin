@@ -30,7 +30,7 @@ public class EmptyNamespaceContext implements NamespaceContext {
 		throw new UnsupportedOperationException();
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "rawtypes" })
 	public Iterator getPrefixes(String namespaceURI) {
 		throw new UnsupportedOperationException();
 	}
