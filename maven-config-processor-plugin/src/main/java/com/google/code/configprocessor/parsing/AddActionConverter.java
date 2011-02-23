@@ -21,8 +21,7 @@ import com.thoughtworks.xstream.io.*;
 
 public class AddActionConverter implements Converter {
 
-	@SuppressWarnings("unchecked")
-	public boolean canConvert(Class type) {
+	public boolean canConvert(@SuppressWarnings("rawtypes") Class type) {
 		return AddAction.class.isAssignableFrom(type);
 	}
 

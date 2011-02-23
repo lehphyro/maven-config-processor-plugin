@@ -44,7 +44,7 @@ public class MapBasedNamespaceContext implements NamespaceContext {
 	/**
 	 * Not used for XPath processing
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "rawtypes" })
 	public Iterator getPrefixes(String namespaceURI) {
 		throw new UnsupportedOperationException();
 	}
