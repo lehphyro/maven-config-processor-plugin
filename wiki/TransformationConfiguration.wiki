@@ -3,22 +3,27 @@
 
 = Introduction =
 
-Each file is processed using a *set of rules* defined by the file configured in field *config* of the plugin declaration.
+Each file is processed using a *set of rules* defined by the file configured in the field *config* of the plugin declaration.
 
 Below is the documentation about the file format and usage.
 
 = File Format =
 
-There are five basic operations that can be performed on target files: add, remove, modify, comment and uncomment properties.
+There are five basic operations that can be performed on target files: add, remove, modify, comment and uncomment:
 
-The transformation configuration file is an _XML_ file that defines those operations:
+ * Add operations append property values and XML nodes at absolute positions _first_ and _last_ and relative positions like _before_, _after_ and _inside_. You can specify only one position for each add operation.
+ * Remove operations delete property values and XML nodes matching the filter expression in _name_.
+ * Modify operations change property values and XML nodes matching the filter expression in _name_.
+ * Comment and uncomment operations are pretty self explanatory and are supported only for properties files processing.
+
+The transformation configuration file defines these operations:
 
 {{{
 <processor>
     <add>
         <name></name>
         <value></value>
-        <before></before> <!-- OR --> <after></after>
+        <before></before> <!-- OR --> <after></after> <!-- OR --> <inside></inside>
         <!-- Only for properties file processing -->
         <first /> <!-- OR --> <last />
     </add>
@@ -42,8 +47,6 @@ The transformation configuration file is an _XML_ file that defines those operat
     </uncomment>
 </processor>
 }}}
-
-It is very simple and intuitive.
 
 It is possible to configure as many tags as necessary.
 
@@ -211,7 +214,7 @@ will not select _testBean_. The XPath should be:
 {{{ //s:bean[@id='testBean'] }}}
 
 See the "s:" preceding "bean"? It is a prefix that we can map to the same http://www.springframework.org/schema/beans namespace used in the spring file.
-But, we have to tell the parser which namespace "s" is in. We do this in the plugin declaration in the *pom.xml* file as follows:
+Now we have to tell the parser which namespace "s" is in. We do this in the plugin declaration in the *pom.xml* file as follows:
 
 {{{
 <plugin>
@@ -238,4 +241,4 @@ But, we have to tell the parser which namespace "s" is in. We do this in the plu
 </plugin>
 }}}
 
-Now the XPath expression will work as expected.
+Now the XPath expression will work as expected. Notice that expressions must specify namespace prefixes at all node levels so the expression _/beans/bean/property[1]_ should be _/s:beans/s:bean/s:property[1]_ if you want to query namespaced XML.
