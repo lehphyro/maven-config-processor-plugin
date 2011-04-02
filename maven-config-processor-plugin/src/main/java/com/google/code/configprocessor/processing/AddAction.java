@@ -70,6 +70,9 @@ public class AddAction extends AbstractAction {
 		if ((isFirst() || isLast()) && (getBefore() != null || getAfter() != null)) {
 			throw new ActionValidationException("Cannot define first or last and before or after", this);
 		}
+		if (getInside() != null && (isFirst() || isLast() || getBefore() != null || getAfter() != null)) {
+			throw new ActionValidationException("Inside cannot be defined with any absolute or relative positions", this);
+		}
 	}
 
 	@Override
