@@ -50,4 +50,13 @@ public class AddActionTest {
 		action.setBefore("a");
 		action.validate();
 	}
+
+	@Test(expected = ActionValidationException.class)
+	public void cannotDefineInsideAndOtherPositions() throws Exception {
+		AddAction action = new AddAction();
+		action.setValue("value");
+		action.setBefore("b");
+		action.setInside("i");
+		action.validate();
+	}
 }
