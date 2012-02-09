@@ -20,6 +20,9 @@ import static com.google.code.configprocessor.util.IOUtils.*;
 import java.io.*;
 import java.util.*;
 
+import org.apache.commons.lang.*;
+import org.apache.tools.ant.*;
+
 import com.google.code.configprocessor.expression.*;
 import com.google.code.configprocessor.io.*;
 import com.google.code.configprocessor.log.*;
@@ -27,7 +30,6 @@ import com.google.code.configprocessor.parsing.*;
 import com.google.code.configprocessor.processing.*;
 import com.google.code.configprocessor.processing.properties.*;
 import com.google.code.configprocessor.processing.xml.*;
-import org.apache.commons.lang.StringUtils;
 
 public class ConfigProcessor {
 
@@ -42,18 +44,11 @@ public class ConfigProcessor {
 	private LogAdapter log;
 	private FileResolver fileResolver;
 	private List<ParserFeature> parserFeatures;
-	
+
 	private File actualOutputDirectory;
 
-	public ConfigProcessor(String encoding,
-	                       int indentSize,
-	                       int lineWidth,
-	                       Map<String, String> namespaceContexts,
-	                       File outputDirectory,
-	                       boolean useOutputDirectory,
-	                       LogAdapter log,
-	                       FileResolver fileResolver,
-	                       List<ParserFeature> parserFeatures) {
+	public ConfigProcessor(String encoding, int indentSize, int lineWidth, Map<String, String> namespaceContexts, File outputDirectory, boolean useOutputDirectory, LogAdapter log,
+			FileResolver fileResolver, List<ParserFeature> parserFeatures) {
 		this.encoding = encoding;
 		this.indentSize = indentSize;
 		this.lineWidth = lineWidth;
@@ -64,7 +59,7 @@ public class ConfigProcessor {
 		this.fileResolver = fileResolver;
 		this.parserFeatures = parserFeatures;
 	}
-	
+
 	public void init() throws IOException {
 		if (useOutputDirectory) {
 			if (!outputDirectory.exists()) {
@@ -82,47 +77,135 @@ public class ConfigProcessor {
 	}
 
 	public void execute(ExpressionResolver resolver, Transformation transformation) throws ConfigProcessorException, IOException {
-		File input = fileResolver.resolve(transformation.getInput());
+		String input = transformation.getInput();
 		File config = fileResolver.resolve(transformation.getConfig());
-                File output;
-                //use input file as output file if output is not set
-                if (StringUtils.isBlank(transformation.getOutput())) {
-                  output = input;
-                } else {
-                  output = new File(actualOutputDirectory, transformation.getOutput());
-                }
-		String type = getInputType(transformation);
 
-		if (!input.exists()) {
-			throw new ConfigProcessorException("Input file [" + input + "] does not exist");
-		}
 		if (!config.exists()) {
 			throw new ConfigProcessorException("Configuration file [" + config + "] does not exist");
 		}
-		createOutputFile(output);
 
-		process(resolver, transformation.getInput(), input, output, transformation.getConfig(), config, type);
+		if (input != null && input.contains("*")) {
+			// input parameter specifies a wildcard pattern, we need a base input directory
+			File inputDir = fileResolver.resolve(transformation.getInputDir());
+			if (!StringUtils.isBlank(transformation.getOutput())) {
+				throw new ConfigProcessorException("Cannot specify output file if wildcard pattern based input is given");
+			}
+			getLog().info("Using wildcard pattern based input [" + input + "] with base directory [" + inputDir + "]");
+			List<File> inputFiles = getMatchingFiles(inputDir, input);
+			for (File inputFile : inputFiles) {
+				String type = getInputType(transformation, inputFile);
+				File outputFile;
+				if (actualOutputDirectory != null) {
+					// calculate a relative path below the output directory based on the input file
+					outputFile = new File(actualOutputDirectory, inputDir.toURI().relativize(inputFile.toURI()).getPath());
+					createOutputFile(outputFile);
+				} else {
+					outputFile = inputFile;
+				}
+				process(resolver, inputFile.getPath(), inputFile, outputFile, transformation.getConfig(), config, type);
+			}
+		} else {
+			File inputFile = fileResolver.resolve(transformation.getInput());
+			if (!inputFile.exists()) {
+				throw new ConfigProcessorException("Input file [" + inputFile + "] does not exist");
+			}
+			// use input file as output file if output is not set
+			File output;
+			if (StringUtils.isBlank(transformation.getOutput())) {
+				output = inputFile;
+			} else {
+				output = new File(actualOutputDirectory, transformation.getOutput());
+				createOutputFile(output);
+			}
+			String type = getInputType(transformation, inputFile);
+			process(resolver, transformation.getInput(), inputFile, output, transformation.getConfig(), config, type);
+		}
+	}
+
+	/**
+	 * Scans all files below the given baseDirectory using the supplied pattern.
+	 * All files matching the pattern are returned.
+	 * The implementation is utilizing {@link DirectoryScanner} for pattern matching, e.g.
+	 * it allows to use single ("*") and double wildcards ("**") for matching
+	 * arbitrary characters or directories.
+	 * 
+	 * Examples:
+	 * <table>
+	 * <tr>
+	 * <td>
+	 * 
+	 * <pre>
+	 * *.xml
+	 * </pre>
+	 * 
+	 * </td>
+	 * <td>matches all XML files in the base directory</td>
+	 * </tr>
+	 * <tr>
+	 * <td>
+	 * 
+	 * <pre>
+	 * **\/*.xml
+	 * </pre>
+	 * 
+	 * </td>
+	 * <td>matches all XML files in any subfolder</td>
+	 * </tr>
+	 * </table>
+	 * 
+	 * @param baseDirectory the base directory under which files shall be searched
+	 * @param pattern the directory and file name pattern that files shall match
+	 * @return the {@link List} of {@link File}s that match the given pattern
+	 * @throws ConfigProcessorException
+	 */
+	protected List<File> getMatchingFiles(File baseDirectory, String pattern) throws ConfigProcessorException {
+		if (!baseDirectory.exists()) {
+			throw new ConfigProcessorException("Base directory [" + baseDirectory + "] does not exist");
+		}
+		if (!baseDirectory.isDirectory()) {
+			throw new ConfigProcessorException("File [" + baseDirectory + "] is not a directory");
+		}
+		if (pattern == null || pattern.length() == 0) {
+			throw new ConfigProcessorException("Invalid pattern	[" + pattern + "]");
+		}
+		DirectoryScanner scanner = new DirectoryScanner();
+		scanner.setBasedir(baseDirectory);
+		scanner.setIncludes(new String[] { pattern });
+		scanner.setCaseSensitive(false);
+		scanner.scan();
+		String[] fileNames = scanner.getIncludedFiles();
+		List<File> files = new ArrayList<File>();
+		for (String fileName : fileNames) {
+			files.add(new File(baseDirectory, fileName));
+		}
+		return files;
 	}
 
 	/**
 	 * Detects input file type.
+	 * If {@link com.google.code.configprocessor.Transformation#getType()} is not null,
+	 * this type is used, otherwise it is tried to guess the type from the given
+	 * input File based on the file extension (.properties or .xml).
+	 * If no type could be found or guessed, {@link Transformation#XML_TYPE} is used.
 	 * 
-	 * @param transformation
-         * @return Input file type.
+	 * @param transformation which can have an explicit type set
+	 * @param input file from which the type can be guessed if transformation parameter does not
+	 *        contain a type
+	 * @return Input file type.
 	 */
-	protected String getInputType(Transformation transformation) {
+	protected String getInputType(Transformation transformation, File input) {
 		String type;
 
 		if (transformation.getType() == null) {
-			if (transformation.getInput().endsWith(".properties")) {
+			if (input.getName().endsWith(".properties")) {
 				type = Transformation.PROPERTIES_TYPE;
-			} else if (transformation.getInput().endsWith(".xml")) {
+			} else if (input.getName().endsWith(".xml")) {
 				type = Transformation.XML_TYPE;
 			} else {
 				if (getLog() != null) {
 					getLog().warn(
-						"Could not auto-detect type of input [" + transformation.getInput() +
-							"], assuming it is XML. It is recommended that you configure it in your pom.xml (tag: transformations/transformation/type) to avoid errors");
+							"Could not auto-detect type of input [" + input
+									+ "], assuming it is XML. It is recommended that you configure it in your pom.xml (tag: transformations/transformation/type) to avoid errors");
 				}
 				type = Transformation.XML_TYPE;
 			}
@@ -137,7 +220,7 @@ public class ConfigProcessor {
 	 * Processes a file.
 	 * 
 	 * @param resolver
-	 *
+	 * 
 	 * @param inputName Symbolic name of the input file to read from.
 	 * @param input Input file to read from.
 	 * @param output Output file to write to.
@@ -197,7 +280,7 @@ public class ConfigProcessor {
 	 * Obtain the action processor for the input.
 	 * 
 	 * @param expressionResolver
-	 *
+	 * 
 	 * @param type Type of the input file. Properties or XML.
 	 * @return ActionProcessor for the input file.
 	 * @throws ConfigProcessorException If processing cannot be performed.

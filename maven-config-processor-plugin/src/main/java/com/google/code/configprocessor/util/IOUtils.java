@@ -34,7 +34,7 @@ public class IOUtils {
 
 	public static final void forceMkdirs(File file) throws IOException {
 		if (file.exists() && file.isFile()) {
-			throw new IOException("File " + file + " exists and is not a directory. Unable to create directory.");
+			throw new IOException("File [" + file + "] exists and is not a directory. Unable to create directory.");
 		}
 		if (!file.mkdirs()) {
 			throw new IOException("Unable to create directory: " + file);
