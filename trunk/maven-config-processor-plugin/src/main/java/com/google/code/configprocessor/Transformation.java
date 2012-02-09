@@ -26,12 +26,51 @@ public class Transformation {
 	public static final String XML_TYPE = "xml";
 
 	/**
-	 * File to process.
+	 * File(s) to process.
+	 * If a pattern-based String with wildcards (e.g. <code>**\/* .xml</code>) is supplied,
+	 * all files below the {@link #getInputDir()} directory matching the pattern will be processed.
+	 * 
+	 * The implementation is utilizing {@link org.apache.tools.ant.DirectoryScanner} for the pattern
+	 * matching,
+	 * e.g. it allows to use single ("*") and double wildcards ("**")
+	 * for matching arbitrary characters or directories.
+	 * 
+	 * Examples:
+	 * <table>
+	 * <tr>
+	 * <td>
+	 * 
+	 * <pre>
+	 * *.xml
+	 * </pre>
+	 * 
+	 * </td>
+	 * <td>matches all XML files in the base directory</td>
+	 * </tr>
+	 * <tr>
+	 * <td>
+	 * 
+	 * <pre>
+	 * **\/*.xml
+	 * </pre>
+	 * 
+	 * </td>
+	 * <td>matches all XML files in any subfolder</td>
+	 * </tr>
+	 * </table>
 	 * 
 	 * @parameter
 	 * @required
 	 */
 	private String input;
+
+	/**
+	 * A base directory under which files with a specific pattern shall be searched.
+	 * The pattern must be specified using the <code>input</code> parameter
+	 * 
+	 * @parameter
+	 */
+	private String inputDir;
 
 	/**
 	 * Output file to generate the result of processing.
@@ -50,7 +89,8 @@ public class Transformation {
 	private String config;
 
 	/**
-	 * Type of the file to transform. If not specified, the plugin will try to auto-detect. Possible values: properties, xml.
+	 * Type of the file to transform. If not specified, the plugin will try to auto-detect. Possible
+	 * values: properties, xml.
 	 * 
 	 * @parameter
 	 * @required
@@ -58,7 +98,8 @@ public class Transformation {
 	private String type;
 
 	/**
-	 * Indicates if the plugin should replace values in ${} with properties of the maven environment.
+	 * Indicates if the plugin should replace values in ${} with properties of the maven
+	 * environment.
 	 * 
 	 * @parameter default-value="true"
 	 */
@@ -67,9 +108,13 @@ public class Transformation {
 	public Transformation() {
 		replacePlaceholders = true;
 	}
-	
+
 	public String getInput() {
 		return input;
+	}
+
+	public String getInputDir() {
+		return inputDir;
 	}
 
 	public String getOutput() {
@@ -92,6 +137,10 @@ public class Transformation {
 		this.input = input;
 	}
 
+	public void setInputDir(String inputDir) {
+		this.inputDir = inputDir;
+	}
+
 	public void setOutput(String output) {
 		this.output = output;
 	}
@@ -107,5 +156,4 @@ public class Transformation {
 	public void setReplacePlaceholders(boolean replacePlaceholders) {
 		this.replacePlaceholders = replacePlaceholders;
 	}
-
 }
