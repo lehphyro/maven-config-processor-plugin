@@ -65,14 +65,6 @@ public class Transformation {
 	private String input;
 
 	/**
-	 * A base directory under which files with a specific pattern shall be searched.
-	 * The pattern must be specified using the <code>input</code> parameter
-	 * 
-	 * @parameter
-	 */
-	private String inputDir;
-
-	/**
 	 * Output file to generate the result of processing.
 	 * 
 	 * @parameter
@@ -113,10 +105,6 @@ public class Transformation {
 		return input;
 	}
 
-	public String getInputDir() {
-		return inputDir;
-	}
-
 	public String getOutput() {
 		return output;
 	}
@@ -135,10 +123,6 @@ public class Transformation {
 
 	public void setInput(String input) {
 		this.input = input;
-	}
-
-	public void setInputDir(String inputDir) {
-		this.inputDir = inputDir;
 	}
 
 	public void setOutput(String output) {

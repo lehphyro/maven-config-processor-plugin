@@ -40,6 +40,7 @@ public class ConfigProcessor {
 	private int indentSize;
 	private Map<String, String> namespaceContexts;
 	private boolean useOutputDirectory;
+	private File baseDir;
 	private File outputDirectory;
 	private LogAdapter log;
 	private FileResolver fileResolver;
@@ -52,19 +53,7 @@ public class ConfigProcessor {
 						   int indentSize,
 						   int lineWidth,
 						   Map<String, String> namespaceContexts,
-						   File outputDirectory,
-						   boolean useOutputDirectory,
-						   LogAdapter log,
-						   FileResolver fileResolver,
-						   List<ParserFeature> parserFeatures) {
-		this(encoding, indentSize, lineWidth, namespaceContexts, outputDirectory, useOutputDirectory, log, fileResolver, parserFeatures, true);
-
-	}
-
-	public ConfigProcessor(String encoding,
-						   int indentSize,
-						   int lineWidth,
-						   Map<String, String> namespaceContexts,
+						   File baseDir,
 						   File outputDirectory,
 						   boolean useOutputDirectory,
 						   LogAdapter log,
@@ -75,6 +64,7 @@ public class ConfigProcessor {
 		this.indentSize = indentSize;
 		this.lineWidth = lineWidth;
 		this.namespaceContexts = namespaceContexts;
+		this.baseDir = baseDir;
 		this.outputDirectory = outputDirectory;
 		this.useOutputDirectory = useOutputDirectory;
 		this.log = log;
@@ -108,19 +98,18 @@ public class ConfigProcessor {
 		}
 
 		if (input != null && input.contains("*")) {
-			// input parameter specifies a wildcard pattern, we need a base input directory
-			File inputDir = fileResolver.resolve(transformation.getInputDir());
+			// input parameter specifies a wildcard pattern
 			if (!StringUtils.isBlank(transformation.getOutput())) {
 				throw new ConfigProcessorException("Cannot specify output file if wildcard pattern based input is given");
 			}
-			getLog().info("Using wildcard pattern based input [" + input + "] with base directory [" + inputDir + "]");
-			List<File> inputFiles = getMatchingFiles(inputDir, input);
+			getLog().info("Using wildcard pattern based input [" + input + "]");
+			List<File> inputFiles = getMatchingFiles(input);
 			for (File inputFile : inputFiles) {
 				String type = getInputType(transformation, inputFile);
 				File outputFile;
 				if (actualOutputDirectory != null) {
 					// calculate a relative path below the output directory based on the input file
-					outputFile = new File(actualOutputDirectory, inputDir.toURI().relativize(inputFile.toURI()).getPath());
+					outputFile = new File(actualOutputDirectory, baseDir.toURI().relativize(inputFile.toURI()).getPath());
 					createOutputFile(outputFile);
 				} else {
 					outputFile = inputFile;
@@ -176,30 +165,23 @@ public class ConfigProcessor {
 	 * </tr>
 	 * </table>
 	 *
-	 * @param baseDirectory the base directory under which files shall be searched
 	 * @param pattern the directory and file name pattern that files shall match
 	 * @return the {@link List} of {@link File}s that match the given pattern
 	 * @throws ConfigProcessorException
 	 */
-	protected List<File> getMatchingFiles(File baseDirectory, String pattern) throws ConfigProcessorException {
-		if (!baseDirectory.exists()) {
-			throw new ConfigProcessorException("Base directory [" + baseDirectory + "] does not exist");
-		}
-		if (!baseDirectory.isDirectory()) {
-			throw new ConfigProcessorException("File [" + baseDirectory + "] is not a directory");
-		}
+	protected List<File> getMatchingFiles(String pattern) throws ConfigProcessorException {
 		if (pattern == null || pattern.length() == 0) {
 			throw new ConfigProcessorException("Invalid pattern	[" + pattern + "]");
 		}
 		DirectoryScanner scanner = new DirectoryScanner();
-		scanner.setBasedir(baseDirectory);
+		scanner.setBasedir(baseDir);
 		scanner.setIncludes(new String[] { pattern });
 		scanner.setCaseSensitive(false);
 		scanner.scan();
 		String[] fileNames = scanner.getIncludedFiles();
 		List<File> files = new ArrayList<File>();
 		for (String fileName : fileNames) {
-			files.add(new File(baseDirectory, fileName));
+			files.add(new File(baseDir, fileName));
 		}
 		return files;
 	}

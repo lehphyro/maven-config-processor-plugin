@@ -204,7 +204,7 @@ public class ConfigProcessorMojo extends AbstractMojo {
 		} else {
 			try {
 				FileResolver fileResolver = new MavenFileResolver(mavenProject, artifactFactory, artifactResolver, localRepository, remoteRepositories, logAdapter);
-				ConfigProcessor processor = new ConfigProcessor(encoding, indentSize, lineWidth, namespaceContexts, outputDirectory, useOutputDirectory, logAdapter, fileResolver, parserFeatures, failOnMissingXpath);
+				ConfigProcessor processor = new ConfigProcessor(encoding, indentSize, lineWidth, namespaceContexts, mavenProject.getBasedir(), outputDirectory, useOutputDirectory, logAdapter, fileResolver, parserFeatures, failOnMissingXpath);
 				processor.init();
 
 				Properties additionalProperties = loadIfPossible(specificProperties, logAdapter);
