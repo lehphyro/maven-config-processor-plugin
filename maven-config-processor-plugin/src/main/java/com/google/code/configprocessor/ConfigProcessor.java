@@ -44,11 +44,33 @@ public class ConfigProcessor {
 	private LogAdapter log;
 	private FileResolver fileResolver;
 	private List<ParserFeature> parserFeatures;
+	private boolean failOnMissingXpath;
 
 	private File actualOutputDirectory;
 
-	public ConfigProcessor(String encoding, int indentSize, int lineWidth, Map<String, String> namespaceContexts, File outputDirectory, boolean useOutputDirectory, LogAdapter log,
-			FileResolver fileResolver, List<ParserFeature> parserFeatures) {
+	public ConfigProcessor(String encoding,
+						   int indentSize,
+						   int lineWidth,
+						   Map<String, String> namespaceContexts,
+						   File outputDirectory,
+						   boolean useOutputDirectory,
+						   LogAdapter log,
+						   FileResolver fileResolver,
+						   List<ParserFeature> parserFeatures) {
+		this(encoding, indentSize, lineWidth, namespaceContexts, outputDirectory, useOutputDirectory, log, fileResolver, parserFeatures, true);
+
+	}
+
+	public ConfigProcessor(String encoding,
+						   int indentSize,
+						   int lineWidth,
+						   Map<String, String> namespaceContexts,
+						   File outputDirectory,
+						   boolean useOutputDirectory,
+						   LogAdapter log,
+						   FileResolver fileResolver,
+						   List<ParserFeature> parserFeatures,
+						   boolean failOnMissingXpath) {
 		this.encoding = encoding;
 		this.indentSize = indentSize;
 		this.lineWidth = lineWidth;
@@ -58,6 +80,7 @@ public class ConfigProcessor {
 		this.log = log;
 		this.fileResolver = fileResolver;
 		this.parserFeatures = parserFeatures;
+		this.failOnMissingXpath = failOnMissingXpath;
 	}
 
 	public void init() throws IOException {
@@ -128,31 +151,31 @@ public class ConfigProcessor {
 	 * The implementation is utilizing {@link DirectoryScanner} for pattern matching, e.g.
 	 * it allows to use single ("*") and double wildcards ("**") for matching
 	 * arbitrary characters or directories.
-	 * 
+	 *
 	 * Examples:
 	 * <table>
 	 * <tr>
 	 * <td>
-	 * 
+	 *
 	 * <pre>
 	 * *.xml
 	 * </pre>
-	 * 
+	 *
 	 * </td>
 	 * <td>matches all XML files in the base directory</td>
 	 * </tr>
 	 * <tr>
 	 * <td>
-	 * 
+	 *
 	 * <pre>
 	 * **\/*.xml
 	 * </pre>
-	 * 
+	 *
 	 * </td>
 	 * <td>matches all XML files in any subfolder</td>
 	 * </tr>
 	 * </table>
-	 * 
+	 *
 	 * @param baseDirectory the base directory under which files shall be searched
 	 * @param pattern the directory and file name pattern that files shall match
 	 * @return the {@link List} of {@link File}s that match the given pattern
@@ -187,7 +210,7 @@ public class ConfigProcessor {
 	 * this type is used, otherwise it is tried to guess the type from the given
 	 * input File based on the file extension (.properties or .xml).
 	 * If no type could be found or guessed, {@link Transformation#XML_TYPE} is used.
-	 * 
+	 *
 	 * @param transformation which can have an explicit type set
 	 * @param input file from which the type can be guessed if transformation parameter does not
 	 *        contain a type
@@ -218,9 +241,8 @@ public class ConfigProcessor {
 
 	/**
 	 * Processes a file.
-	 * 
+	 *
 	 * @param resolver
-	 * 
 	 * @param inputName Symbolic name of the input file to read from.
 	 * @param input Input file to read from.
 	 * @param output Output file to write to.
@@ -278,16 +300,15 @@ public class ConfigProcessor {
 
 	/**
 	 * Obtain the action processor for the input.
-	 * 
+	 *
 	 * @param expressionResolver
-	 * 
 	 * @param type Type of the input file. Properties or XML.
 	 * @return ActionProcessor for the input file.
 	 * @throws ConfigProcessorException If processing cannot be performed.
 	 */
 	protected ActionProcessor getActionProcessor(ExpressionResolver expressionResolver, String type) throws ConfigProcessorException {
 		if (Transformation.XML_TYPE.equals(type)) {
-			return new XmlActionProcessor(encoding, lineWidth, indentSize, fileResolver, expressionResolver, namespaceContexts, parserFeatures);
+			return new XmlActionProcessor(encoding, lineWidth, indentSize, fileResolver, expressionResolver, namespaceContexts, parserFeatures, failOnMissingXpath);
 		} else if (Transformation.PROPERTIES_TYPE.equals(type)) {
 			return new PropertiesActionProcessor(encoding, fileResolver, expressionResolver);
 		} else {
@@ -297,7 +318,7 @@ public class ConfigProcessor {
 
 	/**
 	 * Creates output file and required directories.
-	 * 
+	 *
 	 * @param output Output file to create.
 	 * @throws ConfigProcessorException If processing cannot be performed.
 	 */

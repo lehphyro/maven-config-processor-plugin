@@ -27,8 +27,12 @@ import com.google.code.configprocessor.processing.*;
 
 public class XmlRemoveActionProcessingAdvisor extends AbstractXmlActionProcessingAdvisor {
 
-	public XmlRemoveActionProcessingAdvisor(RemoveAction action, ExpressionResolver expressionResolver, NamespaceContext namespaceContext, List<ParserFeature> parserFeatures) throws ParsingException {
-		super(action, expressionResolver, namespaceContext, parserFeatures);
+    public XmlRemoveActionProcessingAdvisor(RemoveAction action, ExpressionResolver expressionResolver, NamespaceContext namespaceContext, List<ParserFeature> parserFeatures) throws ParsingException {
+        this(action, expressionResolver, namespaceContext, parserFeatures, true);
+    }
+
+	public XmlRemoveActionProcessingAdvisor(RemoveAction action, ExpressionResolver expressionResolver, NamespaceContext namespaceContext, List<ParserFeature> parserFeatures, boolean failOnMissingXpath) throws ParsingException {
+		super(action, expressionResolver, namespaceContext, parserFeatures, failOnMissingXpath);
 
 		if (action.getName() == null) {
 			throw new ParsingException("Remove tag must specify the xpath expression in [name] property");
@@ -41,7 +45,7 @@ public class XmlRemoveActionProcessingAdvisor extends AbstractXmlActionProcessin
 
 		if (node instanceof Attr) {
 			removeAttribute((Attr) node);
-		} else {
+		} else if (node != null) {
 			removeNode(node);
 		}
 	}

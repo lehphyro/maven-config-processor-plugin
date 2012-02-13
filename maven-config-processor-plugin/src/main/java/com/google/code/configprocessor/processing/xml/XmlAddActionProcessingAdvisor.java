@@ -33,12 +33,21 @@ public class XmlAddActionProcessingAdvisor extends AbstractXmlActionProcessingAd
 	private String textFragment;
 	private boolean prefixAndSuffixTextFragment;
 
+    public XmlAddActionProcessingAdvisor(AddAction action,
+                                         String fileContent,
+                                         ExpressionResolver expressionResolver,
+                                         NamespaceContext namespaceContext,
+                                         List<ParserFeature> parserFeatures) throws ParsingException {
+        this(action, fileContent, expressionResolver, namespaceContext, parserFeatures, true);
+    }
+
 	public XmlAddActionProcessingAdvisor(AddAction action,
 	                                     String fileContent,
 	                                     ExpressionResolver expressionResolver,
 	                                     NamespaceContext namespaceContext,
-	                                     List<ParserFeature> parserFeatures) throws ParsingException {
-		super(action, expressionResolver, namespaceContext, parserFeatures);
+	                                     List<ParserFeature> parserFeatures,
+                                         boolean failOnMissingXpath) throws ParsingException {
+		super(action, expressionResolver, namespaceContext, parserFeatures, failOnMissingXpath);
 
 		this.action = action;
 		if (fileContent == null) {
@@ -74,10 +83,10 @@ public class XmlAddActionProcessingAdvisor extends AbstractXmlActionProcessingAd
 	public void process(Document document) throws ParsingException {
 		if (XmlHelper.representsNodeElement(textFragment)) {
 			Node node = evaluateForSingleNode(document, false, false);
-			addNode(document, node);
+			if (node != null) addNode(document, node);
 		} else {
 			Node node = evaluateForSingleNode(document, true, false);
-			addAttribute(document, node);
+            if (node != null) addAttribute(document, node);
 		}
 	}
 

@@ -34,8 +34,11 @@ public class XmlModifyActionProcessingAdvisor extends AbstractXmlActionProcessin
 	private Pattern pattern;
 	private String replace;
 
-	public XmlModifyActionProcessingAdvisor(ModifyAction action, ExpressionResolver expressionResolver, NamespaceContext namespaceContext, List<ParserFeature> parserFeatures) throws ParsingException {
-		super(action, expressionResolver, namespaceContext, parserFeatures);
+    public XmlModifyActionProcessingAdvisor(ModifyAction action, ExpressionResolver expressionResolver, NamespaceContext namespaceContext, List<ParserFeature> parserFeatures) throws ParsingException {
+        this (action, expressionResolver, namespaceContext, parserFeatures, true);
+    }
+	public XmlModifyActionProcessingAdvisor(ModifyAction action, ExpressionResolver expressionResolver, NamespaceContext namespaceContext, List<ParserFeature> parserFeatures, boolean failOnMissingXpath) throws ParsingException {
+		super(action, expressionResolver, namespaceContext, parserFeatures, failOnMissingXpath);
 
 		if (action.getName() != null) {
 			compile(action.getName());
@@ -59,7 +62,7 @@ public class XmlModifyActionProcessingAdvisor extends AbstractXmlActionProcessin
 
 				if (node instanceof Attr) {
 					modifyAttribute(document, (Attr) node);
-				} else {
+				} else if (node != null){
 					modifyNode(document, node);
 				}
 			} else {
