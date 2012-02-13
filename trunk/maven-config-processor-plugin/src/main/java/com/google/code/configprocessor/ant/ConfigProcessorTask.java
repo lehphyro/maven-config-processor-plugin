@@ -68,7 +68,7 @@ public class ConfigProcessorTask extends Task {
 			for (NamespaceContext nsContext : namespaceContexts) {
 				namespaceContextsMap.put(nsContext.getPrefix(), nsContext.getUrl());
 			}
-			ConfigProcessor processor = new ConfigProcessor(encoding, indentSize, lineWidth, namespaceContextsMap, outputDirectory, useOutputDirectory, log, new DefaultFileResolver(), parserFeatures, failOnMissingXpath);
+			ConfigProcessor processor = new ConfigProcessor(encoding, indentSize, lineWidth, namespaceContextsMap, getProject().getBaseDir(), outputDirectory, useOutputDirectory, log, new DefaultFileResolver(), parserFeatures, failOnMissingXpath);
 			processor.init();
 			
 			Properties additionalProperties = loadIfPossible(specificProperties, log);

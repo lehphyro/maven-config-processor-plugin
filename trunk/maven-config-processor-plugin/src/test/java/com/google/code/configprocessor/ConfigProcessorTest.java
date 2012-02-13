@@ -29,14 +29,7 @@ public class ConfigProcessorTest {
 
 	@Before
 	public void setup() throws Exception {
-		configProcessor = new ConfigProcessor("UTF-8", 80, 4, null, null, false, null, null, null);
-	}
-
-	@Test(expected = ConfigProcessorException.class)
-	public void testNotADirectory() throws Exception {
-		File baseDir = createStrictMock(File.class);
-		expect(baseDir.isDirectory()).andReturn(false);
-		configProcessor.getMatchingFiles(baseDir, "*.xml");
+		configProcessor = new ConfigProcessor("UTF-8", 80, 4, null, null, null, false, null, null, null, true);
 	}
 
 	@Test(expected = ConfigProcessorException.class)
@@ -44,7 +37,7 @@ public class ConfigProcessorTest {
 		File baseDir = createStrictMock(File.class);
 		expect(baseDir.isDirectory()).andReturn(true);
 		expect(baseDir.exists()).andReturn(true);
-		configProcessor.getMatchingFiles(baseDir, null);
+		configProcessor.getMatchingFiles(null);
 	}
 
 	@Test(expected = ConfigProcessorException.class)
@@ -52,15 +45,7 @@ public class ConfigProcessorTest {
 		File baseDir = createStrictMock(File.class);
 		expect(baseDir.isDirectory()).andReturn(true);
 		expect(baseDir.exists()).andReturn(true);
-		configProcessor.getMatchingFiles(baseDir, "");
-	}
-
-	@Test(expected = ConfigProcessorException.class)
-	public void testInvalidDirectory() throws Exception {
-		File baseDir = createStrictMock(File.class);
-		expect(baseDir.isDirectory()).andReturn(true);
-		expect(baseDir.exists()).andReturn(false);
-		configProcessor.getMatchingFiles(baseDir, "*.xml");
+		configProcessor.getMatchingFiles("");
 	}
 
 	@Test
