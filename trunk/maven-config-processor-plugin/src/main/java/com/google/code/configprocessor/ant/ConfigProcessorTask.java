@@ -43,6 +43,7 @@ public class ConfigProcessorTask extends Task {
 	private File specificProperties;
 	private LogAdapter log;
 	private List<ParserFeature> parserFeatures;
+	private boolean failOnMissingXpath = true;
 
 	public ConfigProcessorTask() {
 		transforms = new ArrayList<Transformation>();
@@ -67,7 +68,7 @@ public class ConfigProcessorTask extends Task {
 			for (NamespaceContext nsContext : namespaceContexts) {
 				namespaceContextsMap.put(nsContext.getPrefix(), nsContext.getUrl());
 			}
-			ConfigProcessor processor = new ConfigProcessor(encoding, indentSize, lineWidth, namespaceContextsMap, outputDirectory, useOutputDirectory, log, new DefaultFileResolver(), parserFeatures);
+			ConfigProcessor processor = new ConfigProcessor(encoding, indentSize, lineWidth, namespaceContextsMap, outputDirectory, useOutputDirectory, log, new DefaultFileResolver(), parserFeatures, failOnMissingXpath);
 			processor.init();
 			
 			Properties additionalProperties = loadIfPossible(specificProperties, log);
@@ -127,6 +128,15 @@ public class ConfigProcessorTask extends Task {
 	public void setSpecificProperties(File specificProperties) {
 		this.specificProperties = specificProperties;
 	}
+
+	/**
+	 * switch whether to fail when XPaths are not found within a XML document (default: true)
+	 * @since 2.1
+	 */
+	public void setFailOnMissingXpath(boolean failOnMissingXpath) {
+		this.failOnMissingXpath = failOnMissingXpath;
+	}
+	
 
 	public static class NamespaceContext {
 		private String prefix;

@@ -32,16 +32,22 @@ public abstract class AbstractXmlActionProcessingAdvisor implements XmlActionPro
 	private ExpressionResolver expressionResolver;
 	private NamespaceContext namespaceContext;
 	private List<ParserFeature> parserFeatures;
+    private boolean failOnMissingXpath;
 	
 	private String textExpression;
 	private XPathExpression xpathExpression;
 
 	public AbstractXmlActionProcessingAdvisor(Action action, ExpressionResolver expressionResolver, NamespaceContext namespaceContext, List<ParserFeature> parserFeatures) {
-		this.action = action;
-		this.expressionResolver = expressionResolver;
-		this.namespaceContext = namespaceContext;
-		this.parserFeatures = parserFeatures;
+		this(action, expressionResolver, namespaceContext, parserFeatures, true);
 	}
+
+    public AbstractXmlActionProcessingAdvisor(Action action, ExpressionResolver expressionResolver, NamespaceContext namespaceContext, List<ParserFeature> parserFeatures, boolean failOnMissingXpath) {
+        this.action = action;
+        this.expressionResolver = expressionResolver;
+        this.namespaceContext = namespaceContext;
+        this.parserFeatures = parserFeatures;
+        this.failOnMissingXpath = failOnMissingXpath;
+    }
 	
 	public Action getAction() {
 		return action;
@@ -62,7 +68,7 @@ public abstract class AbstractXmlActionProcessingAdvisor implements XmlActionPro
 	protected Node evaluateForSingleNode(Document document, boolean orphanOK, boolean attributeOk) throws ParsingException {
 		Node node = evaluateForNode(document);
 
-		if (!orphanOK) {
+		if (!orphanOK && node != null) {
 			Node parent = node.getParentNode();
 			if (parent == null) {
 				throw new ParsingException("Cannot manipulate node without a parent");
@@ -80,7 +86,7 @@ public abstract class AbstractXmlActionProcessingAdvisor implements XmlActionPro
 		try {
 			Node node = (Node) getXPathExpression().evaluate(document, XPathConstants.NODE);
 
-			if (node == null) {
+			if (node == null && failOnMissingXpath) {
 				throw new ParsingException("XPath expression did not find node(s): " + textExpression);
 			}
 

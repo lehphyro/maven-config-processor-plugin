@@ -36,16 +36,16 @@ import com.google.code.configprocessor.maven.*;
 
 /**
  * Generates modified configuration files according to configuration. Includes, excludes, modify, comment and uncomment properties.
- * 
+ *
+ * @author Leandro Aparecido
  * @phase process-resources
  * @goal process
- * @author Leandro Aparecido
  */
 public class ConfigProcessorMojo extends AbstractMojo {
 
 	/**
 	 * Output directory of the generated files.
-	 * 
+	 *
 	 * @parameter default-value="${project.build.directory}"
 	 * @required
 	 * @since 1.0
@@ -54,7 +54,7 @@ public class ConfigProcessorMojo extends AbstractMojo {
 
 	/**
 	 * Indicate if should prefix file paths with the outputDirectory configuration property.
-	 * 
+	 *
 	 * @parameter default-value="true"
 	 * @required
 	 * @since 1.0
@@ -63,7 +63,7 @@ public class ConfigProcessorMojo extends AbstractMojo {
 
 	/**
 	 * Encoding to use when reading or writing files.
-	 * 
+	 *
 	 * @parameter default-value="${project.build.sourceEncoding}"
 	 * @since 1.1
 	 */
@@ -71,7 +71,7 @@ public class ConfigProcessorMojo extends AbstractMojo {
 
 	/**
 	 * Maximum line width of the generated files to use when formatting.
-	 * 
+	 *
 	 * @parameter default-value="80"
 	 * @since 1.2
 	 */
@@ -79,7 +79,7 @@ public class ConfigProcessorMojo extends AbstractMojo {
 
 	/**
 	 * Indentation size as the number of whitespaces to use when formatting.
-	 * 
+	 *
 	 * @parameter default-value="4"
 	 * @since 1.2
 	 */
@@ -87,7 +87,7 @@ public class ConfigProcessorMojo extends AbstractMojo {
 
 	/**
 	 * File to load aditional specific properties for plugin execution.
-	 * 
+	 *
 	 * @parameter expression="${config-processor.properties}"
 	 * @since 1.0
 	 */
@@ -95,7 +95,7 @@ public class ConfigProcessorMojo extends AbstractMojo {
 
 	/**
 	 * File transformations to be performed.
-	 * 
+	 *
 	 * @parameter
 	 * @since 1.0
 	 */
@@ -103,23 +103,23 @@ public class ConfigProcessorMojo extends AbstractMojo {
 
 	/**
 	 * Namespace contexts for XPath expressions. Mapping in the form prefix => url
-	 * 
+	 *
 	 * @parameter
 	 * @since 1.2
 	 */
 	private Map<String, String> namespaceContexts;
-	
+
 	/**
 	 * Disables the plugin execution.
-	 * 
+	 *
 	 * @parameter expression="${config-processor.skip}" default-value="false"
 	 * @since 1.7
 	 */
 	private boolean skip;
-	
+
 	/**
 	 * Features to be set when parsing files.
-	 * 
+	 *
 	 * @parameter
 	 * @since 1.9
 	 */
@@ -127,7 +127,7 @@ public class ConfigProcessorMojo extends AbstractMojo {
 
 	/**
 	 * The Maven Project Object.
-	 * 
+	 *
 	 * @parameter expression="${project}"
 	 * @required
 	 * @readonly
@@ -136,7 +136,7 @@ public class ConfigProcessorMojo extends AbstractMojo {
 
 	/**
 	 * The Maven Session Object.
-	 * 
+	 *
 	 * @parameter expression="${session}"
 	 * @required
 	 * @readonly
@@ -145,7 +145,7 @@ public class ConfigProcessorMojo extends AbstractMojo {
 
 	/**
 	 * The Mojo Execution Object.
-	 * 
+	 *
 	 * @parameter expression="${mojoExecution}"
 	 * @required
 	 * @readonly
@@ -154,21 +154,21 @@ public class ConfigProcessorMojo extends AbstractMojo {
 
 	/**
 	 * The ArtifactFactory Object.
-	 * 
+	 *
 	 * @component
 	 */
 	private ArtifactFactory artifactFactory;
-	
+
 	/**
 	 * The ArtifactResolver Object.
-	 * 
+	 *
 	 * @component
 	 */
 	private ArtifactResolver artifactResolver;
-	
+
 	/**
 	 * The local repository object.
-	 * 
+	 *
 	 * @parameter expression="${localRepository}"
 	 * @required
 	 */
@@ -176,10 +176,18 @@ public class ConfigProcessorMojo extends AbstractMojo {
 
 	/**
 	 * The remote repositories list.
-	 * 
+	 *
 	 * @parameter expression="${project.remoteArtifactRepositories}"
 	 */
 	private List<ArtifactRepository> remoteRepositories;
+
+	/**
+	 * switch whether to fail when XPaths are not found within a XML document
+	 *
+	 * @parameter expression="${config-processor.failOnMissingXpath}" default-value="true" 	 *
+	 * @since 2.1
+	 */
+	private boolean failOnMissingXpath = true;
 
 	public ConfigProcessorMojo() {
 		transformations = new ArrayList<Transformation>();
@@ -196,11 +204,11 @@ public class ConfigProcessorMojo extends AbstractMojo {
 		} else {
 			try {
 				FileResolver fileResolver = new MavenFileResolver(mavenProject, artifactFactory, artifactResolver, localRepository, remoteRepositories, logAdapter);
-				ConfigProcessor processor = new ConfigProcessor(encoding, indentSize, lineWidth, namespaceContexts, outputDirectory, useOutputDirectory, logAdapter, fileResolver, parserFeatures);
+				ConfigProcessor processor = new ConfigProcessor(encoding, indentSize, lineWidth, namespaceContexts, outputDirectory, useOutputDirectory, logAdapter, fileResolver, parserFeatures, failOnMissingXpath);
 				processor.init();
-				
+
 				Properties additionalProperties = loadIfPossible(specificProperties, logAdapter);
-				
+
 				for (Transformation transformation : transformations) {
 					MavenExpressionResolver resolver = getExpressionResolver(transformation.isReplacePlaceholders(), additionalProperties);
 					processor.execute(resolver, transformation);
@@ -210,18 +218,18 @@ public class ConfigProcessorMojo extends AbstractMojo {
 			}
 		}
 	}
-	
+
 	/**
 	 * Creates a expression resolver to replace placeholders.
-	 * 
-	 * @param replacePlaceholders True if placeholders must be replaced on output files.
+	 *
+	 * @param replacePlaceholders  True if placeholders must be replaced on output files.
 	 * @param additionalProperties
 	 * @return Created ExpressionResolver.
 	 * @throws MojoExecutionException If processing cannot be performed.
 	 */
 	protected MavenExpressionResolver getExpressionResolver(boolean replacePlaceholders, Properties additionalProperties) throws MojoExecutionException {
 		return new MavenExpressionResolver(new PluginParameterExpressionEvaluator(mavenSession, mojoExecution, new DefaultPathTranslator(), new ConsoleLogger(Logger.LEVEL_INFO, "ConfigProcessorMojo"),
-			mavenProject, additionalProperties), replacePlaceholders);
+				mavenProject, additionalProperties), replacePlaceholders);
 	}
 
 }
