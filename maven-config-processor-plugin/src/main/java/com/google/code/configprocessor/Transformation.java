@@ -28,7 +28,8 @@ public class Transformation {
 	/**
 	 * File(s) to process.
 	 * If a pattern-based String with wildcards (e.g. <code>**\/* .xml</code>) is supplied,
-	 * all files below the {@link #getInputDir()} directory matching the pattern will be processed.
+	 * all files below the base directory (the Maven or ANT project base directory) directory matching the pattern
+	 * will be processed.
 	 * 
 	 * The implementation is utilizing {@link org.apache.tools.ant.DirectoryScanner} for the pattern
 	 * matching,
