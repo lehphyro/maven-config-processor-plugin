@@ -13,7 +13,7 @@ There are five basic operations that can be performed on target files: add, remo
 
  * Add operations append property values and XML nodes at absolute positions _first_ and _last_ and relative positions like _before_, _after_ and _inside_. You can specify only one position for each add operation.
  * Remove operations delete property values and XML nodes matching the filter expression in _name_.
- * Modify operations change property values and XML nodes matching the filter expression in _name_.
+ * Modify operations change property values and XML nodes matching the filter expression in _name_ or execute _find/replace_ operations in property values and comments or XML node values.
  * Comment and uncomment operations are pretty self explanatory and are supported only for properties files processing.
 
 The transformation configuration file defines these operations:
@@ -31,6 +31,10 @@ The transformation configuration file defines these operations:
     <modify>
         <name></name>
         <value></value>
+        <!-- OR -->
+        <find></find>
+        <replace></replace>
+        <flags></flags>
     </modify>
 
     <remove>
