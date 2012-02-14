@@ -159,6 +159,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
 				<configuration>
 					<showDeprecation>true</showDeprecation>
 					<showWarnings>true</showWarnings>
@@ -171,6 +172,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.12</version>
 				<configuration>
 					<includes>
 						<include>**/*Test.java</include>
@@ -238,6 +240,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.8.1</version>
 				<configuration>
 					<stylesheet>maven</stylesheet>
 				</configuration>
@@ -311,40 +314,8 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jxr-plugin</artifactId>
+				<version>2.3</version>
 			</plugin>
 		</plugins>
 	</reporting>
-
-	<developers>
-		<developer>
-			<id>lehphyro</id>
-			<name>Leandro Aparecido</name>
-			<email>lehphyro@gmail.com</email>
-			<url />
-			<roles>
-				<role>Leader</role>
-				<role>Developer</role>
-			</roles>
-			<timezone>-3</timezone>
-		</developer>
-		<developer>
-			<id>sebastian.pappert</id>
-			<name>Sebastian Pappert</name>
-			<email>sebastian.pappert@gmail.com</email>
-			<url />
-			<roles>
-				<role>Developer</role>
-			</roles>
-			<timezone>+1</timezone>
-		</developer>
-	</developers>
-
-	<contributors>
-		<contributor>
-			<name>etienne.caron</name>
-			<roles>
-				<role>Developer</role>
-			</roles>
-		</contributor>
-	</contributors>
 </project>
