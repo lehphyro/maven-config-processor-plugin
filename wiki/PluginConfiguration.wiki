@@ -16,6 +16,7 @@ Below is a plugin configuration with all the available options set:
         <encoding>ISO-8859-1</encoding>
         <lineWidth>200</lineWidth>
         <indentSize>4</indentSize>
+        <failOnMissingXpath>true</failOnMissingXpath>
         <specificProperties>src/main/assembly/qa.properties</specificProperties>
         <skip>false</skip>
         <transformations>
@@ -49,12 +50,13 @@ Below is a plugin configuration with all the available options set:
 
 The following table shows detailed descriptions of the configuration options:
 
-||Name||Type||Required||Default||Description||
+||Name||Type||Required||Default Value||Description||
 ||outputDirectory||file||false||${project.build.directory}||Output directory of processed files, all output will be relative to this directory unless _useOutputDirectory_ is set to false||
 ||useOutputDirectory||boolean||false||true||Specify if you want to output all files in directories relative to _outputDirectory_. Ignore _outputDirectory_ completely if false||
 ||encoding||string||false||UTF-8||Encoding to use when generating files resulting of the processing||
 ||lineWidth||integer||false||80||Line width to use when formatting XML output files||
 ||indentSize||integer||false||4||Number of whitespaces to use when formatting XML output files||
+||failOnMissingXpath||boolean||false||true||Indicates whether to fail when XML elements are not found||
 ||specificProperties||file||false||empty||File to load additional properties from when replacing placeholders of output files. Useful to keep properties for different environments in files specific to each one. Notice that Maven/Ant environment properties always take precedence when resolving placeholders||
 ||skip||boolean||false||false||Disables plugin execution||
 ||transformations||list||true||none||List of files to process with one transformation per file||
