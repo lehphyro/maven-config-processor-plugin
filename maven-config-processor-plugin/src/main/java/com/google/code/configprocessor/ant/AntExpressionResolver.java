@@ -32,29 +32,34 @@ public class AntExpressionResolver implements ExpressionResolver {
 	 * Ant project.
 	 */
 	private Project project;
-	
+
 	/**
 	 * Properties to use when resolving.
 	 */
-	private Hashtable<Object, Object> properties;
+	private Properties specificProperties;
 
-	public AntExpressionResolver(Project project, Hashtable<Object, Object> properties, boolean replacePlaceholders) {
+	public AntExpressionResolver(Project project, Properties specificProperties, boolean replacePlaceholders) {
 		this.project = project;
-		this.properties = properties;
+		this.specificProperties = specificProperties;
 		this.replacePlaceholders = replacePlaceholders;
 	}
-	
+
 	public String resolve(String value, boolean isPropertiesValue) {
 		String resolvedValue;
-		
+
 		if (replacePlaceholders) {
 			PropertyHelper ph = PropertyHelper.getPropertyHelper(project);
-			resolvedValue = ph.replaceProperties(null, value, properties);
+			// #issue 31
+			Enumeration<?> names = specificProperties.propertyNames();
+			while (names.hasMoreElements()) {
+				String name = (String) names.nextElement();
+				ph.setUserProperty(null, name, specificProperties.getProperty(name));
+			}
+			resolvedValue = ph.replaceProperties(null, value, specificProperties);
 		} else {
 			resolvedValue = value;
 		}
-		
+
 		return resolvedValue;
 	}
-
 }
