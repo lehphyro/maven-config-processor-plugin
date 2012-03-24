@@ -23,6 +23,7 @@ import java.util.*;
 import org.apache.maven.artifact.factory.*;
 import org.apache.maven.artifact.repository.*;
 import org.apache.maven.artifact.resolver.*;
+import org.apache.maven.artifact.versioning.*;
 import org.apache.maven.execution.*;
 import org.apache.maven.plugin.*;
 import org.apache.maven.project.*;
@@ -189,6 +190,13 @@ public class ConfigProcessorMojo extends AbstractMojo {
 	 */
 	private boolean failOnMissingXpath = true;
 
+    /**
+     * The RuntimeInforamtion for the current instance of maven.
+     * 
+     * @component
+     */
+    private RuntimeInformation runtime;
+
 	public ConfigProcessorMojo() {
 		transformations = new ArrayList<Transformation>();
 		parserFeatures = new ArrayList<ParserFeature>();
@@ -207,6 +215,11 @@ public class ConfigProcessorMojo extends AbstractMojo {
 				ConfigProcessor processor = new ConfigProcessor(encoding, indentSize, lineWidth, namespaceContexts, mavenProject.getBasedir(), outputDirectory, useOutputDirectory, logAdapter, fileResolver, parserFeatures, failOnMissingXpath);
 				processor.init();
 
+				// issue 35 - Specificproperties in maven doesn't work
+				ArtifactVersion mavenVersion = runtime.getApplicationVersion();
+				if (specificProperties != null && mavenVersion.getMajorVersion() > 2) {
+					throw new MojoExecutionException("specificProperties are not supported anymore by Maven, please specify them in the properties section of your pom.xml file");
+				}
 				Properties additionalProperties = loadIfPossible(specificProperties, logAdapter);
 
 				for (Transformation transformation : transformations) {
