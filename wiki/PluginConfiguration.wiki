@@ -57,7 +57,7 @@ The following table shows detailed descriptions of the configuration options:
 ||lineWidth||integer||false||80||Line width to use when formatting XML output files||
 ||indentSize||integer||false||4||Number of whitespaces to use when formatting XML output files||
 ||failOnMissingXpath||boolean||false||true||Indicates whether to fail when XML elements are not found||
-||specificProperties||file||false||empty||File to load additional properties from when replacing placeholders of output files. Useful to keep properties for different environments in files specific to each one. Notice that Maven/Ant environment properties always take precedence when resolving placeholders||
+||specificProperties||file||false||empty||File to load additional properties from when replacing placeholders of output files. Useful to keep properties for different environments in files specific to each one. Maven/Ant environment properties always take precedence when resolving placeholders. _Not supported by Maven 3.x or later, you have to use the properties section of your pom.xml file_||
 ||skip||boolean||false||false||Disables plugin execution||
 ||transformations||list||true||none||List of files to process with one transformation per file||
 ||type||string||false||auto-detected||Type of the file being processed. Possible values are: xml, properties. The plugin will try to auto-detect the file type looking for known file name extensions such as .properties for properties files and .xml for XML files||
