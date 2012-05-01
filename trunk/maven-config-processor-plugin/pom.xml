@@ -191,6 +191,9 @@
 						<include>src/main/java/**</include>
 						<include>src/test/java/**</include>
 					</includes>
+					<excludes>
+						<exclude>**/AntrunXmlPlexusConfigurationWriter.java</exclude>
+					</excludes>
 					<mapping>
 						<java>SLASHSTAR_STYLE</java>
 					</mapping>

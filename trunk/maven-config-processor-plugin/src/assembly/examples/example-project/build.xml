@@ -15,12 +15,12 @@
 			<pathelement location="${PLUGIN_HOME}/lib/xpp3_min.jar" />
 			<pathelement location="${PLUGIN_HOME}/lib/commons-lang.jar" />
 			<pathelement location="${PLUGIN_HOME}/lib/xercesImpl.jar" />
+			<pathelement location="${PLUGIN_HOME}/lib/plexus-container-default.jar" />
 		</classpath>
 	</taskdef>
 
 	<target name="process">
-		<config-processor specificproperties="my-specific.properties"
-						  outputdirectory="target">
+		<config-processor outputdirectory="target">
 
 			<namespacecontext prefix="s" url="http://www.springframework.org/schema/beans" />
 

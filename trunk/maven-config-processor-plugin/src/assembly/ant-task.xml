@@ -40,7 +40,8 @@
                 <exclude>org.apache.maven.reporting:*</exclude>
 				<exclude>org.apache.maven.shared:*</exclude>
                 <exclude>org.apache.maven.wagon:*</exclude>
-                <exclude>org.codehaus.plexus:*</exclude>
+                <exclude>org.codehaus.plexus:plexus-interactivity-api</exclude>
+                <exclude>org.codehaus.plexus:plexus-utils</exclude>
                 <exclude>org.apache.ant:*</exclude>
                 <exclude>classworlds:*</exclude>
                 <exclude>commons-cli:*</exclude>

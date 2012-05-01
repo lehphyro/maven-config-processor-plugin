@@ -16,6 +16,7 @@
 package com.google.code.configprocessor;
 
 import static com.google.code.configprocessor.util.IOUtils.*;
+import static org.apache.commons.lang.StringUtils.*;
 
 import java.io.*;
 import java.util.*;
@@ -26,6 +27,7 @@ import org.apache.tools.ant.*;
 import com.google.code.configprocessor.expression.*;
 import com.google.code.configprocessor.io.*;
 import com.google.code.configprocessor.log.*;
+import com.google.code.configprocessor.maven.*;
 import com.google.code.configprocessor.parsing.*;
 import com.google.code.configprocessor.processing.*;
 import com.google.code.configprocessor.processing.properties.*;
@@ -91,11 +93,8 @@ public class ConfigProcessor {
 
 	public void execute(ExpressionResolver resolver, Transformation transformation) throws ConfigProcessorException, IOException {
 		String input = transformation.getInput();
-		File config = fileResolver.resolve(transformation.getConfig());
-
-		if (!config.exists()) {
-			throw new ConfigProcessorException("Configuration file [" + config + "] does not exist");
-		}
+		Action action = getAction(transformation);
+		String configIdentifier = getConfigIdentifier(transformation);
 
 		if (input != null && input.contains("*")) {
 			// input parameter specifies a wildcard pattern
@@ -114,7 +113,7 @@ public class ConfigProcessor {
 				} else {
 					outputFile = inputFile;
 				}
-				process(resolver, inputFile.getPath(), inputFile, outputFile, transformation.getConfig(), config, type);
+				process(resolver, inputFile.getPath(), inputFile, outputFile, configIdentifier, action, type);
 			}
 		} else {
 			File inputFile = fileResolver.resolve(transformation.getInput());
@@ -130,8 +129,66 @@ public class ConfigProcessor {
 				createOutputFile(output);
 			}
 			String type = getInputType(transformation, inputFile);
-			process(resolver, transformation.getInput(), inputFile, output, transformation.getConfig(), config, type);
+			process(resolver, transformation.getInput(), inputFile, output, configIdentifier, action, type);
 		}
+	}
+
+	protected Action getAction(Transformation transformation) throws ConfigProcessorException, IOException {
+		if (transformation.getConfig() == null && transformation.getRules() == null) {
+			throw new ConfigProcessorException("Transformation config file or rules must be set");
+		} else if (transformation.getConfig() != null && transformation.getRules() != null) {
+			throw new ConfigProcessorException("Cannot specify transformation config file and rules at the same time");
+		}
+
+		Action action;
+		Reader configReader;
+		if (transformation.getConfig() == null) {
+			StringWriter writer = new StringWriter();
+			AntrunXmlPlexusConfigurationWriter xmlWriter = new AntrunXmlPlexusConfigurationWriter();
+			xmlWriter.write(transformation.getRules(), writer);
+			String configContent = trimToNull(writer.toString());
+			configContent = removeStart(configContent, "<rules>");
+			configContent = removeEnd(configContent, "</rules>");
+			StringBuilder sb = new StringBuilder(configContent.length() + XmlHelper.ROOT_PROCESSOR_START.length() + XmlHelper.ROOT_PROCESSOR_END.length());
+			sb.append(XmlHelper.ROOT_PROCESSOR_START);
+			sb.append(configContent);
+			sb.append(XmlHelper.ROOT_PROCESSOR_END);
+			configReader = new StringReader(sb.toString());
+		} else {
+			File config = fileResolver.resolve(transformation.getConfig());
+
+			if (!config.exists()) {
+				throw new ConfigProcessorException("Configuration file [" + config + "] does not exist");
+			}
+
+			configReader = new InputStreamReader(new FileInputStream(config), encoding);
+		}
+
+		try {
+			ProcessingConfigurationParser parser = new ProcessingConfigurationParser();
+			action = parser.parse(configReader);
+		} catch (ParsingException e) {
+			throw new ConfigProcessorException("Error parsing transformation config [" + getConfigIdentifier(transformation) + "]", e);
+		} finally {
+			close(configReader, getLog());
+		}
+		action.validate();
+
+		return action;
+	}
+
+	protected String getConfigIdentifier(Transformation transformation) throws ConfigProcessorException {
+		if (transformation.getConfig() == null) {
+			StringWriter writer = new StringWriter();
+			AntrunXmlPlexusConfigurationWriter xmlWriter = new AntrunXmlPlexusConfigurationWriter();
+			try {
+				xmlWriter.write(transformation.getRules(), writer);
+			} catch (IOException e) {
+				throw new ConfigProcessorException("Shouldn't happen because there is no I/O here", e);
+			}
+			return abbreviate(trimToNull(removeStart(writer.toString(), "<rules>")), 100);
+		}
+		return transformation.getConfig();
 	}
 
 	/**
@@ -233,28 +290,20 @@ public class ConfigProcessor {
 	 * @param type Type of the input file. Properties, XML or null if it is to be auto-detected.
 	 * @throws ConfigProcessorException If processing cannot be performed.
 	 */
-	protected void process(ExpressionResolver resolver, String inputName, File input, File output, String configName, File config, String type) throws ConfigProcessorException {
+	protected void process(ExpressionResolver resolver, String inputName, File input, File output, String configName, Action action, String type) throws ConfigProcessorException {
 		getLog().info("Processing file [" + inputName + "] using config [" + configName + "], outputing to [" + output + "]");
 
-		InputStream configStream = null;
 		InputStream inputStream = null;
 		ByteArrayOutputStream outputStream = null;
 
-		InputStreamReader configStreamReader = null;
 		InputStreamReader inputStreamReader = null;
 		OutputStreamWriter outputStreamWriter = null;
 		try {
-			configStream = new FileInputStream(config);
 			inputStream = new FileInputStream(input);
 			outputStream = new ByteArrayOutputStream();
 
 			inputStreamReader = new InputStreamReader(inputStream, encoding);
-			configStreamReader = new InputStreamReader(configStream, encoding);
 			outputStreamWriter = new OutputStreamWriter(outputStream, encoding);
-
-			ProcessingConfigurationParser parser = new ProcessingConfigurationParser();
-			Action action = parser.parse(configStreamReader);
-			action.validate();
 
 			ActionProcessor processor = getActionProcessor(resolver, type);
 			processor.process(inputStreamReader, outputStreamWriter, action);
@@ -263,7 +312,6 @@ public class ConfigProcessor {
 		} catch (IOException e) {
 			throw new ConfigProcessorException("Error reading/writing files. Input is [" + inputName + "], configuration is [" + configName + "]", e);
 		} finally {
-			close(configStreamReader, getLog());
 			close(inputStreamReader, getLog());
 		}
 		FileOutputStream fileOut = null;

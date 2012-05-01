@@ -34,6 +34,9 @@ public class XmlHelper {
 	public static final String CLOSING_NODE_END = NODE_END;
 
 	public static final String ROOT_TAG = "root";
+	public static final String PROCESSOR_TAG = "processor";
+	public static final String ROOT_PROCESSOR_START = NODE_START + PROCESSOR_TAG + NODE_END;
+	public static final String ROOT_PROCESSOR_END = CLOSING_NODE_START + PROCESSOR_TAG + CLOSING_NODE_END;
 
 	public static Document parse(String text, boolean prefixAndSuffix, List<ParserFeature> features) throws SAXException, ParserConfigurationException {
 		String textToParse;
