@@ -18,6 +18,7 @@ package com.google.code.configprocessor.parsing;
 import static org.junit.Assert.*;
 
 import java.io.*;
+import java.nio.charset.*;
 
 import org.junit.*;
 
@@ -34,7 +35,7 @@ public class ProcessingConfigurationParserTest {
 		ProcessingConfigurationParser parser = new ProcessingConfigurationParser();
 		NestedAction action = null;
 		try {
-			action = parser.parse(is);
+			action = parser.parse(is, Charset.forName("UTF-8"));
 		} finally {
 			try {
 				if (is != null) {
@@ -97,13 +98,13 @@ public class ProcessingConfigurationParserTest {
 	@Test(expected = NullPointerException.class)
 	public void parsingInexistentInput() throws Exception {
 		ProcessingConfigurationParser parser = new ProcessingConfigurationParser();
-		parser.parse(getClass().getResourceAsStream("inexistent"));
+		parser.parse(getClass().getResourceAsStream("inexistent"), Charset.forName("UTF-8"));
 	}
 
 	@Test(expected = ParsingException.class)
 	public void parsingInvalidInput() throws Exception {
 		ProcessingConfigurationParser parser = new ProcessingConfigurationParser();
-		parser.parse(getClass().getResourceAsStream("/com/google/code/configprocessor/data/xml-target-config.xml"));
+		parser.parse(getClass().getResourceAsStream("/com/google/code/configprocessor/data/xml-target-config.xml"), Charset.forName("UTF-8"));
 	}
 	
 	@Test

@@ -16,6 +16,7 @@
 package com.google.code.configprocessor.parsing;
 
 import java.io.*;
+import java.nio.charset.*;
 
 import com.google.code.configprocessor.*;
 import com.google.code.configprocessor.processing.*;
@@ -23,11 +24,11 @@ import com.thoughtworks.xstream.*;
 
 public class ProcessingConfigurationParser {
 
-	public NestedAction parse(InputStream is) throws ParsingException {
+	public NestedAction parse(InputStream is, Charset charset) throws ParsingException {
 		if (is == null) {
 			throw new NullPointerException("InputStream is null");
 		}
-		return parse(new InputStreamReader(is));
+		return parse(new InputStreamReader(is, charset));
 	}
 
 	public NestedAction parse(Reader is) throws ParsingException {
