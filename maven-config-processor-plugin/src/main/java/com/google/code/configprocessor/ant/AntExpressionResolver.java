@@ -40,7 +40,7 @@ public class AntExpressionResolver implements ExpressionResolver {
 
 	public AntExpressionResolver(Project project, Properties specificProperties, boolean replacePlaceholders) {
 		this.project = project;
-		this.specificProperties = specificProperties;
+		this.specificProperties = specificProperties == null ? new Properties() : specificProperties;
 		this.replacePlaceholders = replacePlaceholders;
 	}
 
