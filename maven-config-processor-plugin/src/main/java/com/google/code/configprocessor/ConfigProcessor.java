@@ -286,7 +286,7 @@ public class ConfigProcessor {
 	 * @param input Input file to read from.
 	 * @param output Output file to write to.
 	 * @param configName Symbolic name of the file containing rules to process the input.
-	 * @param config File containing rules to process the input.
+	 * @param action Action to be performed on the input file.
 	 * @param type Type of the input file. Properties, XML or null if it is to be auto-detected.
 	 * @throws ConfigProcessorException If processing cannot be performed.
 	 */
