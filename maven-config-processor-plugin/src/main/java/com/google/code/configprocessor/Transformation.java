@@ -15,6 +15,8 @@
  */
 package com.google.code.configprocessor;
 
+import org.codehaus.plexus.configuration.*;
+
 /**
  * Configuration of a file transformation.
  * 
@@ -67,6 +69,7 @@ public class Transformation {
 
 	/**
 	 * Output file to generate the result of processing.
+	 * May be the same as input in order to override it.
 	 * 
 	 * @parameter
 	 * @required
@@ -75,9 +78,9 @@ public class Transformation {
 
 	/**
 	 * Configuration file describing the processing to be performed.
+	 * Either this property or rules must be set.
 	 * 
 	 * @parameter
-	 * @required
 	 */
 	private String config;
 
@@ -97,6 +100,15 @@ public class Transformation {
 	 * @parameter default-value="true"
 	 */
 	private boolean replacePlaceholders;
+
+	/**
+	 * Transformation rules to be applied to the input file.
+	 * Either this property or config must be set.
+	 * 
+	 * @parameter
+	 * @since 2.2
+	 */
+	private PlexusConfiguration rules;
 
 	public Transformation() {
 		replacePlaceholders = true;
@@ -140,5 +152,13 @@ public class Transformation {
 
 	public void setReplacePlaceholders(boolean replacePlaceholders) {
 		this.replacePlaceholders = replacePlaceholders;
+	}
+
+	public PlexusConfiguration getRules() {
+		return rules;
+	}
+
+	public void setRules(PlexusConfiguration rules) {
+		this.rules = rules;
 	}
 }
