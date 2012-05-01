@@ -1,5 +1,4 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.google.code.maven-config-processor-plugin</groupId>
 	<artifactId>example-project</artifactId>
@@ -17,6 +16,7 @@
 				<artifactId>maven-config-processor-plugin</artifactId>
 				<version>${project.version}</version>
 				<configuration>
+					<encoding>UTF-8</encoding>
 					<namespaceContexts>
 						<s>http://www.springframework.org/schema/beans</s>
 					</namespaceContexts>
@@ -25,7 +25,25 @@
 						<transformation>
 							<input>config/my-prop-config.properties</input>
 							<output>processed/my-prop-config.properties</output>
-							<config>my-prop-config-processing.xml</config>
+							<rules>
+								<!-- Add non-existing property -->
+								<add>
+									<name>test-property</name>
+									<value>${project.version}</value>
+									<before>property1.value</before>
+								</add>
+
+								<!-- Modify a property value -->
+								<modify>
+									<name>property1.value</name>
+									<value>modified-value1</value>
+								</modify>
+
+								<!-- Remove a property -->
+								<remove>
+									<name>property3.value</name>
+								</remove>
+							</rules>
 						</transformation>
 
 						<transformation>
@@ -45,5 +63,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>

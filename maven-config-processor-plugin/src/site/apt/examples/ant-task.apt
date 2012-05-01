@@ -24,6 +24,7 @@ Ant Task
     <pathelement location="lib/xercesImpl.jar" />
     <pathelement location="lib/xpp3_min.jar" />
     <pathelement location="lib/commons-lang.jar" />
+    <pathelement location="lib/plexus-container-default.jar" />
   </classpath>
 </taskdef>
 +-----+
