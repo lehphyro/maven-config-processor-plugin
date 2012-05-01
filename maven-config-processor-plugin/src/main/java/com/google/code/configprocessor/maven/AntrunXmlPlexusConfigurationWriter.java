@@ -45,7 +45,7 @@ public class AntrunXmlPlexusConfigurationWriter {
 		int count = c.getChildCount();
 
 		if (count == 0) {
-			writeTag(c, w, depth);
+			writeTag(c, w);
 		} else {
 			w.startElement(c.getName());
 			writeAttributes(c, w);
@@ -60,7 +60,7 @@ public class AntrunXmlPlexusConfigurationWriter {
 		}
 	}
 
-	private void writeTag(PlexusConfiguration c, XMLWriter w, int depth) throws IOException {
+	private void writeTag(PlexusConfiguration c, XMLWriter w) throws IOException {
 		w.startElement(c.getName());
 
 		writeAttributes(c, w);
