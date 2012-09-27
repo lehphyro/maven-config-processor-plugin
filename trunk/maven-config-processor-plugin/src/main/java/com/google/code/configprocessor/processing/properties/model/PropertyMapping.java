@@ -39,16 +39,20 @@ public class PropertyMapping implements PropertiesFileItem {
 
 	public void parse(String text, boolean trim) {
 		String[] splitted = StringUtils.splitPreserveAllTokens(text, SEPARATOR_1 + SEPARATOR_2, 2);
-		
+
 		if (splitted.length > 1) {
 			String name = splitted[0];
 			String value = splitted[1];
-			for (int i = 0; StringUtils.endsWith(name, SEPARATOR_ESCAPE); i++) {
+			while (StringUtils.endsWith(name, SEPARATOR_ESCAPE)) {
 				String[] aux = StringUtils.splitPreserveAllTokens(value, SEPARATOR_1 + SEPARATOR_2, 2);
-				name = StringUtils.removeEnd(name, SEPARATOR_ESCAPE) + text.charAt(name.length() + i);
+				String charToAdd = Character.toString(text.charAt(name.length()));
+				name += charToAdd;
 				if (aux.length > 1) {
 					name += aux[0];
 					value = aux[1];
+				} else if ((charToAdd.equals(SEPARATOR_1)) || (charToAdd.equals(SEPARATOR_2))) {
+					name += value;
+					value = null;
 				} else {
 					value = aux[0];
 				}

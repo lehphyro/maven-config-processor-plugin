@@ -54,15 +54,15 @@ public class PropertyMappingTest {
 	@Test
 	public void parseWithEscapedKey() {
 		String text = "prop\\=prop:::value";
-		executeParsingTest(text, "prop=prop", "::value");
+		executeParsingTest(text, "prop\\=prop", "::value");
 		
 		text = "prop\\=prop\\:===:value";
-		executeParsingTest(text, "prop=prop:", "==:value");
+		executeParsingTest(text, "prop\\=prop\\:", "==:value");
 		
-		text = "\\:\\=:value";
-		executeParsingTest(text, ":=", "value");
+		text = "spring.context#classpath\\:com/sample/internal/beanRefContext.xml";
+		executeParsingTest(text, "spring.context#classpath\\:com/sample/internal/beanRefContext.xml", null);
 	}
-	
+
 	@Test
 	public void parseWithLineBreak() {
 		String text = "fruits                           =apple, banana, pear, \\\ncantaloupe, watermelon, \\\nkiwi, mango";
