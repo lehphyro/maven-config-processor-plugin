@@ -77,10 +77,8 @@ public class ConfigProcessor {
 
 	public void init() throws IOException {
 		if (useOutputDirectory) {
-			if (!outputDirectory.exists()) {
-				if (!outputDirectory.mkdirs()) {
-					throw new IOException("Could not create outputDirectory [" + outputDirectory + "]");
-				}
+			if (!outputDirectory.exists() && !outputDirectory.mkdirs()) {
+				throw new IOException("Could not create outputDirectory [" + outputDirectory + "]");
 			}
 			actualOutputDirectory = outputDirectory;
 		}
