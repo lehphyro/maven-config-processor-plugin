@@ -102,9 +102,9 @@ public class XmlHelper {
 
 	public static String write(Document document, String encoding, int lineWidth, int indentSize) {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		write(new OutputStreamWriter(baos), document, encoding, lineWidth, indentSize);
 
 		try {
+			write(new OutputStreamWriter(baos, encoding), document, encoding, lineWidth, indentSize);
 			return new String(baos.toByteArray(), encoding);
 		} catch (UnsupportedEncodingException e) {
 			// Should never happen
