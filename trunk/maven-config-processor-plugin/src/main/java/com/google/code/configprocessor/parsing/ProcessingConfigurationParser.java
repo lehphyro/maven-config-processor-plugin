@@ -21,6 +21,7 @@ import java.nio.charset.*;
 import com.google.code.configprocessor.*;
 import com.google.code.configprocessor.processing.*;
 import com.thoughtworks.xstream.*;
+import com.thoughtworks.xstream.converters.reflection.*;
 
 public class ProcessingConfigurationParser {
 
@@ -41,7 +42,7 @@ public class ProcessingConfigurationParser {
 	}
 
 	protected XStream getXStream() {
-		XStream xstream = new XStream();
+		XStream xstream = new XStream(new PureJavaReflectionProvider());
 
 		xstream.alias("processor", NestedAction.class);
 		xstream.alias("add", AddAction.class);
