@@ -52,6 +52,7 @@ public class MavenExpressionResolver implements ExpressionResolver {
 	 * Resolves the given text replacing any placeholders if necessary.
 	 * 
 	 * @param value Value to resolve.
+	 * @param isPropertiesValue True is the value will be used in .properties files and should be escaped.
 	 * @return Resolved value with values replaced as necessary.
 	 */
 	public String resolve(String value, boolean isPropertiesValue) {
