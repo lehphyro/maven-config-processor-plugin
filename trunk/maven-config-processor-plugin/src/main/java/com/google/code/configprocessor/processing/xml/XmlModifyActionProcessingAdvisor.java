@@ -61,6 +61,8 @@ public class XmlModifyActionProcessingAdvisor extends AbstractXmlActionProcessin
 
 				if (node instanceof Attr) {
 					modifyAttribute(document, (Attr) node);
+				} else if (node instanceof Text) {
+					modifyText(document, (Text) node);
 				} else if (node != null){
 					modifyNode(document, node);
 				}
@@ -85,7 +87,11 @@ public class XmlModifyActionProcessingAdvisor extends AbstractXmlActionProcessin
 	protected void modifyAttribute(Document document, Attr oldAttr) {
 		oldAttr.setValue(textFragment);
 	}
-	
+
+	protected void modifyText(Document document, Text oldText) {
+		oldText.setTextContent(textFragment);
+	}
+
 	protected void findReplace(NodeList nodeList) {
 		for (int i = 0; i < nodeList.getLength(); i++) {
 			Node node = nodeList.item(i);
