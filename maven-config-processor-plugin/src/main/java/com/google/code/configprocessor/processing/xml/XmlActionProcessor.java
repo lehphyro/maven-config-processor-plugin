@@ -18,7 +18,6 @@ package com.google.code.configprocessor.processing.xml;
 import java.io.*;
 import java.util.*;
 
-import javax.xml.namespace.*;
 import javax.xml.parsers.*;
 
 import org.w3c.dom.*;
@@ -39,7 +38,7 @@ public class XmlActionProcessor implements ActionProcessor {
 	private int indentSize;
 	private FileResolver fileResolver;
 	private ExpressionResolver expressionResolver;
-	private NamespaceContext namespaceContext;
+	private MapBasedNamespaceContext namespaceContext;
 	private List<ParserFeature> parserFeatures;
     private boolean failOnMissingXpath;
 

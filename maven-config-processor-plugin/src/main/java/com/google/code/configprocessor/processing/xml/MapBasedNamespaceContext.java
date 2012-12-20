@@ -23,6 +23,10 @@ public class MapBasedNamespaceContext implements NamespaceContext {
 
 	private Map<String, String> mappings;
 
+	public MapBasedNamespaceContext() {
+		this(null);
+	}
+
 	public MapBasedNamespaceContext(Map<String, String> mappings) {
 		this.mappings = new HashMap<String, String>();
 		if (mappings != null) {
@@ -47,5 +51,9 @@ public class MapBasedNamespaceContext implements NamespaceContext {
 	@SuppressWarnings({ "rawtypes" })
 	public Iterator getPrefixes(String namespaceURI) {
 		throw new UnsupportedOperationException();
+	}
+
+	public Map<String, String> getMappings() {
+		return mappings;
 	}
 }

@@ -17,7 +17,6 @@ package com.google.code.configprocessor.processing.xml;
 
 import java.util.*;
 
-import javax.xml.namespace.*;
 import javax.xml.parsers.*;
 
 import org.w3c.dom.*;
@@ -36,7 +35,7 @@ public class XmlAddActionProcessingAdvisor extends AbstractXmlActionProcessingAd
     public XmlAddActionProcessingAdvisor(AddAction action,
                                          String fileContent,
                                          ExpressionResolver expressionResolver,
-                                         NamespaceContext namespaceContext,
+                                         MapBasedNamespaceContext namespaceContext,
                                          List<ParserFeature> parserFeatures) throws ParsingException {
         this(action, fileContent, expressionResolver, namespaceContext, parserFeatures, true);
     }
@@ -44,7 +43,7 @@ public class XmlAddActionProcessingAdvisor extends AbstractXmlActionProcessingAd
 	public XmlAddActionProcessingAdvisor(AddAction action,
 	                                     String fileContent,
 	                                     ExpressionResolver expressionResolver,
-	                                     NamespaceContext namespaceContext,
+	                                     MapBasedNamespaceContext namespaceContext,
 	                                     List<ParserFeature> parserFeatures,
                                          boolean failOnMissingXpath) throws ParsingException {
 		super(action, expressionResolver, namespaceContext, parserFeatures, failOnMissingXpath);
@@ -94,7 +93,7 @@ public class XmlAddActionProcessingAdvisor extends AbstractXmlActionProcessingAd
 		Node parent;
 
 		try {
-			Document fragment = XmlHelper.parse(textFragment, prefixAndSuffixTextFragment, getParserFeatures());
+			Document fragment = XmlHelper.parse(textFragment, prefixAndSuffixTextFragment, getNamespaceContext(), getParserFeatures());
 
 			Node referenceNode;
 			if (action.getBefore() != null) {

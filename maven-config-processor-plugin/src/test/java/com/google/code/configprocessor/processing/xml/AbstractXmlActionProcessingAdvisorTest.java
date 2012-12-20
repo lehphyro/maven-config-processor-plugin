@@ -19,8 +19,6 @@ import static org.junit.Assert.*;
 
 import java.util.*;
 
-import javax.xml.namespace.*;
-
 import org.codehaus.plexus.component.configurator.expression.*;
 import org.junit.*;
 import org.w3c.dom.*;
@@ -32,12 +30,12 @@ import com.google.code.configprocessor.maven.*;
 public class AbstractXmlActionProcessingAdvisorTest {
 
 	protected MavenExpressionResolver expressionResolver;
-	protected NamespaceContext namespaceContext;
+	protected MapBasedNamespaceContext namespaceContext;
 	protected Document document;
 
 	public AbstractXmlActionProcessingAdvisorTest() {
 		expressionResolver = new MavenExpressionResolver(new DefaultExpressionEvaluator());
-		namespaceContext = new EmptyNamespaceContext();
+		namespaceContext = new MapBasedNamespaceContext();
 	}
 	
 	@Before

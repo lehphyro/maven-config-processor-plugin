@@ -18,7 +18,6 @@ package com.google.code.configprocessor.processing.xml;
 import java.util.*;
 import java.util.regex.*;
 
-import javax.xml.namespace.*;
 import javax.xml.parsers.*;
 
 import org.w3c.dom.*;
@@ -34,10 +33,10 @@ public class XmlModifyActionProcessingAdvisor extends AbstractXmlActionProcessin
 	private Pattern pattern;
 	private String replace;
 
-    public XmlModifyActionProcessingAdvisor(ModifyAction action, ExpressionResolver expressionResolver, NamespaceContext namespaceContext, List<ParserFeature> parserFeatures) throws ParsingException {
+    public XmlModifyActionProcessingAdvisor(ModifyAction action, ExpressionResolver expressionResolver, MapBasedNamespaceContext namespaceContext, List<ParserFeature> parserFeatures) throws ParsingException {
         this (action, expressionResolver, namespaceContext, parserFeatures, true);
     }
-	public XmlModifyActionProcessingAdvisor(ModifyAction action, ExpressionResolver expressionResolver, NamespaceContext namespaceContext, List<ParserFeature> parserFeatures, boolean failOnMissingXpath) throws ParsingException {
+	public XmlModifyActionProcessingAdvisor(ModifyAction action, ExpressionResolver expressionResolver, MapBasedNamespaceContext namespaceContext, List<ParserFeature> parserFeatures, boolean failOnMissingXpath) throws ParsingException {
 		super(action, expressionResolver, namespaceContext, parserFeatures, failOnMissingXpath);
 
 		if (action.getName() != null) {
@@ -77,7 +76,7 @@ public class XmlModifyActionProcessingAdvisor extends AbstractXmlActionProcessin
 	}
 
 	protected void modifyNode(Document document, Node oldNode) throws SAXException, ParserConfigurationException {
-		Document fragment = XmlHelper.parse(textFragment, false, getParserFeatures());
+		Document fragment = XmlHelper.parse(textFragment, false, getNamespaceContext(), getParserFeatures());
 		Node parent = oldNode.getParentNode();
 		Node importedNode = document.importNode(fragment.getDocumentElement(), true);
 		parent.replaceChild(importedNode, oldNode);
