@@ -38,12 +38,17 @@ public class XmlHelper {
 	public static final String ROOT_PROCESSOR_START = NODE_START + PROCESSOR_TAG + NODE_END;
 	public static final String ROOT_PROCESSOR_END = CLOSING_NODE_START + PROCESSOR_TAG + CLOSING_NODE_END;
 
-	public static Document parse(String text, boolean prefixAndSuffix, List<ParserFeature> features) throws SAXException, ParserConfigurationException {
+	public static Document parse(String text, boolean prefixAndSuffix, MapBasedNamespaceContext namespaceContext, List<ParserFeature> features) throws SAXException, ParserConfigurationException {
 		String textToParse;
 
 		if (prefixAndSuffix) {
 			StringBuilder sb = new StringBuilder();
-			sb.append(NODE_START).append(ROOT_TAG).append(NODE_END);
+			sb.append(NODE_START).append(ROOT_TAG);
+			for (Map.Entry<String, String> mapping : namespaceContext.getMappings().entrySet()) {
+				sb.append(' ');
+				sb.append("xmlns:").append(mapping.getKey()).append("=\"").append(mapping.getValue()).append('"');
+			}
+			sb.append(NODE_END);
 			sb.append(text);
 			sb.append(CLOSING_NODE_START).append(ROOT_TAG).append(CLOSING_NODE_END);
 

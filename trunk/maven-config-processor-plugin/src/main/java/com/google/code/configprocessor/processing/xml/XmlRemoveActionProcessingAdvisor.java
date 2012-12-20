@@ -17,8 +17,6 @@ package com.google.code.configprocessor.processing.xml;
 
 import java.util.*;
 
-import javax.xml.namespace.*;
-
 import org.w3c.dom.*;
 
 import com.google.code.configprocessor.*;
@@ -27,11 +25,11 @@ import com.google.code.configprocessor.processing.*;
 
 public class XmlRemoveActionProcessingAdvisor extends AbstractXmlActionProcessingAdvisor {
 
-    public XmlRemoveActionProcessingAdvisor(RemoveAction action, ExpressionResolver expressionResolver, NamespaceContext namespaceContext, List<ParserFeature> parserFeatures) throws ParsingException {
+    public XmlRemoveActionProcessingAdvisor(RemoveAction action, ExpressionResolver expressionResolver, MapBasedNamespaceContext namespaceContext, List<ParserFeature> parserFeatures) throws ParsingException {
         this(action, expressionResolver, namespaceContext, parserFeatures, true);
     }
 
-	public XmlRemoveActionProcessingAdvisor(RemoveAction action, ExpressionResolver expressionResolver, NamespaceContext namespaceContext, List<ParserFeature> parserFeatures, boolean failOnMissingXpath) throws ParsingException {
+	public XmlRemoveActionProcessingAdvisor(RemoveAction action, ExpressionResolver expressionResolver, MapBasedNamespaceContext namespaceContext, List<ParserFeature> parserFeatures, boolean failOnMissingXpath) throws ParsingException {
 		super(action, expressionResolver, namespaceContext, parserFeatures, failOnMissingXpath);
 
 		if (action.getName() == null) {

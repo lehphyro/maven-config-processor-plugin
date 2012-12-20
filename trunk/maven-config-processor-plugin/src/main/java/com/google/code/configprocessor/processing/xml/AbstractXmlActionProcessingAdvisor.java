@@ -17,7 +17,6 @@ package com.google.code.configprocessor.processing.xml;
 
 import java.util.*;
 
-import javax.xml.namespace.*;
 import javax.xml.xpath.*;
 
 import org.w3c.dom.*;
@@ -30,18 +29,18 @@ public abstract class AbstractXmlActionProcessingAdvisor implements XmlActionPro
 
 	private Action action;
 	private ExpressionResolver expressionResolver;
-	private NamespaceContext namespaceContext;
+	private MapBasedNamespaceContext namespaceContext;
 	private List<ParserFeature> parserFeatures;
     private boolean failOnMissingXpath;
 	
 	private String textExpression;
 	private XPathExpression xpathExpression;
 
-	public AbstractXmlActionProcessingAdvisor(Action action, ExpressionResolver expressionResolver, NamespaceContext namespaceContext, List<ParserFeature> parserFeatures) {
+	public AbstractXmlActionProcessingAdvisor(Action action, ExpressionResolver expressionResolver, MapBasedNamespaceContext namespaceContext, List<ParserFeature> parserFeatures) {
 		this(action, expressionResolver, namespaceContext, parserFeatures, true);
 	}
 
-    public AbstractXmlActionProcessingAdvisor(Action action, ExpressionResolver expressionResolver, NamespaceContext namespaceContext, List<ParserFeature> parserFeatures, boolean failOnMissingXpath) {
+    public AbstractXmlActionProcessingAdvisor(Action action, ExpressionResolver expressionResolver, MapBasedNamespaceContext namespaceContext, List<ParserFeature> parserFeatures, boolean failOnMissingXpath) {
         this.action = action;
         this.expressionResolver = expressionResolver;
         this.namespaceContext = namespaceContext;
@@ -103,7 +102,11 @@ public abstract class AbstractXmlActionProcessingAdvisor implements XmlActionPro
 	protected XPathExpression getXPathExpression() {
 		return xpathExpression;
 	}
-	
+
+	protected MapBasedNamespaceContext getNamespaceContext() {
+		return namespaceContext;
+	}
+
 	protected List<ParserFeature> getParserFeatures() {
 		return parserFeatures;
 	}
