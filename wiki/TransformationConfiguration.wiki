@@ -161,6 +161,11 @@ The following is an example of configuration file to process [http://www.springf
         <name>/beans/bean[@id='dataSource']/@scope</name>
         <value>singleton</value>
     </modify>
+
+    <modify>
+        <name>/beans/bean[@id='mappings']/property[@name='properties']/value/text()</name>
+        <value>new-value=new-text</value>
+    </modify>
 </processor>
 }}}
 
