@@ -3,9 +3,7 @@
 
 = Introduction =
 
-Each file is processed using a *set of rules* defined by the file configured in the field *config* of the plugin declaration.
-
-Below is the documentation about the file format and usage.
+Each file is processed using a *set of rules* defined by the file configured in the fields *config* or *rules* of the plugin declaration.
 
 = File Format =
 
