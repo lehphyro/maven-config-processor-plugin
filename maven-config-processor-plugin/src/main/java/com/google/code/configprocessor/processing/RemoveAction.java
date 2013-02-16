@@ -15,28 +15,46 @@
  */
 package com.google.code.configprocessor.processing;
 
+import org.apache.commons.lang.*;
+
 public class RemoveAction extends AbstractAction {
 
 	private static final long serialVersionUID = 6999363851417248906L;
+
+	private String nodeSetPolicy;
 
 	public RemoveAction() {
 		this(null);
 	}
 
 	public RemoveAction(String name) {
-		super(name, name);
+		this(name, NodeSetPolicy.SINGLE);
 	}
 
 	public RemoveAction(String name, NodeSetPolicy nodeSetPolicy) {
 		super(name, name);
-		setNodeSetPolicy(nodeSetPolicy.toString());
+		this.nodeSetPolicy = nodeSetPolicy.toString();
 	}
 	
 	public void validate() throws ActionValidationException {
-		super.validate();
 		if (getName() == null) {
 			throw new ActionValidationException("Name is required", this);
 		}
+		if (StringUtils.isBlank(getNodeSetPolicy())) {
+			throw new ActionValidationException("NodeSetPolicy is required", this);
+		}
+	}
+
+	public String getNodeSetPolicy() {
+		return nodeSetPolicy;
+	}
+
+	public NodeSetPolicy getNodeSetPolicyAsEnum() {
+		return NodeSetPolicy.valueOfName(getNodeSetPolicy());
+	}
+
+	public void setNodeSetPolicy(String nodeSetPolicy) {
+		this.nodeSetPolicy = nodeSetPolicy;
 	}
 
 	@Override
@@ -64,7 +82,7 @@ public class RemoveAction extends AbstractAction {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		AbstractAction other = (AbstractAction) obj;
+		RemoveAction other = (RemoveAction) obj;
 		if (getName() == null) {
 			if (other.getName() != null) {
 				return false;

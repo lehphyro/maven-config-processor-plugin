@@ -97,7 +97,7 @@ public abstract class AbstractXmlActionProcessingAdvisor implements XmlActionPro
 		}
 	}
 
-	protected List<Node> evaluateForNodeList(Document document) throws ParsingException {
+	protected List<Node> evaluateForNodeList(Document document, NodeSetPolicy nodeSetPolicy) throws ParsingException {
 		try {
 			NodeList nodeList = (NodeList) getXPathExpression().evaluate(document, XPathConstants.NODESET);
 
@@ -106,7 +106,7 @@ public abstract class AbstractXmlActionProcessingAdvisor implements XmlActionPro
 			}
 
 			List<Node> nodes = new ArrayList<Node>(nodeList.getLength());
-			switch (action.getNodeSetPolicyAsEnum()) {
+			switch (nodeSetPolicy) {
 				case FIRST:
 					if (nodeList.getLength() > 0) {
 						nodes.add(nodeList.item(0));
@@ -123,7 +123,7 @@ public abstract class AbstractXmlActionProcessingAdvisor implements XmlActionPro
 					}
 					break;
 				default:
-					throw new IllegalStateException("Unknown node set policy: " + action.getNodeSetPolicyAsEnum());
+					throw new IllegalStateException("Unknown node set policy: " + nodeSetPolicy);
 			}
 			return nodes;
 		} catch (XPathExpressionException e) {
