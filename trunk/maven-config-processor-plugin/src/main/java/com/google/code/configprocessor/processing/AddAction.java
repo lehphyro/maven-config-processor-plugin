@@ -58,6 +58,7 @@ public class AddAction extends AbstractAction {
 	}
 	
 	public void validate() throws ActionValidationException {
+		super.validate();
 		if (getFile() == null && getValue() == null) {
 			throw new ActionValidationException("File or value are required", this);
 		}

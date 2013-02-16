@@ -64,4 +64,34 @@ public class XmlRemoveActionProcessingAdvisorTest extends AbstractXmlActionProce
 		XmlActionProcessingAdvisor advisor = new XmlRemoveActionProcessingAdvisor(action, expressionResolver, namespaceContext, Collections.<ParserFeature>emptyList(), true);
 		executeTest(advisor, null);
 	}
+
+	@Test
+	public void removeFirstElement() throws Exception {
+		List<ParserFeature> features = Collections.emptyList();
+		document = XmlHelper.parse(getClass().getResourceAsStream("/com/google/code/configprocessor/data/xml-target-config-2.xml"), features);
+		RemoveAction action = new RemoveAction("/root/property[@attribute='value3']", NodeSetPolicy.FIRST);
+		XmlActionProcessingAdvisor advisor = new XmlRemoveActionProcessingAdvisor(action, expressionResolver, namespaceContext, Collections.<ParserFeature>emptyList());
+		String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + LINE_SEPARATOR + "<root>" + LINE_SEPARATOR + " <property attribute=\"value3\">value3</property>" + LINE_SEPARATOR + " <property5>" + LINE_SEPARATOR + "  <nested1 a=\"1\"/>" + LINE_SEPARATOR + " </property5>" + LINE_SEPARATOR + "</root>" + LINE_SEPARATOR;
+		executeTest(advisor, expected);
+	}
+
+	@Test
+	public void removeLastElement() throws Exception {
+		List<ParserFeature> features = Collections.emptyList();
+		document = XmlHelper.parse(getClass().getResourceAsStream("/com/google/code/configprocessor/data/xml-target-config-2.xml"), features);
+		RemoveAction action = new RemoveAction("/root/property[@attribute='value3']", NodeSetPolicy.LAST);
+		XmlActionProcessingAdvisor advisor = new XmlRemoveActionProcessingAdvisor(action, expressionResolver, namespaceContext, Collections.<ParserFeature>emptyList());
+		String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + LINE_SEPARATOR + "<root>" + LINE_SEPARATOR + " <property attribute=\"value3\">value3</property>" + LINE_SEPARATOR + " <property5>" + LINE_SEPARATOR + "  <nested1 a=\"1\"/>" + LINE_SEPARATOR + " </property5>" + LINE_SEPARATOR + "</root>" + LINE_SEPARATOR;
+		executeTest(advisor, expected);
+	}
+
+	@Test
+	public void removeAllElements() throws Exception {
+		List<ParserFeature> features = Collections.emptyList();
+		document = XmlHelper.parse(getClass().getResourceAsStream("/com/google/code/configprocessor/data/xml-target-config-2.xml"), features);
+		RemoveAction action = new RemoveAction("/root/property[@attribute='value3']", NodeSetPolicy.ALL);
+		XmlActionProcessingAdvisor advisor = new XmlRemoveActionProcessingAdvisor(action, expressionResolver, namespaceContext, Collections.<ParserFeature>emptyList());
+		String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + LINE_SEPARATOR + "<root>" + LINE_SEPARATOR + " <property5>" + LINE_SEPARATOR + "  <nested1 a=\"1\"/>" + LINE_SEPARATOR + " </property5>" + LINE_SEPARATOR + "</root>" + LINE_SEPARATOR;
+		executeTest(advisor, expected);
+	}
 }

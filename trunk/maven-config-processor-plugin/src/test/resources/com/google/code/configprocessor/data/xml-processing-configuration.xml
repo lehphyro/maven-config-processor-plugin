@@ -84,4 +84,9 @@
         <value>value-first-property</value>
         <first />
     </add>
+
+    <remove>
+        <name>/root/property3</name>
+        <nodeSetPolicy>last</nodeSetPolicy>
+    </remove>
 </processor>

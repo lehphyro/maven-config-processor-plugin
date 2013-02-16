@@ -49,7 +49,11 @@ public class NestedAction implements Action {
 	public boolean isStrict() {
 		return strict;
 	}
-	
+
+	public NodeSetPolicy getNodeSetPolicyAsEnum() {
+		throw new UnsupportedOperationException("NestedActions dont have node set policy");
+	}
+
 	public List<Action> getActions() {
 		if (actions == null) {
 			return Collections.emptyList();

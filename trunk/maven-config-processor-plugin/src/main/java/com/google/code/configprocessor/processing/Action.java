@@ -23,4 +23,6 @@ public interface Action extends Serializable {
 
 	boolean isStrict();
 
+	NodeSetPolicy getNodeSetPolicyAsEnum();
+
 }
