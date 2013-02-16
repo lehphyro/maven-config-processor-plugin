@@ -48,7 +48,7 @@ public class XmlRemoveActionProcessingAdvisor extends AbstractXmlActionProcessin
 				removeNode(node);
 			}
 		} else {
-			List<Node> nodes = evaluateForNodeList(document);
+			List<Node> nodes = evaluateForNodeList(document, getAction().getNodeSetPolicyAsEnum());
 			for (Node node : nodes) {
 				removeNode(node);
 			}
@@ -63,5 +63,10 @@ public class XmlRemoveActionProcessingAdvisor extends AbstractXmlActionProcessin
 	protected void removeAttribute(Attr attr) {
 		Node owner = attr.getOwnerElement();
 		owner.getAttributes().removeNamedItemNS(attr.getNamespaceURI(), attr.getLocalName());
+	}
+
+	@Override
+	public RemoveAction getAction() {
+		return (RemoveAction) super.getAction();
 	}
 }
