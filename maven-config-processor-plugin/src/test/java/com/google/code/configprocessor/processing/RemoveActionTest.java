@@ -24,4 +24,11 @@ public class RemoveActionTest {
 		RemoveAction action = new RemoveAction();
 		action.validate();
 	}
+
+	@Test(expected = ActionValidationException.class)
+	public void nodeSetPolicyIsRequired() throws Exception {
+		RemoveAction action = new RemoveAction("name");
+		action.setNodeSetPolicy("    ");
+		action.validate();
+	}
 }

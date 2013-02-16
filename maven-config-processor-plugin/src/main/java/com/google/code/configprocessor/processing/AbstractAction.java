@@ -24,11 +24,19 @@ public abstract class AbstractAction implements Action {
 	private String name;
 	private String value;
 	private boolean strict;
+	private String nodeSetPolicy;
 
 	public AbstractAction(String name, String value) {
 		this.name = name;
 		this.value = value;
 		this.strict = true;
+		this.nodeSetPolicy = NodeSetPolicy.SINGLE.toString();
+	}
+
+	public void validate() throws ActionValidationException {
+		if (StringUtils.isBlank(getNodeSetPolicy())) {
+			throw new ActionValidationException("NodeSetPolicy is required", this);
+		}
 	}
 
 	public String getName() {
@@ -53,6 +61,18 @@ public abstract class AbstractAction implements Action {
 	
 	public void setStrict(boolean strict) {
 		this.strict = strict;
+	}
+
+	public String getNodeSetPolicy() {
+		return nodeSetPolicy;
+	}
+
+	public NodeSetPolicy getNodeSetPolicyAsEnum() {
+		return NodeSetPolicy.valueOfName(getNodeSetPolicy());
+	}
+
+	public void setNodeSetPolicy(String nodeSetPolicy) {
+		this.nodeSetPolicy = nodeSetPolicy;
 	}
 
 	protected abstract String getActionName();

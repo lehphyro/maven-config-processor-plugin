@@ -28,6 +28,7 @@ public class CommentAction extends AbstractAction {
 	}
 	
 	public void validate() throws ActionValidationException {
+		super.validate();
 		if (getName() == null) {
 			throw new ActionValidationException("Name is required", this);
 		}

@@ -26,8 +26,14 @@ public class RemoveAction extends AbstractAction {
 	public RemoveAction(String name) {
 		super(name, name);
 	}
+
+	public RemoveAction(String name, NodeSetPolicy nodeSetPolicy) {
+		super(name, name);
+		setNodeSetPolicy(nodeSetPolicy.toString());
+	}
 	
 	public void validate() throws ActionValidationException {
+		super.validate();
 		if (getName() == null) {
 			throw new ActionValidationException("Name is required", this);
 		}
@@ -43,6 +49,7 @@ public class RemoveAction extends AbstractAction {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
+		result = prime * result + getNodeSetPolicyAsEnum().hashCode();
 		return result;
 	}
 
@@ -63,6 +70,9 @@ public class RemoveAction extends AbstractAction {
 				return false;
 			}
 		} else if (!getName().equals(other.getName())) {
+			return false;
+		}
+		if (getNodeSetPolicyAsEnum() != other.getNodeSetPolicyAsEnum()) {
 			return false;
 		}
 		return true;

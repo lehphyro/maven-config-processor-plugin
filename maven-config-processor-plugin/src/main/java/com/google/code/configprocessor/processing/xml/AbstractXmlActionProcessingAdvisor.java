@@ -31,23 +31,25 @@ public abstract class AbstractXmlActionProcessingAdvisor implements XmlActionPro
 	private ExpressionResolver expressionResolver;
 	private MapBasedNamespaceContext namespaceContext;
 	private List<ParserFeature> parserFeatures;
-    private boolean failOnMissingXpath;
-	
+	private boolean failOnMissingXpath;
+
 	private String textExpression;
 	private XPathExpression xpathExpression;
 
-	public AbstractXmlActionProcessingAdvisor(Action action, ExpressionResolver expressionResolver, MapBasedNamespaceContext namespaceContext, List<ParserFeature> parserFeatures) {
+	public AbstractXmlActionProcessingAdvisor(Action action, ExpressionResolver expressionResolver, MapBasedNamespaceContext namespaceContext,
+			List<ParserFeature> parserFeatures) {
 		this(action, expressionResolver, namespaceContext, parserFeatures, true);
 	}
 
-    public AbstractXmlActionProcessingAdvisor(Action action, ExpressionResolver expressionResolver, MapBasedNamespaceContext namespaceContext, List<ParserFeature> parserFeatures, boolean failOnMissingXpath) {
-        this.action = action;
-        this.expressionResolver = expressionResolver;
-        this.namespaceContext = namespaceContext;
-        this.parserFeatures = parserFeatures;
-        this.failOnMissingXpath = failOnMissingXpath;
-    }
-	
+	public AbstractXmlActionProcessingAdvisor(Action action, ExpressionResolver expressionResolver, MapBasedNamespaceContext namespaceContext,
+			List<ParserFeature> parserFeatures, boolean failOnMissingXpath) {
+		this.action = action;
+		this.expressionResolver = expressionResolver;
+		this.namespaceContext = namespaceContext;
+		this.parserFeatures = parserFeatures;
+		this.failOnMissingXpath = failOnMissingXpath;
+	}
+
 	public Action getAction() {
 		return action;
 	}
@@ -90,6 +92,40 @@ public abstract class AbstractXmlActionProcessingAdvisor implements XmlActionPro
 			}
 
 			return node;
+		} catch (XPathExpressionException e) {
+			throw new ParsingException(e);
+		}
+	}
+
+	protected List<Node> evaluateForNodeList(Document document) throws ParsingException {
+		try {
+			NodeList nodeList = (NodeList) getXPathExpression().evaluate(document, XPathConstants.NODESET);
+
+			if ((nodeList == null || nodeList.getLength() == 0) && failOnMissingXpath) {
+				throw new ParsingException("XPath expression did not find node(s): " + textExpression);
+			}
+
+			List<Node> nodes = new ArrayList<Node>(nodeList.getLength());
+			switch (action.getNodeSetPolicyAsEnum()) {
+				case FIRST:
+					if (nodeList.getLength() > 0) {
+						nodes.add(nodeList.item(0));
+					}
+					break;
+				case LAST:
+					if (nodeList.getLength() > 0) {
+						nodes.add(nodeList.item(nodeList.getLength() - 1));
+					}
+					break;
+				case ALL:
+					for (int index = 0; index < nodeList.getLength(); index++) {
+						nodes.add(nodeList.item(index));
+					}
+					break;
+				default:
+					throw new IllegalStateException("Unknown node set policy: " + action.getNodeSetPolicyAsEnum());
+			}
+			return nodes;
 		} catch (XPathExpressionException e) {
 			throw new ParsingException(e);
 		}

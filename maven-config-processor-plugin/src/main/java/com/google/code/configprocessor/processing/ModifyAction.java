@@ -39,6 +39,7 @@ public class ModifyAction extends AbstractAction {
 	}
 
 	public void validate() throws ActionValidationException {
+		super.validate();
 		if (getName() == null) {
 			if (getValue() == null) {
 				if (getFind() == null || getReplace() == null) {
