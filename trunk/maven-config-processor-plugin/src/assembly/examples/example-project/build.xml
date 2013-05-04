@@ -10,7 +10,7 @@
 	<taskdef name="config-processor"
 			 classname="com.google.code.configprocessor.ant.ConfigProcessorTask">
 		<classpath>
-			<pathelement location="${PLUGIN_HOME}/lib/maven-config-processor-plugin.jar" />
+			<pathelement location="${PLUGIN_HOME}/lib/config-processor-maven-plugin.jar" />
 			<pathelement location="${PLUGIN_HOME}/lib/xstream.jar" />
 			<pathelement location="${PLUGIN_HOME}/lib/xpp3_min.jar" />
 			<pathelement location="${PLUGIN_HOME}/lib/commons-lang.jar" />
