@@ -78,7 +78,7 @@ public class XmlActionProcessor implements ActionProcessor {
 			// Processes the file applying all sub-transformations before
 			// passing it over to the advisor
 			AddAction addAction = (AddAction) action;
-			String fileName = addAction.getFile();
+			String fileName = expressionResolver.resolve(addAction.getFile(), false);
 			String fileContent = null;
 			if (fileName != null) {
 				fileContent = getProcessedFile(fileName, addAction.getNestedAction());
