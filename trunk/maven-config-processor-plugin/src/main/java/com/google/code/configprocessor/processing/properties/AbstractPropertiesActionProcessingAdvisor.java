@@ -48,7 +48,7 @@ public abstract class AbstractPropertiesActionProcessingAdvisor implements Prope
 	}
 
 	protected PropertyMapping createPropertyMapping(String name, String value) {
-		return new PropertyMapping(name, resolve(value));
+		return new PropertyMapping(resolve(name), resolve(value));
 	}
 
 	protected String resolve(String value) {

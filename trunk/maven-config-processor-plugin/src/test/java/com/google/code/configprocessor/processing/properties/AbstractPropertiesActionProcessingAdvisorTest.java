@@ -18,15 +18,18 @@ package com.google.code.configprocessor.processing.properties;
 import static org.junit.Assert.*;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.codehaus.plexus.component.configurator.expression.*;
 import org.junit.*;
 
+import com.google.code.configprocessor.expression.ExpressionResolver;
 import com.google.code.configprocessor.io.*;
 import com.google.code.configprocessor.maven.*;
 import com.google.code.configprocessor.processing.*;
 
-@Ignore
 public class AbstractPropertiesActionProcessingAdvisorTest {
 
 	private static final String ENCODING = "ISO-8859-1";
@@ -39,6 +42,15 @@ public class AbstractPropertiesActionProcessingAdvisorTest {
 		processor = new PropertiesActionProcessor(ENCODING, new ClasspathFileResolver(), new MavenExpressionResolver(new DefaultExpressionEvaluator()));
 		input = getClass().getResourceAsStream(PropertiesActionProcessorTest.PROPERTIES_PATH);
 		output = new ByteArrayOutputStream();
+	}
+
+	@Test
+	public void testCreatePropertyMapping() throws Exception {
+		TestExpressionResolver resolver = new TestExpressionResolver();
+		PropertiesAddActionProcessingAdvisor advisor = new PropertiesAddActionProcessingAdvisor(new AddAction(), resolver);
+		advisor.createPropertyMapping("name", "value");
+		assertEquals(2, resolver.getResolvedValues().size());
+		assertEquals(Arrays.asList("name", "value"), resolver.getResolvedValues());
 	}
 
 	protected void executeTest(Action action, String expected) throws Exception {
@@ -55,5 +67,18 @@ public class AbstractPropertiesActionProcessingAdvisorTest {
 	
 	protected String getOutput() {
 		return new String(output.toByteArray());
+	}
+
+	private static class TestExpressionResolver implements ExpressionResolver {
+		private List<String> resolvedValues = new ArrayList<String>();
+
+		public String resolve(String value, boolean isPropertiesValue) {
+			resolvedValues.add(value);
+			return value;
+		}
+
+		public List<String> getResolvedValues() {
+			return resolvedValues;
+		}
 	}
 }
