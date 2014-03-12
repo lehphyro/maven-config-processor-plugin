@@ -51,6 +51,7 @@ The transformation configuration file defines these operations:
 }}}
 
 It is possible to configure as many tags as necessary.
+There is a work-in-progress schema file available at http://config-processor-maven-plugin.appspot.com/schema/transformation-2.2.xsd
 
 = Properties File Processing =
 
