@@ -35,7 +35,7 @@ public class RemoveAction extends AbstractAction {
 		super(name, name);
 		this.nodeSetPolicy = nodeSetPolicy.toString();
 	}
-	
+
 	public void validate() throws ActionValidationException {
 		if (getName() == null) {
 			throw new ActionValidationException("Name is required", this);
