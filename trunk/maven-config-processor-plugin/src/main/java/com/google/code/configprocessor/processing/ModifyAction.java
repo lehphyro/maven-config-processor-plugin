@@ -15,17 +15,19 @@
  */
 package com.google.code.configprocessor.processing;
 
-import java.util.regex.*;
+import org.apache.commons.lang.StringUtils;
 
-import org.apache.commons.lang.*;
+import java.util.regex.Pattern;
 
 public class ModifyAction extends AbstractAction {
 
 	private static final long serialVersionUID = 3614101885803457281L;
-	
+
 	private static final String DEFAULT_PATTERN_FLAGS = "CASE_INSENSITIVE";
 	private static final char PATTERN_FLAG_SEPARATOR = ',';
-	
+
+	private String nodeSetPolicy;
+
 	private String find;
 	private String replace;
 	private String flags;
@@ -35,7 +37,12 @@ public class ModifyAction extends AbstractAction {
 	}
 
 	public ModifyAction(String name, String value) {
+		this(name, value, NodeSetPolicy.SINGLE);
+	}
+
+	public ModifyAction(String name, String value, NodeSetPolicy nodeSetPolicy) {
 		super(name, value);
+		this.nodeSetPolicy = nodeSetPolicy.toString();
 	}
 
 	public void validate() throws ActionValidationException {
@@ -52,8 +59,23 @@ public class ModifyAction extends AbstractAction {
 				throw new ActionValidationException("Find/Replace cannot be used when modifying a specific property", this);
 			}
 		}
+		if (StringUtils.isBlank(getNodeSetPolicy())) {
+			throw new ActionValidationException("NodeSetPolicy is required", this);
+		}
 	}
-	
+
+	public String getNodeSetPolicy() {
+		return nodeSetPolicy;
+	}
+
+	public NodeSetPolicy getNodeSetPolicyAsEnum() {
+		return NodeSetPolicy.valueOfName(getNodeSetPolicy());
+	}
+
+	public void setNodeSetPolicy(String nodeSetPolicy) {
+		this.nodeSetPolicy = nodeSetPolicy;
+	}
+
 	@Override
 	protected String getActionName() {
 		return "Modify";
@@ -84,7 +106,7 @@ public class ModifyAction extends AbstractAction {
 				throw new IllegalArgumentException("Unknown flag: " + flag);
 			}
 		}
-		
+
 		return flagsToUse;
 	}
 
@@ -107,15 +129,15 @@ public class ModifyAction extends AbstractAction {
 	public String getFlags() {
 		return StringUtils.trimToNull(flags);
 	}
-	
+
 	public void setFlags(String flags) {
 		this.flags = flags;
 	}
-	
+
 	public Pattern getPattern() {
 		return Pattern.compile(getFind(), parseFlags());
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -153,7 +175,7 @@ public class ModifyAction extends AbstractAction {
 		}
 		return true;
 	}
-	
+
 	@Override
 	public String toString() {
 		return getActionName() + " [name=" + getName() + ";value=" + getValue() + ";find=" + getFind() + ";replace=" + getReplace() + ";flags=" + getFlags() + "]";

@@ -15,17 +15,18 @@
  */
 package com.google.code.configprocessor.processing.xml;
 
-import java.util.*;
-import java.util.regex.*;
-
-import javax.xml.parsers.*;
-
+import com.google.code.configprocessor.ParserFeature;
+import com.google.code.configprocessor.ParsingException;
+import com.google.code.configprocessor.expression.ExpressionResolver;
+import com.google.code.configprocessor.processing.ModifyAction;
+import com.google.code.configprocessor.processing.NodeSetPolicy;
 import org.w3c.dom.*;
-import org.xml.sax.*;
+import org.xml.sax.SAXException;
 
-import com.google.code.configprocessor.*;
-import com.google.code.configprocessor.expression.*;
-import com.google.code.configprocessor.processing.*;
+import javax.xml.parsers.ParserConfigurationException;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class XmlModifyActionProcessingAdvisor extends AbstractXmlActionProcessingAdvisor {
 
@@ -42,10 +43,10 @@ public class XmlModifyActionProcessingAdvisor extends AbstractXmlActionProcessin
 		if (action.getName() != null) {
 			compile(action.getName());
 			textFragment = resolve(action.getValue());
-			// The call to modify node later on will throw a NullPointerException if textFragment resolves to null. 
+			// The call to modify node later on will throw a NullPointerException if textFragment resolves to null.
 			// It's easier for a user to track down the problem with a explanatory exception message.
 			if (textFragment == null && action.getValue() != null) {
-				throw new ParsingException(String.format("Action value %s resolved to null on lookup.", action.getValue())); 
+				throw new ParsingException(String.format("Action value %s resolved to null on lookup.", action.getValue()));
 			}
 		}
 		if (action.getFind() != null) {
@@ -57,14 +58,26 @@ public class XmlModifyActionProcessingAdvisor extends AbstractXmlActionProcessin
 	public void process(Document document) throws ParsingException {
 		try {
 			if (pattern == null) {
-				Node node = evaluateForSingleNode(document, true, true);
-
-				if (node instanceof Attr) {
-					modifyAttribute(document, (Attr) node);
-				} else if (node instanceof Text) {
-					modifyText(document, (Text) node);
-				} else if (node != null){
-					modifyNode(document, node);
+				if (getAction().getNodeSetPolicyAsEnum() == NodeSetPolicy.SINGLE) {
+					Node node = evaluateForSingleNode(document, true, true);
+					if (node instanceof Attr) {
+						modifyAttribute(document, (Attr) node);
+					} else if (node instanceof Text) {
+						modifyText(document, (Text) node);
+					} else if (node != null){
+						modifyNode(document, node);
+					}
+				} else {
+					List<Node> nodes = evaluateForNodeList(document, getAction().getNodeSetPolicyAsEnum());
+					for (Node node : nodes) {
+						if (node instanceof Attr) {
+							modifyAttribute(document, (Attr) node);
+						} else if (node instanceof Text) {
+							modifyText(document, (Text) node);
+						} else if (node != null){
+							modifyNode(document, node);
+						}
+					}
 				}
 			} else {
 				NodeList nodes = document.getChildNodes();
@@ -107,7 +120,7 @@ public class XmlModifyActionProcessingAdvisor extends AbstractXmlActionProcessin
 			findReplace(node.getChildNodes());
 		}
 	}
-	
+
 	protected void findReplaceOnNode(Node node) {
 		String value = node.getNodeValue();
 		if (value != null) {
@@ -115,5 +128,10 @@ public class XmlModifyActionProcessingAdvisor extends AbstractXmlActionProcessin
 			String newValue = matcher.replaceAll(replace);
 			node.setNodeValue(newValue);
 		}
+	}
+
+	@Override
+	public ModifyAction getAction() {
+		return (ModifyAction) super.getAction();
 	}
 }
