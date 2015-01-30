@@ -1,0 +1,7 @@
+<root>
+    <property attribute="value3">value3</property>
+    <property attribute="value3">value3</property>
+    <property5>
+        <nested1 a="1"></nested1>
+    </property5>
+</root>
