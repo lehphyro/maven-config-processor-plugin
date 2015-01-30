@@ -10,7 +10,7 @@
 
 	<groupId>com.google.code.maven-config-processor-plugin</groupId>
 	<artifactId>config-processor-maven-plugin</artifactId>
-	<version>2.7-SNAPSHOT</version>
+	<version>2.7</version>
 	<packaging>maven-plugin</packaging>
 
 	<name>Config Processor Maven Plugin</name>
@@ -52,9 +52,9 @@
 	</licenses>
 
 	<scm>
-		<connection>scm:svn:https://maven-config-processor-plugin.googlecode.com/svn/trunk/maven-config-processor-plugin</connection>
-		<developerConnection>scm:svn:https://maven-config-processor-plugin.googlecode.com/svn/trunk/maven-config-processor-plugin</developerConnection>
-		<url>http://maven-config-processor-plugin.googlecode.com/svn/trunk/maven-config-processor-plugin</url>
+		<connection>scm:svn:https://maven-config-processor-plugin.googlecode.com/svn/tags/config-processor-maven-plugin-2.7</connection>
+		<developerConnection>scm:svn:https://maven-config-processor-plugin.googlecode.com/svn/tags/config-processor-maven-plugin-2.7</developerConnection>
+		<url>http://maven-config-processor-plugin.googlecode.com/svn/tags/config-processor-maven-plugin-2.7</url>
 	</scm>
 
 	<dependencies>
@@ -262,7 +262,7 @@
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<ignore></ignore>
+										<ignore />
 									</action>
 								</pluginExecution>
 							</pluginExecutions>
