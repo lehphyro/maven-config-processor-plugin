@@ -1,0 +1,62 @@
+# STEP 1: Configure the Plugin #
+
+In general, you will want to configure the plugin to run only when a specific profile is activated, to do this, you should add something like this to your **pom.xml** file:
+
+```
+<project>
+    ...
+    <profiles>
+        ...
+        <profile>
+            <id>qa</id>
+            <build>
+                <plugins>
+                    ...
+                    <plugin>
+                        <groupId>com.google.code.maven-config-processor-plugin</groupId>
+                        <artifactId>config-processor-maven-plugin</artifactId>
+                        <version>2.6</version>
+                        <configuration>
+                            <specificProperties>src/assembly/qa.properties</specificProperties>
+                            <transformations>
+                                ...
+                                <transformation>
+                                    <input>src/main/resources/my-config.properties</input>
+                                    <output>processed-files/my-config.properties</output>
+                                    <config>src/assembly/qa/my-config-processing.xml</config>
+                                </transformation>
+                                ...
+                            </transformations>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>process</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    ...
+                </plugins>
+            </build>
+        </profile>
+        ...
+    </profiles>
+</project>
+```
+
+Of course, you are not limited to profiles. You can configure the plugin to run whenever you build your project.
+
+# STEP 2: Configure File Transformations #
+
+In the previous step we specified that the file _my-config.properties_ must be processed according to the rules configured in _my-config-processing.xml_ and the output should go to _processed-files/my-config.properties_ in the default outputDirectory (which is ${project.build.directory}).
+
+Now we have to create the rules to process the file. Please, refer to TransformationConfiguration to see how to create rules and PluginConfiguration to see all the properties you can set to customize the plugin execution.
+
+# STEP 3: Process Files #
+
+In order to process the _my-config.properties_ file specified in the previous step, you can execute the following command:
+
+`mvn clean install -Pqa`
+
+This will execute the _process_ goal of the plugin and create the output file _my-config.properties_ in _target/processed-files_ so that you can, for example, configure the [assembly plugin](http://maven.apache.org/plugins/maven-assembly-plugin/) to copy it to the assembly package to be ready for QA tests.
