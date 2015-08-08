@@ -35,7 +35,7 @@ Add this plugin configuration to you pom.xml file:
 </plugin>
 ```
 
-Go to [TransformationConfiguration](TransformationConfiguration.md) to see all available options.
+Go to [PluginConfiguration](PluginConfiguration.md) to see all available options and [TransformationConfiguration](TransformationConfiguration.md) to see all available transformation rules.
 
 ## Getting Help
 
