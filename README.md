@@ -4,7 +4,7 @@ This is a Maven2 plugin and Ant Task to process configuration files using a set 
 
 * Add, remove, modify, comment and uncomment single values of .properties files keeping comments
 * Add, remove and modify elements of XML files keeping comments
-* Ant task with the same capabilities of the maven plugin
+* [Ant task](AntTask.md) with the same capabilities of the maven plugin
 
 ## Getting Started
 
