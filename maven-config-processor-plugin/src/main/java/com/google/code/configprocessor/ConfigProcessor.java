@@ -124,7 +124,7 @@ public class ConfigProcessor {
             try {
                 inputStream  = fileResolver.resolve(transformation.getInput());
             } catch (Exception e) {
-                throw new ConfigProcessorException("Input file [" + transformation.getInput() + "] does not exist");
+                throw new ConfigProcessorException("Input file [" + transformation.getInput() + "] does not exist", e);
             }
             // use input file as output file if output is not set
             File output;
