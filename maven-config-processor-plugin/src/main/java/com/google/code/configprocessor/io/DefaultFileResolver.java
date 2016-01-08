@@ -19,12 +19,18 @@ import java.io.*;
 
 public class DefaultFileResolver implements FileResolver {
 
-	public File resolve(String name) throws IOException {
-		File file = new File(name);
-		if (!file.exists()) {
-			throw new FileNotFoundException("File [" + name + "] does not exist");
-		}
-		return file;
-	}
+    ClasspathFileResolver classpathFileResolver = new ClasspathFileResolver();
+
+    public InputStream resolve(String name) throws IOException {
+        if (name.startsWith("classpath:")) {
+            String resourcePath = name.replace("classpath:", "");
+            return classpathFileResolver.resolve(resourcePath);
+        }
+        File file = new File(name);
+        if (!file.exists()) {
+            throw new FileNotFoundException("File [" + name + "] does not exist");
+        }
+        return new FileInputStream(file);
+    }
 
 }

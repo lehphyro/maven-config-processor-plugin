@@ -32,53 +32,53 @@ import com.google.code.configprocessor.processing.*;
 
 public class AbstractPropertiesActionProcessingAdvisorTest {
 
-	private static final String ENCODING = "ISO-8859-1";
-	
-	protected InputStream input;
-	protected ByteArrayOutputStream output;
-	protected ActionProcessor processor;
-	
-	public void setup() {
-		processor = new PropertiesActionProcessor(ENCODING, new ClasspathFileResolver(), new MavenExpressionResolver(new DefaultExpressionEvaluator()));
-		input = getClass().getResourceAsStream(PropertiesActionProcessorTest.PROPERTIES_PATH);
-		output = new ByteArrayOutputStream();
-	}
+    private static final String ENCODING = "ISO-8859-1";
 
-	@Test
-	public void testCreatePropertyMapping() throws Exception {
-		TestExpressionResolver resolver = new TestExpressionResolver();
-		PropertiesAddActionProcessingAdvisor advisor = new PropertiesAddActionProcessingAdvisor(new AddAction(), resolver);
-		advisor.createPropertyMapping("name", "value");
-		assertEquals(2, resolver.getResolvedValues().size());
-		assertEquals(Arrays.asList("name", "value"), resolver.getResolvedValues());
-	}
+    protected InputStream input;
+    protected ByteArrayOutputStream output;
+    protected ActionProcessor processor;
 
-	protected void executeTest(Action action, String expected) throws Exception {
-		setup();
-		processor.process(new InputStreamReader(input), new OutputStreamWriter(output), action);
-		assertEquals(expected, getOutput());
-		
-		setup();
-		NestedAction nestedAction = new NestedAction();
-		nestedAction.addAction(action);
-		processor.process(new InputStreamReader(input), new OutputStreamWriter(output), nestedAction);
-		assertEquals(expected, getOutput());
-	}
-	
-	protected String getOutput() {
-		return new String(output.toByteArray());
-	}
+    public void setup() {
+        processor = new PropertiesActionProcessor(ENCODING, new ClasspathFileResolver(), new MavenExpressionResolver(new DefaultExpressionEvaluator()));
+        input = getClass().getResourceAsStream(PropertiesActionProcessorTest.PROPERTIES_PATH);
+        output = new ByteArrayOutputStream();
+    }
 
-	private static class TestExpressionResolver implements ExpressionResolver {
-		private List<String> resolvedValues = new ArrayList<String>();
+    @Test
+    public void testCreatePropertyMapping() throws Exception {
+        TestExpressionResolver resolver = new TestExpressionResolver();
+        PropertiesAddActionProcessingAdvisor advisor = new PropertiesAddActionProcessingAdvisor(new AddAction(), resolver);
+        advisor.createPropertyMapping("name", "value");
+        assertEquals(2, resolver.getResolvedValues().size());
+        assertEquals(Arrays.asList("name", "value"), resolver.getResolvedValues());
+    }
 
-		public String resolve(String value, boolean isPropertiesValue) {
-			resolvedValues.add(value);
-			return value;
-		}
+    protected void executeTest(Action action, String expected) throws Exception {
+        setup();
+        processor.process(new InputStreamReader(input), new OutputStreamWriter(output), action);
+        assertEquals(expected, getOutput());
 
-		public List<String> getResolvedValues() {
-			return resolvedValues;
-		}
-	}
+        setup();
+        NestedAction nestedAction = new NestedAction();
+        nestedAction.addAction(action);
+        processor.process(new InputStreamReader(input), new OutputStreamWriter(output), nestedAction);
+        assertEquals(expected, getOutput());
+    }
+
+    protected String getOutput() {
+        return new String(output.toByteArray());
+    }
+
+    public static class TestExpressionResolver implements ExpressionResolver {
+        private List<String> resolvedValues = new ArrayList<String>();
+
+        public String resolve(String value, boolean isPropertiesValue) {
+            resolvedValues.add(value);
+            return value;
+        }
+
+        public List<String> getResolvedValues() {
+            return resolvedValues;
+        }
+    }
 }
