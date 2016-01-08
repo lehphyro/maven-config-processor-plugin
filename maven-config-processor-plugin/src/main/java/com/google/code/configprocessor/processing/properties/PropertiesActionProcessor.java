@@ -34,13 +34,13 @@ public class PropertiesActionProcessor implements ActionProcessor {
 	private FileResolver fileResolver;
 	private ExpressionResolver expressionResolver;
 
-	private Set<File> appendedFiles;
+	private Set<String> appendedFiles;
 
 	public PropertiesActionProcessor(String encoding, FileResolver fileResolver, ExpressionResolver expressionResolver) {
 		this.encoding = encoding;
 		this.fileResolver = fileResolver;
 		this.expressionResolver = expressionResolver;
-		this.appendedFiles = new HashSet<File>();
+		this.appendedFiles = new HashSet<String>();
 	}
 
 	public void process(Reader input, Writer output, Action action) throws ParsingException, IOException {
@@ -48,7 +48,7 @@ public class PropertiesActionProcessor implements ActionProcessor {
 		BufferedWriter writer = new BufferedWriter(output);
 		process(reader, writer, action);
 	}
-	
+
 	protected void process(BufferedReader reader, BufferedWriter writer, Action action) throws ParsingException, IOException {
 		PropertiesActionProcessingAdvisor advisor = getAdvisorFor(action);
 
@@ -165,12 +165,12 @@ public class PropertiesActionProcessor implements ActionProcessor {
 			writer.append(LINE_SEPARATOR);
 		}
 	}
-	
+
 	protected void appendFile(PropertiesFileItem item, BufferedWriter writer, Action action) throws ParsingException, IOException {
 		FilePropertiesFileItem aux = (FilePropertiesFileItem)item;
-		File file = fileResolver.resolve(aux.getFile());
-		if (appendedFiles.add(file)) { // Prevent adding the same file twice
-			InputStreamReader reader = new InputStreamReader(new FileInputStream(file), encoding);
+		InputStream inputStream = fileResolver.resolve(aux.getFile());
+		if (appendedFiles.add(aux.getFile())) { // Prevent adding the same file twice
+			InputStreamReader reader = new InputStreamReader(inputStream, encoding);
 			try {
 				process(reader, writer, action);
 			} finally {

@@ -15,17 +15,18 @@
  */
 package com.google.code.configprocessor.io;
 
-import java.io.*;
-import java.net.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class ClasspathFileResolver implements FileResolver {
 
-	public File resolve(String name) throws IOException {
-		URL url = getClass().getResource(name);
-		if (url == null) {
+	public InputStream resolve(String name) throws IOException {
+		InputStream inputStream = getClass().getResourceAsStream(name);
+		if (inputStream == null) {
 			throw new FileNotFoundException("Classpath resource [" + name + "] not found");
 		}
-		return new File(url.getPath());
+		return inputStream;
 	}
 
 }

@@ -16,6 +16,7 @@
 package com.google.code.configprocessor;
 
 import static com.google.code.configprocessor.util.IOUtils.*;
+
 import static org.apache.commons.lang.StringUtils.*;
 
 import java.io.*;
@@ -32,6 +33,7 @@ import com.google.code.configprocessor.parsing.*;
 import com.google.code.configprocessor.processing.*;
 import com.google.code.configprocessor.processing.properties.*;
 import com.google.code.configprocessor.processing.xml.*;
+import com.google.code.configprocessor.util.IOUtils;
 
 public class ConfigProcessor {
 
@@ -104,32 +106,36 @@ public class ConfigProcessor {
 			getLog().info("Using wildcard pattern based input [" + input + "]");
 			List<File> inputFiles = getMatchingFiles(input);
 			for (File inputFile : inputFiles) {
-				String type = getInputType(transformation, inputFile);
-				File outputFile;
-				if (actualOutputDirectory != null) {
-					// calculate a relative path below the output directory based on the input file
-					outputFile = new File(actualOutputDirectory, baseDir.toURI().relativize(inputFile.toURI()).getPath());
-					createOutputFile(outputFile);
-				} else {
-					outputFile = inputFile;
+				String type = getInputType(transformation);
+				if (actualOutputDirectory == null) {
+					throw new ConfigProcessorException("Output directory must be set");
 				}
-				process(resolver, inputFile.getPath(), inputFile, outputFile, configIdentifier, action, type);
+				// calculate a relative path below the output directory based on the input file
+				File outputFile = new File(actualOutputDirectory, baseDir.toURI().relativize(inputFile.toURI()).getPath());
+				createOutputFile(outputFile);
+				if (!inputFile.exists()) {
+					throw new ConfigProcessorException("File not found: " + inputFile);
+				}
+				InputStream inputStream = new FileInputStream(inputFile);
+				process(resolver, inputFile.getPath(), inputStream, outputFile, configIdentifier, action, type);
 			}
 		} else {
-			File inputFile = fileResolver.resolve(transformation.getInput());
-			if (!inputFile.exists()) {
-				throw new ConfigProcessorException("Input file [" + inputFile + "] does not exist");
+			InputStream inputStream;
+			try {
+				inputStream  = fileResolver.resolve(transformation.getInput());
+			} catch (Exception e) {
+				throw new ConfigProcessorException("Input file [" + transformation.getInput() + "] does not exist", e);
 			}
 			// use input file as output file if output is not set
 			File output;
 			if (StringUtils.isBlank(transformation.getOutput())) {
-				output = inputFile;
+				throw new ConfigProcessorException("Output must be set");
 			} else {
 				output = new File(actualOutputDirectory, transformation.getOutput());
 				createOutputFile(output);
 			}
-			String type = getInputType(transformation, inputFile);
-			process(resolver, transformation.getInput(), inputFile, output, configIdentifier, action, type);
+			String type = getInputType(transformation);
+			process(resolver, transformation.getInput(), inputStream, output, configIdentifier, action, type);
 		}
 	}
 
@@ -155,13 +161,13 @@ public class ConfigProcessor {
 			sb.append(XmlHelper.ROOT_PROCESSOR_END);
 			configReader = new StringReader(sb.toString());
 		} else {
-			File config = fileResolver.resolve(transformation.getConfig());
+			InputStream config = fileResolver.resolve(transformation.getConfig());
 
-			if (!config.exists()) {
+			if (config == null) {
 				throw new ConfigProcessorException("Configuration file [" + config + "] does not exist");
 			}
 
-			configReader = new InputStreamReader(new FileInputStream(config), encoding);
+			configReader = new InputStreamReader(config, encoding);
 		}
 
 		try {
@@ -255,13 +261,13 @@ public class ConfigProcessor {
 	 *        contain a type
 	 * @return Input file type.
 	 */
-	protected String getInputType(Transformation transformation, File input) {
+	protected String getInputType(Transformation transformation) {
 		String type;
-
+		String input = transformation.getInput();
 		if (transformation.getType() == null) {
-			if (input.getName().endsWith(".properties")) {
+			if (input.endsWith(".properties")) {
 				type = Transformation.PROPERTIES_TYPE;
-			} else if (input.getName().endsWith(".xml")) {
+			} else if (input.endsWith(".xml")) {
 				type = Transformation.XML_TYPE;
 			} else {
 				if (getLog() != null) {
@@ -283,23 +289,21 @@ public class ConfigProcessor {
 	 *
 	 * @param resolver
 	 * @param inputName Symbolic name of the input file to read from.
-	 * @param input Input file to read from.
+	 * @param inputStream2 Input file to read from.
 	 * @param output Output file to write to.
 	 * @param configName Symbolic name of the file containing rules to process the input.
 	 * @param action Action to be performed on the input file.
 	 * @param type Type of the input file. Properties, XML or null if it is to be auto-detected.
 	 * @throws ConfigProcessorException If processing cannot be performed.
 	 */
-	protected void process(ExpressionResolver resolver, String inputName, File input, File output, String configName, Action action, String type) throws ConfigProcessorException {
+	protected void process(ExpressionResolver resolver, String inputName, InputStream inputStream, File output, String configName, Action action, String type) throws ConfigProcessorException {
 		getLog().info("Processing file [" + inputName + "] using config [" + configName + "], outputing to [" + output + "]");
 
-		InputStream inputStream = null;
 		ByteArrayOutputStream outputStream = null;
 
 		InputStreamReader inputStreamReader = null;
 		OutputStreamWriter outputStreamWriter = null;
 		try {
-			inputStream = new FileInputStream(input);
 			outputStream = new ByteArrayOutputStream();
 
 			inputStreamReader = new InputStreamReader(inputStream, encoding);

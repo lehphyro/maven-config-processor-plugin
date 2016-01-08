@@ -33,11 +33,11 @@ import com.google.code.configprocessor.processing.*;
 public class AbstractPropertiesActionProcessingAdvisorTest {
 
 	private static final String ENCODING = "ISO-8859-1";
-	
+
 	protected InputStream input;
 	protected ByteArrayOutputStream output;
 	protected ActionProcessor processor;
-	
+
 	public void setup() {
 		processor = new PropertiesActionProcessor(ENCODING, new ClasspathFileResolver(), new MavenExpressionResolver(new DefaultExpressionEvaluator()));
 		input = getClass().getResourceAsStream(PropertiesActionProcessorTest.PROPERTIES_PATH);
@@ -57,19 +57,19 @@ public class AbstractPropertiesActionProcessingAdvisorTest {
 		setup();
 		processor.process(new InputStreamReader(input), new OutputStreamWriter(output), action);
 		assertEquals(expected, getOutput());
-		
+
 		setup();
 		NestedAction nestedAction = new NestedAction();
 		nestedAction.addAction(action);
 		processor.process(new InputStreamReader(input), new OutputStreamWriter(output), nestedAction);
 		assertEquals(expected, getOutput());
 	}
-	
+
 	protected String getOutput() {
 		return new String(output.toByteArray());
 	}
 
-	private static class TestExpressionResolver implements ExpressionResolver {
+	public static class TestExpressionResolver implements ExpressionResolver {
 		private List<String> resolvedValues = new ArrayList<String>();
 
 		public String resolve(String value, boolean isPropertiesValue) {

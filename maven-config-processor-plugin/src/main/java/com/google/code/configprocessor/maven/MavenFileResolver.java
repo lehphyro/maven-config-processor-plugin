@@ -31,7 +31,7 @@ public class MavenFileResolver implements FileResolver {
 
 	private Locator locator;
 	private LogAdapter logAdapter;
-	
+
 	public MavenFileResolver(MavenProject mavenProject, ArtifactFactory artifactFactory, ArtifactResolver artifactResolver, ArtifactRepository localRepository, List<ArtifactRepository> remoteRepositories, LogAdapter logAdapter) {
 		this.logAdapter = logAdapter;
 		locator = new Locator();
@@ -43,19 +43,18 @@ public class MavenFileResolver implements FileResolver {
 		locator.setStrategies(strategies);
 	}
 
-	public File resolve(String name) throws IOException {
+	public InputStream resolve(String name) throws IOException {
 		Location location = locator.resolve(name);
 		if (location == null) {
 			throw new IOException("File not found [" + name + "]\n" + locator.getMessageHolder().render());
 		}
-		
-		try {
-			File file = location.getFile();
-			logAdapter.debug("Resolved [" + name + "] to file [" + file + "]");
-			return file;
-		} catch (IOException e) {
-			throw new IOException("Failed to load file [" + name + "]\n" + locator.getMessageHolder().render());
+
+		InputStream inputStream = location.getInputStream();
+		if (inputStream != null) {
+			logAdapter.debug("Resolved [" + name + "] to an inputStream [" + location + "]");
+			return inputStream;
 		}
+		throw new IOException("Failed to load file [" + name + "]\n" + locator.getMessageHolder().render());
 	}
 
 }

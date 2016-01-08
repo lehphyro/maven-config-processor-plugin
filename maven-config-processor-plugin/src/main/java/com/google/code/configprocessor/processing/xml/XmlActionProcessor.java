@@ -40,9 +40,9 @@ public class XmlActionProcessor implements ActionProcessor {
 	private ExpressionResolver expressionResolver;
 	private MapBasedNamespaceContext namespaceContext;
 	private List<ParserFeature> parserFeatures;
-    private boolean failOnMissingXpath;
+	private boolean failOnMissingXpath;
 
-    public XmlActionProcessor(String encoding, int lineWidth, int indentSize, FileResolver fileResolver, ExpressionResolver expressionResolver, Map<String, String> contextMappings,
+	public XmlActionProcessor(String encoding, int lineWidth, int indentSize, FileResolver fileResolver, ExpressionResolver expressionResolver, Map<String, String> contextMappings,
 			List<ParserFeature> parserFeatures, boolean failOnMissingXpath) {
 		this.encoding = encoding;
 		this.lineWidth = lineWidth;
@@ -51,7 +51,7 @@ public class XmlActionProcessor implements ActionProcessor {
 		this.expressionResolver = expressionResolver;
 		this.namespaceContext = new MapBasedNamespaceContext(contextMappings);
 		this.parserFeatures = parserFeatures;
-        this.failOnMissingXpath = failOnMissingXpath;
+		this.failOnMissingXpath = failOnMissingXpath;
 	}
 
 	public void process(Reader input, Writer output, Action action) throws ParsingException, IOException {
@@ -108,8 +108,8 @@ public class XmlActionProcessor implements ActionProcessor {
 	}
 
 	protected String getProcessedFile(String name, Action action) throws ParsingException, IOException {
-		File file = fileResolver.resolve(name);
-		InputStreamReader reader = new InputStreamReader(new FileInputStream(file), encoding);
+		InputStream inputStream = fileResolver.resolve(name);
+		InputStreamReader reader = new InputStreamReader(inputStream, encoding);
 		StringWriter writer = new StringWriter();
 		try {
 			process(reader, writer, action);
