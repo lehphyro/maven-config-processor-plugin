@@ -3,15 +3,34 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>org.sonatype.oss</groupId>
-		<artifactId>oss-parent</artifactId>
-		<version>7</version>
+	  <groupId>se.idainfront</groupId>
+	  <artifactId>ida-base-pom</artifactId>
+	  <version>2.2</version>
 	</parent>
 
 	<groupId>com.google.code.maven-config-processor-plugin</groupId>
 	<artifactId>config-processor-maven-plugin</artifactId>
 	<version>2.8-SNAPSHOT</version>
 	<packaging>maven-plugin</packaging>
+
+	<distributionManagement>
+	    <snapshotRepository>
+	      <id>internal-snapshots</id>
+	      <name>internal-snapshots</name>
+	      <url>http://repo.idainfront.se/content/groups/internal-snapshots</url>
+	    </snapshotRepository>
+	</distributionManagement>
+
+	<repositories>
+	  <repository>
+	    <snapshots>
+	      <enabled>false</enabled>
+	    </snapshots>
+	    <id>central</id>
+	    <name>internal</name>
+	    <url>http://repo.idainfront.se/content/groups/internal</url>
+	  </repository>
+	</repositories>
 
 	<name>Config Processor Maven Plugin</name>
 	<description>Generates configuration files modified according to a ruleset to prepare them for different environments</description>
@@ -367,4 +386,5 @@
 			</plugin>
 		</plugins>
 	</reporting>
+
 </project>
