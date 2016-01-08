@@ -15,9 +15,9 @@
 
 	<distributionManagement>
 	    <snapshotRepository>
-	      <id>internal-snapshots</id>
-	      <name>internal-snapshots</name>
-	      <url>http://repo.idainfront.se/content/groups/internal-snapshots</url>
+	      <id>iipax-snapshots</id>
+	      <name>iipax-snapshots</name>
+	      <url>http://repo.idainfront.se/content/repositories/iipax-snapshots</url>
 	    </snapshotRepository>
 	</distributionManagement>
 
@@ -27,8 +27,8 @@
 	      <enabled>false</enabled>
 	    </snapshots>
 	    <id>central</id>
-	    <name>internal</name>
-	    <url>http://repo.idainfront.se/content/groups/internal</url>
+	    <name>internal-snapshots</name>
+	    <url>http://repo.idainfront.se/content/groups/internal-snapshots</url>
 	  </repository>
 	</repositories>
 
