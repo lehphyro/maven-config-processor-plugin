@@ -29,32 +29,32 @@ import com.google.code.configprocessor.log.*;
 
 public class MavenFileResolver implements FileResolver {
 
-    private Locator locator;
-    private LogAdapter logAdapter;
+	private Locator locator;
+	private LogAdapter logAdapter;
 
-    public MavenFileResolver(MavenProject mavenProject, ArtifactFactory artifactFactory, ArtifactResolver artifactResolver, ArtifactRepository localRepository, List<ArtifactRepository> remoteRepositories, LogAdapter logAdapter) {
-        this.logAdapter = logAdapter;
-        locator = new Locator();
-        List<LocatorStrategy> strategies = new ArrayList<LocatorStrategy>();
-        strategies.add(new RelativeFileLocatorStrategy(mavenProject));
-        strategies.add(new ClasspathResourceLocatorStrategy());
-        strategies.add(new ArtifactLocatorStrategy(artifactFactory, artifactResolver, localRepository, remoteRepositories));
-        strategies.add(new URLLocatorStrategy());
-        locator.setStrategies(strategies);
-    }
+	public MavenFileResolver(MavenProject mavenProject, ArtifactFactory artifactFactory, ArtifactResolver artifactResolver, ArtifactRepository localRepository, List<ArtifactRepository> remoteRepositories, LogAdapter logAdapter) {
+		this.logAdapter = logAdapter;
+		locator = new Locator();
+		List<LocatorStrategy> strategies = new ArrayList<LocatorStrategy>();
+		strategies.add(new RelativeFileLocatorStrategy(mavenProject));
+		strategies.add(new ClasspathResourceLocatorStrategy());
+		strategies.add(new ArtifactLocatorStrategy(artifactFactory, artifactResolver, localRepository, remoteRepositories));
+		strategies.add(new URLLocatorStrategy());
+		locator.setStrategies(strategies);
+	}
 
-    public InputStream resolve(String name) throws IOException {
-        Location location = locator.resolve(name);
-        if (location == null) {
-            throw new IOException("File not found [" + name + "]\n" + locator.getMessageHolder().render());
-        }
+	public InputStream resolve(String name) throws IOException {
+		Location location = locator.resolve(name);
+		if (location == null) {
+			throw new IOException("File not found [" + name + "]\n" + locator.getMessageHolder().render());
+		}
 
-        InputStream inputStream = location.getInputStream();
-        if (inputStream != null) {
-            logAdapter.debug("Resolved [" + name + "] to an inputStream [" + location + "]");
-            return inputStream;
-        }
-        throw new IOException("Failed to load file [" + name + "]\n" + locator.getMessageHolder().render());
-    }
+		InputStream inputStream = location.getInputStream();
+		if (inputStream != null) {
+			logAdapter.debug("Resolved [" + name + "] to an inputStream [" + location + "]");
+			return inputStream;
+		}
+		throw new IOException("Failed to load file [" + name + "]\n" + locator.getMessageHolder().render());
+	}
 
 }

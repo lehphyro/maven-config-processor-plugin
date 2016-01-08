@@ -21,12 +21,12 @@ import java.io.InputStream;
 
 public class ClasspathFileResolver implements FileResolver {
 
-    public InputStream resolve(String name) throws IOException {
-        InputStream inputStream = getClass().getResourceAsStream(name);
-        if (inputStream == null) {
-            throw new FileNotFoundException("Classpath resource [" + name + "] not found");
-        }
-        return inputStream;
-    }
+	public InputStream resolve(String name) throws IOException {
+		InputStream inputStream = getClass().getResourceAsStream(name);
+		if (inputStream == null) {
+			throw new FileNotFoundException("Classpath resource [" + name + "] not found");
+		}
+		return inputStream;
+	}
 
 }

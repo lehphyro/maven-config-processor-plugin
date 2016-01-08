@@ -19,6 +19,6 @@ import java.io.*;
 
 public interface FileResolver {
 
-    InputStream resolve(String name) throws IOException;
+	InputStream resolve(String name) throws IOException;
 
 }
