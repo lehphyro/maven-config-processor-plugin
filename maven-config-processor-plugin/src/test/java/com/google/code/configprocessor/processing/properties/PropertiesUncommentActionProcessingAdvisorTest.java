@@ -34,7 +34,7 @@ public class PropertiesUncommentActionProcessingAdvisorTest extends AbstractProp
 	@Test
 	public void processUncomment() throws Exception {
 		Action action = new UncommentAction("property4.value");
-		String expected = "property1.value=value1" + LINE_SEPARATOR + "property2.value=" + LINE_SEPARATOR + "# Comment" + LINE_SEPARATOR + "	property3.value=value3 \\" + LINE_SEPARATOR + "value 3 continuation" + LINE_SEPARATOR + "property4.value=value4 \\" + LINE_SEPARATOR + "value 4 continuation" + LINE_SEPARATOR + "#property5.value=value5" + LINE_SEPARATOR + "property6.value=value6=value" + LINE_SEPARATOR + "#" + LINE_SEPARATOR + "#property7.value=value7" + LINE_SEPARATOR + "#  " + LINE_SEPARATOR;
+		String expected = "property1.value=value1" + LINE_SEPARATOR + "property2.value=" + LINE_SEPARATOR + "# Comment" + LINE_SEPARATOR + "	property3.value=value3 \\" + LINE_SEPARATOR + "value 3 continuation" + LINE_SEPARATOR + "property4.value=value4 \\" + LINE_SEPARATOR + "value 4 continuation" + LINE_SEPARATOR + "#property5.value=value5" + LINE_SEPARATOR + "property6.value=value6=value" + LINE_SEPARATOR + "#" + LINE_SEPARATOR + "#property7.value=value7" + LINE_SEPARATOR + "#  " + LINE_SEPARATOR + "#property8.value=value!7" + LINE_SEPARATOR;
 
 		executeTest(action, expected);
 	}
@@ -42,7 +42,7 @@ public class PropertiesUncommentActionProcessingAdvisorTest extends AbstractProp
 	@Test
 	public void processUncommentAfterComment() throws Exception {
 		Action action = new UncommentAction("property5.value");
-		String expected = "property1.value=value1" + LINE_SEPARATOR + "property2.value=" + LINE_SEPARATOR + "# Comment" + LINE_SEPARATOR + "	property3.value=value3 \\" + LINE_SEPARATOR + "value 3 continuation" + LINE_SEPARATOR + "# property4.value=value4 \\" + LINE_SEPARATOR + "#value 4 continuation" + LINE_SEPARATOR + "property5.value=value5" + LINE_SEPARATOR + "property6.value=value6=value" + LINE_SEPARATOR + "#" + LINE_SEPARATOR + "#property7.value=value7" + LINE_SEPARATOR + "#  " + LINE_SEPARATOR;
+		String expected = "property1.value=value1" + LINE_SEPARATOR + "property2.value=" + LINE_SEPARATOR + "# Comment" + LINE_SEPARATOR + "	property3.value=value3 \\" + LINE_SEPARATOR + "value 3 continuation" + LINE_SEPARATOR + "# property4.value=value4 \\" + LINE_SEPARATOR + "#value 4 continuation" + LINE_SEPARATOR + "property5.value=value5" + LINE_SEPARATOR + "property6.value=value6=value" + LINE_SEPARATOR + "#" + LINE_SEPARATOR + "#property7.value=value7" + LINE_SEPARATOR + "#  " + LINE_SEPARATOR + "#property8.value=value!7" + LINE_SEPARATOR;
 
 		executeTest(action, expected);
 	}
@@ -50,7 +50,7 @@ public class PropertiesUncommentActionProcessingAdvisorTest extends AbstractProp
 	@Test
 	public void processUncommentPropertyWithEmptyValue() throws Exception {
 		Action action = new UncommentAction("property2.value");
-		String expected = "property1.value=value1" + LINE_SEPARATOR + "property2.value=" + LINE_SEPARATOR + "# Comment" + LINE_SEPARATOR + "	property3.value=value3 \\" + LINE_SEPARATOR + "value 3 continuation" + LINE_SEPARATOR + "# property4.value=value4 \\" + LINE_SEPARATOR + "#value 4 continuation" + LINE_SEPARATOR + "#property5.value=value5" + LINE_SEPARATOR + "property6.value=value6=value" + LINE_SEPARATOR + "#" + LINE_SEPARATOR + "#property7.value=value7" + LINE_SEPARATOR + "#  " + LINE_SEPARATOR;
+		String expected = "property1.value=value1" + LINE_SEPARATOR + "property2.value=" + LINE_SEPARATOR + "# Comment" + LINE_SEPARATOR + "	property3.value=value3 \\" + LINE_SEPARATOR + "value 3 continuation" + LINE_SEPARATOR + "# property4.value=value4 \\" + LINE_SEPARATOR + "#value 4 continuation" + LINE_SEPARATOR + "#property5.value=value5" + LINE_SEPARATOR + "property6.value=value6=value" + LINE_SEPARATOR + "#" + LINE_SEPARATOR + "#property7.value=value7" + LINE_SEPARATOR + "#  " + LINE_SEPARATOR + "#property8.value=value!7" + LINE_SEPARATOR;
 
 		executeTest(action, expected);
 	}
@@ -62,8 +62,16 @@ public class PropertiesUncommentActionProcessingAdvisorTest extends AbstractProp
 	@Test
 	public void processUncommentPropertyAfterEmptyComment() throws Exception {
 		Action action = new UncommentAction("property7.value");
-		String expected = "property1.value=value1" + LINE_SEPARATOR + "property2.value=" + LINE_SEPARATOR + "# Comment" + LINE_SEPARATOR + "	property3.value=value3 \\" + LINE_SEPARATOR + "value 3 continuation" + LINE_SEPARATOR + "# property4.value=value4 \\" + LINE_SEPARATOR + "#value 4 continuation" + LINE_SEPARATOR + "#property5.value=value5" + LINE_SEPARATOR + "property6.value=value6=value" + LINE_SEPARATOR + "#" + LINE_SEPARATOR + "property7.value=value7" + LINE_SEPARATOR + "#  " + LINE_SEPARATOR;
+		String expected = "property1.value=value1" + LINE_SEPARATOR + "property2.value=" + LINE_SEPARATOR + "# Comment" + LINE_SEPARATOR + "	property3.value=value3 \\" + LINE_SEPARATOR + "value 3 continuation" + LINE_SEPARATOR + "# property4.value=value4 \\" + LINE_SEPARATOR + "#value 4 continuation" + LINE_SEPARATOR + "#property5.value=value5" + LINE_SEPARATOR + "property6.value=value6=value" + LINE_SEPARATOR + "#" + LINE_SEPARATOR + "property7.value=value7" + LINE_SEPARATOR + "#  " + LINE_SEPARATOR + "#property8.value=value!7" + LINE_SEPARATOR;
 		
+		executeTest(action, expected);
+	}
+
+	@Test
+	public void processUncommentPropertyWithCommentCharacterValue() throws  Exception {
+		Action action = new UncommentAction("property8.value");
+		String expected = "property1.value=value1" + LINE_SEPARATOR + "property2.value=" + LINE_SEPARATOR + "# Comment" + LINE_SEPARATOR + "	property3.value=value3 \\" + LINE_SEPARATOR + "value 3 continuation" + LINE_SEPARATOR + "# property4.value=value4 \\" + LINE_SEPARATOR + "#value 4 continuation" + LINE_SEPARATOR + "#property5.value=value5" + LINE_SEPARATOR + "property6.value=value6=value" + LINE_SEPARATOR + "#" + LINE_SEPARATOR + "#property7.value=value7" + LINE_SEPARATOR + "#  " + LINE_SEPARATOR + "property8.value=value!7" + LINE_SEPARATOR;
+
 		executeTest(action, expected);
 	}
 }
