@@ -32,15 +32,28 @@ public class PropertiesUncommentActionProcessingAdvisor extends AbstractProperti
 		super(expressionResolver);
 		this.action = action;
 
-		commentPrefixPattern = Pattern.compile(Comment.PREFIX_1 + "|" + Comment.PREFIX_2);
+		commentPrefixPattern = Pattern.compile("(\\s*)" + Comment.PREFIX_1 + "|" + Comment.PREFIX_2);
 	}
 
 	@Override
 	public PropertiesFileItemAdvice process(PropertiesFileItem item) {
 		if (item instanceof Comment) {
 			Comment comment = (Comment) item;
-			String text = commentPrefixPattern.matcher(comment.getAsText()).replaceAll("");
-			text = resolve(text);
+			String[] parts = comment.getAsText().split(PropertiesActionProcessor.LINE_SEPARATOR);
+			for(int i = 0; i < parts.length; ++i)
+			{
+				Matcher matcher = commentPrefixPattern.matcher(parts[i]);
+				if (matcher.find())
+				{
+					String replace = matcher.group(1);
+					if (replace == null)
+					{
+						replace = "";
+					}
+					parts[i] = matcher.replaceFirst(replace);
+				}
+			}
+			String text = resolve(StringUtils.join(parts, PropertiesActionProcessor.LINE_SEPARATOR));
 
 			if (!StringUtils.isBlank(text)) {
 				PropertyMapping mapping = new PropertyMapping();
