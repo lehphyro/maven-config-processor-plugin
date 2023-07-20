@@ -15,15 +15,16 @@
  */
 package com.google.code.configprocessor.maven;
 
-import org.apache.commons.lang.*;
-import org.codehaus.plexus.component.configurator.expression.*;
+import org.apache.commons.lang3.StringUtils;
+import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
+import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
 
-import com.google.code.configprocessor.expression.*;
-import com.google.code.configprocessor.util.*;
+import com.google.code.configprocessor.expression.ExpressionResolver;
+import com.google.code.configprocessor.util.PropertiesUtils;
 
 /**
  * Resolver of placeholders.
- * 
+ *
  * @author Leandro Aparecido
  * @see org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator
  */
@@ -50,12 +51,13 @@ public class MavenExpressionResolver implements ExpressionResolver {
 
 	/**
 	 * Resolves the given text replacing any placeholders if necessary.
-	 * 
+	 *
 	 * @param value Value to resolve.
 	 * @param isPropertiesValue True is the value will be used in .properties files and should be escaped.
 	 * @return Resolved value with values replaced as necessary.
 	 */
-	public String resolve(String value, boolean isPropertiesValue) {
+	@Override
+    public String resolve(String value, boolean isPropertiesValue) {
 		String resolvedValue;
 
 		if (replacePlaceholders) {
@@ -65,7 +67,7 @@ public class MavenExpressionResolver implements ExpressionResolver {
 					throw new IllegalArgumentException("Expression [" + value + "] did not resolve to String");
 				}
 				resolvedValue = (String) aux;
-				
+
 				if (isPropertiesValue && !StringUtils.equals(value, resolvedValue)) {
 					resolvedValue = PropertiesUtils.escapePropertyValue(resolvedValue);
 				}

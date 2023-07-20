@@ -15,9 +15,9 @@
  */
 package com.google.code.configprocessor.processing;
 
-import org.apache.commons.lang.StringUtils;
-
 import java.util.regex.Pattern;
+
+import org.apache.commons.lang3.StringUtils;
 
 public class ModifyAction extends AbstractAction {
 
@@ -45,7 +45,8 @@ public class ModifyAction extends AbstractAction {
 		this.nodeSetPolicy = nodeSetPolicy.toString();
 	}
 
-	public void validate() throws ActionValidationException {
+	@Override
+    public void validate() throws ActionValidationException {
 		if (getName() == null) {
 			if (getValue() == null) {
 				if (getFind() == null || getReplace() == null) {

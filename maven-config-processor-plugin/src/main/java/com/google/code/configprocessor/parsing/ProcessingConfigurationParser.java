@@ -15,13 +15,23 @@
  */
 package com.google.code.configprocessor.parsing;
 
-import java.io.*;
-import java.nio.charset.*;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.Charset;
 
-import com.google.code.configprocessor.*;
-import com.google.code.configprocessor.processing.*;
-import com.thoughtworks.xstream.*;
-import com.thoughtworks.xstream.converters.reflection.*;
+import com.google.code.configprocessor.ParsingException;
+import com.google.code.configprocessor.processing.AddAction;
+import com.google.code.configprocessor.processing.CommentAction;
+import com.google.code.configprocessor.processing.ModifyAction;
+import com.google.code.configprocessor.processing.NestedAction;
+import com.google.code.configprocessor.processing.RemoveAction;
+import com.google.code.configprocessor.processing.UncommentAction;
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.converters.reflection.PureJavaReflectionProvider;
+import com.thoughtworks.xstream.security.NoTypePermission;
+import com.thoughtworks.xstream.security.NullPermission;
+import com.thoughtworks.xstream.security.PrimitiveTypePermission;
 
 public class ProcessingConfigurationParser {
 
@@ -43,6 +53,15 @@ public class ProcessingConfigurationParser {
 
 	protected XStream getXStream() {
 		XStream xstream = new XStream(new PureJavaReflectionProvider());
+
+        // clear out existing permissions and start a whitelist
+        xstream.addPermission(NoTypePermission.NONE);
+        // allow some basics
+        xstream.addPermission(NullPermission.NULL);
+        xstream.addPermission(PrimitiveTypePermission.PRIMITIVES);
+        // allow any type from the same package
+        xstream.allowTypesByWildcard(new String[] { "com.google.code.configprocessor.processing**"
+        });
 
 		xstream.alias("processor", NestedAction.class);
 		xstream.alias("add", AddAction.class);

@@ -15,13 +15,17 @@
  */
 package com.google.code.configprocessor.processing.properties;
 
-import java.util.regex.*;
+import java.util.regex.Pattern;
 
-import org.apache.commons.lang.*;
+import org.apache.commons.lang3.StringUtils;
 
-import com.google.code.configprocessor.expression.*;
-import com.google.code.configprocessor.processing.*;
-import com.google.code.configprocessor.processing.properties.model.*;
+import com.google.code.configprocessor.expression.ExpressionResolver;
+import com.google.code.configprocessor.processing.UncommentAction;
+import com.google.code.configprocessor.processing.properties.model.Comment;
+import com.google.code.configprocessor.processing.properties.model.PropertiesFileItem;
+import com.google.code.configprocessor.processing.properties.model.PropertiesFileItemAdvice;
+import com.google.code.configprocessor.processing.properties.model.PropertiesFileItemAdviceType;
+import com.google.code.configprocessor.processing.properties.model.PropertyMapping;
 
 public class PropertiesUncommentActionProcessingAdvisor extends AbstractPropertiesActionProcessingAdvisor {
 
@@ -45,7 +49,7 @@ public class PropertiesUncommentActionProcessingAdvisor extends AbstractProperti
 			if (!StringUtils.isBlank(text)) {
 				PropertyMapping mapping = new PropertyMapping();
 				mapping.parse(text, true);
-	
+
 				if (mapping.getPropertyName().trim().equals(action.getName())) {
 					return new PropertiesFileItemAdvice(PropertiesFileItemAdviceType.MODIFY, mapping);
 				}

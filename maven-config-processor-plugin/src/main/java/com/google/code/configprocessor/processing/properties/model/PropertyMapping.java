@@ -15,7 +15,7 @@
  */
 package com.google.code.configprocessor.processing.properties.model;
 
-import org.apache.commons.lang.*;
+import org.apache.commons.lang3.StringUtils;
 
 public class PropertyMapping implements PropertiesFileItem {
 
@@ -75,7 +75,8 @@ public class PropertyMapping implements PropertiesFileItem {
 		}
 	}
 
-	public String getAsText() {
+	@Override
+    public String getAsText() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(getPropertyName());
 		sb.append("=");
