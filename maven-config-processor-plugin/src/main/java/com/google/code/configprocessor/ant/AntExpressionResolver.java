@@ -15,11 +15,15 @@
  */
 package com.google.code.configprocessor.ant;
 
-import java.util.*;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Map;
+import java.util.Properties;
 
-import org.apache.tools.ant.*;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.PropertyHelper;
 
-import com.google.code.configprocessor.expression.*;
+import com.google.code.configprocessor.expression.ExpressionResolver;
 
 public class AntExpressionResolver implements ExpressionResolver {
 
@@ -44,7 +48,8 @@ public class AntExpressionResolver implements ExpressionResolver {
 		this.replacePlaceholders = replacePlaceholders;
 	}
 
-	public String resolve(String value, boolean isPropertiesValue) {
+	@Override
+    public String resolve(String value, boolean isPropertiesValue) {
 		String resolvedValue;
 
 		if (replacePlaceholders) {
@@ -55,11 +60,22 @@ public class AntExpressionResolver implements ExpressionResolver {
 				String name = (String) names.nextElement();
 				ph.setUserProperty(null, name, specificProperties.getProperty(name));
 			}
-			resolvedValue = ph.replaceProperties(null, value, specificProperties);
+            resolvedValue = ph.replaceProperties(null, value, loopConvert(specificProperties));
 		} else {
 			resolvedValue = value;
 		}
 
 		return resolvedValue;
 	}
+
+    private Hashtable<String, Object> loopConvert(Properties prop)
+    {
+        Hashtable<String, Object> retMap = new Hashtable<>();
+        for (Map.Entry<Object, Object> entry : prop.entrySet())
+        {
+            retMap.put(String.valueOf(entry.getKey()), entry.getValue());
+        }
+        return retMap;
+    }
+
 }

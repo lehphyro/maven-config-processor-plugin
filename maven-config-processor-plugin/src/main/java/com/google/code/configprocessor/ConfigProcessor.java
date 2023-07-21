@@ -15,23 +15,38 @@
  */
 package com.google.code.configprocessor;
 
-import static com.google.code.configprocessor.util.IOUtils.*;
-import static org.apache.commons.lang.StringUtils.*;
+import static com.google.code.configprocessor.util.IOUtils.close;
+import static com.google.code.configprocessor.util.IOUtils.forceMkdirs;
 
-import java.io.*;
-import java.util.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
-import org.apache.commons.lang.*;
-import org.apache.tools.ant.*;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.tools.ant.DirectoryScanner;
 
-import com.google.code.configprocessor.expression.*;
-import com.google.code.configprocessor.io.*;
-import com.google.code.configprocessor.log.*;
-import com.google.code.configprocessor.maven.*;
-import com.google.code.configprocessor.parsing.*;
-import com.google.code.configprocessor.processing.*;
-import com.google.code.configprocessor.processing.properties.*;
-import com.google.code.configprocessor.processing.xml.*;
+import com.google.code.configprocessor.expression.ExpressionResolver;
+import com.google.code.configprocessor.io.FileResolver;
+import com.google.code.configprocessor.log.LogAdapter;
+import com.google.code.configprocessor.maven.AntrunXmlPlexusConfigurationWriter;
+import com.google.code.configprocessor.parsing.ProcessingConfigurationParser;
+import com.google.code.configprocessor.processing.Action;
+import com.google.code.configprocessor.processing.ActionProcessor;
+import com.google.code.configprocessor.processing.properties.PropertiesActionProcessor;
+import com.google.code.configprocessor.processing.xml.XmlActionProcessor;
+import com.google.code.configprocessor.processing.xml.XmlHelper;
 
 public class ConfigProcessor {
 
@@ -146,9 +161,9 @@ public class ConfigProcessor {
 			StringWriter writer = new StringWriter();
 			AntrunXmlPlexusConfigurationWriter xmlWriter = new AntrunXmlPlexusConfigurationWriter();
 			xmlWriter.write(transformation.getRules(), writer);
-			String configContent = trimToNull(writer.toString());
-			configContent = removeStart(configContent, "<rules>");
-			configContent = removeEnd(configContent, "</rules>");
+            String configContent = StringUtils.trimToNull(writer.toString());
+            configContent = StringUtils.removeStart(configContent, "<rules>");
+            configContent = StringUtils.removeEnd(configContent, "</rules>");
 			StringBuilder sb = new StringBuilder(configContent.length() + XmlHelper.ROOT_PROCESSOR_START.length() + XmlHelper.ROOT_PROCESSOR_END.length());
 			sb.append(XmlHelper.ROOT_PROCESSOR_START);
 			sb.append(configContent);
@@ -186,7 +201,8 @@ public class ConfigProcessor {
 			} catch (IOException e) {
 				throw new ConfigProcessorException("Shouldn't happen because there is no I/O here", e);
 			}
-			return abbreviate(trimToNull(removeStart(writer.toString(), "<rules>")), 100);
+            return StringUtils.abbreviate(StringUtils.trimToNull(StringUtils.removeStart(writer.toString(), "<rules>")),
+                100);
 		}
 		return transformation.getConfig();
 	}
@@ -236,7 +252,7 @@ public class ConfigProcessor {
 		scanner.setCaseSensitive(false);
 		scanner.scan();
 		String[] fileNames = scanner.getIncludedFiles();
-		List<File> files = new ArrayList<File>();
+		List<File> files = new ArrayList<>();
 		for (String fileName : fileNames) {
 			files.add(new File(baseDir, fileName));
 		}

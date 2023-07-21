@@ -15,12 +15,12 @@
  */
 package com.google.code.configprocessor.processing;
 
-import org.apache.commons.lang.*;
+import org.apache.commons.lang3.StringUtils;
 
 public class AddAction extends AbstractAction {
 
 	private static final long serialVersionUID = -5444028483023476286L;
-	
+
 	private static final boolean DEFAULT_IGNORE_ROOT = true;
 
 	private boolean first;
@@ -42,11 +42,11 @@ public class AddAction extends AbstractAction {
 
 	public AddAction(String file, String after, String before) {
 		super(null, null);
-		
+
 		this.file = file;
 		this.after = after;
 		this.before = before;
-		this.ignoreRoot = DEFAULT_IGNORE_ROOT;
+		ignoreRoot = DEFAULT_IGNORE_ROOT;
 	}
 
 	public AddAction(String name, String value, String after, String before) {
@@ -54,10 +54,11 @@ public class AddAction extends AbstractAction {
 
 		this.after = after;
 		this.before = before;
-		this.ignoreRoot = DEFAULT_IGNORE_ROOT;
+		ignoreRoot = DEFAULT_IGNORE_ROOT;
 	}
-	
-	public void validate() throws ActionValidationException {
+
+	@Override
+    public void validate() throws ActionValidationException {
 		if (getFile() == null && getValue() == null) {
 			throw new ActionValidationException("File or value are required", this);
 		}
@@ -99,7 +100,7 @@ public class AddAction extends AbstractAction {
 	public String getAfter() {
 		return StringUtils.trimToNull(after);
 	}
-	
+
 	public void setAfter(String after) {
 		this.after = after;
 	}
@@ -107,19 +108,19 @@ public class AddAction extends AbstractAction {
 	public String getBefore() {
 		return StringUtils.trimToNull(before);
 	}
-	
+
 	public void setBefore(String before) {
 		this.before = before;
 	}
-	
+
 	public String getInside() {
 		return StringUtils.trimToNull(inside);
 	}
-	
+
 	public void setInside(String inside) {
 		this.inside = inside;
 	}
-	
+
 	public String getFile() {
 		return StringUtils.trimToNull(file);
 	}
@@ -127,19 +128,19 @@ public class AddAction extends AbstractAction {
 	public void setFile(String file) {
 		this.file = file;
 	}
-	
+
 	public boolean isIgnoreRoot() {
 		return ignoreRoot;
 	}
-	
+
 	public void setIgnoreRoot(boolean ignoreRoot) {
 		this.ignoreRoot = ignoreRoot;
 	}
-	
+
 	public NestedAction getNestedAction() {
 		return nestedAction;
 	}
-	
+
 	public void setNestedAction(NestedAction nestedAction) {
 		this.nestedAction = nestedAction;
 	}

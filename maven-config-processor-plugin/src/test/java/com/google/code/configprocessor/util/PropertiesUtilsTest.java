@@ -15,10 +15,10 @@
  */
 package com.google.code.configprocessor.util;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-import org.apache.commons.lang.*;
-import org.junit.*;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.Test;
 
 public class PropertiesUtilsTest {
 
@@ -26,22 +26,22 @@ public class PropertiesUtilsTest {
 	public void getAsTextSimple() {
 		executeExportingTest("value", "value");
 	}
-	
+
 	@Test
 	public void getAsTextNullValue() {
 		executeExportingTest(null, null);
 	}
-	
+
 	@Test
 	public void getAsTextEmptyValue() {
 		executeExportingTest("", StringUtils.EMPTY);
 	}
-	
+
 	@Test
 	public void getAsTextEscapingBackslashes() {
 		executeExportingTest("c:\\\\file.txt", "c:\\file.txt");
 	}
-	
+
 	@Test
 	public void getAsTextEscapingLineBreaks() {
 		executeExportingTest("value1\\\rvalue2", "value1\rvalue2");

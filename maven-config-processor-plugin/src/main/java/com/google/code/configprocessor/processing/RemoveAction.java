@@ -15,7 +15,7 @@
  */
 package com.google.code.configprocessor.processing;
 
-import org.apache.commons.lang.*;
+import org.apache.commons.lang3.StringUtils;
 
 public class RemoveAction extends AbstractAction {
 
@@ -36,7 +36,8 @@ public class RemoveAction extends AbstractAction {
 		this.nodeSetPolicy = nodeSetPolicy.toString();
 	}
 
-	public void validate() throws ActionValidationException {
+	@Override
+    public void validate() throws ActionValidationException {
 		if (getName() == null) {
 			throw new ActionValidationException("Name is required", this);
 		}

@@ -15,12 +15,12 @@
  */
 package com.google.code.configprocessor.processing;
 
-import org.apache.commons.lang.*;
+import org.apache.commons.lang3.StringUtils;
 
 public abstract class AbstractAction implements Action {
 
 	private static final long serialVersionUID = 2344519551554135862L;
-	
+
 	private String name;
 	private String value;
 	private boolean strict;
@@ -28,7 +28,7 @@ public abstract class AbstractAction implements Action {
 	public AbstractAction(String name, String value) {
 		this.name = name;
 		this.value = value;
-		this.strict = true;
+		strict = true;
 	}
 
 	public String getName() {
@@ -46,11 +46,12 @@ public abstract class AbstractAction implements Action {
 	public void setValue(String value) {
 		this.value = value;
 	}
-	
-	public boolean isStrict() {
+
+	@Override
+    public boolean isStrict() {
 		return strict;
 	}
-	
+
 	public void setStrict(boolean strict) {
 		this.strict = strict;
 	}

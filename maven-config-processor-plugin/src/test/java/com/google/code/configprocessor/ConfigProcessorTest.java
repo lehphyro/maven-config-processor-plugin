@@ -15,13 +15,14 @@
  */
 package com.google.code.configprocessor;
 
-import static org.easymock.EasyMock.*;
-import static org.easymock.classextension.EasyMock.*;
-import static org.junit.Assert.*;
+import static org.easymock.EasyMock.createStrictMock;
+import static org.easymock.EasyMock.expect;
+import static org.junit.Assert.assertEquals;
 
-import java.io.*;
+import java.io.File;
 
-import org.junit.*;
+import org.junit.Before;
+import org.junit.Test;
 
 public class ConfigProcessorTest {
 
