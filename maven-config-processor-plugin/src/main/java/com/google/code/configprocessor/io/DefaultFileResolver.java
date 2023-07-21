@@ -19,12 +19,23 @@ import java.io.*;
 
 public class DefaultFileResolver implements FileResolver {
 
+	private String basedir;
+
 	public File resolve(String name) throws IOException {
 		File file = new File(name);
 		if (!file.exists()) {
-			throw new FileNotFoundException("File [" + name + "] does not exist");
+			file = new File(basedir, name);
+			if (!file.exists()) {
+				throw new FileNotFoundException("File [" + name +
+						"] does not exist. " + "looked in: " + new File(name) +
+						"\n" + file);
+			}
 		}
 		return file;
+	}
+	
+	public void setBasedir(String basedir) {
+		this.basedir = basedir;
 	}
 
 }
